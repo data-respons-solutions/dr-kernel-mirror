@@ -210,7 +210,9 @@ static int tpm_tis_spi_remove(struct spi_device *dev)
 }
 
 static const struct spi_device_id tpm_tis_spi_id[] = {
-	{"tpm_tis_spi", 0},
+	{"st33htpm-spi", 0},
+	{"slb9670", 1},
+	{"tpm_tis_spi", 2},
 	{}
 };
 MODULE_DEVICE_TABLE(spi, tpm_tis_spi_id);
