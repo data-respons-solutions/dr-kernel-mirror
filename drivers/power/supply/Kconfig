@@ -561,4 +561,16 @@ config CHARGER_RT9455
 	help
 	  Say Y to enable support for Richtek RT9455 battery charger.
 
+config LINKBOX_PLUS_PSY
+    bool "Linkbox Plus Power Supply"
+    depends on I2C && GPIOLIB
+    help
+        Say Y to enable Linkbox Plus PSY
+
+config SIMPAD_PLUS_PSY
+    bool "Simpad Plus Power Supply"
+    depends on GPIOLIB
+    help
+        Say Y to enable Simpad Plus PSY
+
 endif # POWER_SUPPLY
