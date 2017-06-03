@@ -30,7 +30,7 @@
 #include <linux/regmap.h>
 #include <linux/slab.h>
 #include <linux/string.h>
-#include <asm/div64.h>
+#include <linux/math64.h>
 
 #include "clk-si5351.h"
 
@@ -435,7 +435,8 @@ static unsigned long si5351_pll_recalc_rate(struct clk_hw *hw,
 	rate += 512 * hwdata->params.p3;
 	rate += hwdata->params.p2;
 	rate *= parent_rate;
-	do_div(rate, 128 * hwdata->params.p3);
+	rate = div_u64(rate, 128 * hwdata->params.p3);
+	/* do_div(rate, 128 * hwdata->params.p3); */
 
 	dev_dbg(&hwdata->drvdata->client->dev,
 		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, parent_rate = %lu, rate = %lu\n",
@@ -471,7 +472,8 @@ static long si5351_pll_round_rate(struct clk_hw *hw, unsigned long rate,
 	denom = 1000 * 1000;
 	lltmp = rate % (*parent_rate);
 	lltmp *= denom;
-	do_div(lltmp, *parent_rate);
+	lltmp = div_u64(lltmp, *parent_rate);
+	/* do_div(lltmp, *parent_rate); */
 	rfrac = (unsigned long)lltmp;
 
 	b = 0;
@@ -490,7 +492,8 @@ static long si5351_pll_round_rate(struct clk_hw *hw, unsigned long rate,
 	/* recalculate rate by fIN * (a + b/c) */
 	lltmp  = *parent_rate;
 	lltmp *= b;
-	do_div(lltmp, c);
+	lltmp = div_u64(lltmp, c);
+	/* do_div(lltmp, c); */
 
 	rate  = (unsigned long)lltmp;
 	rate += *parent_rate * a;
