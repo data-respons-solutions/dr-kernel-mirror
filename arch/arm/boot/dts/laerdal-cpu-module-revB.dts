@@ -17,7 +17,7 @@
 
 / {
     model = "Laerdal Medical CPU Module";
-    compatible = "datarespons,laerdal2";
+    compatible = "datarespons,laerdal2", "fsl,imx6dl";
 
     aliases {
         mmc0 = &usdhc3;
