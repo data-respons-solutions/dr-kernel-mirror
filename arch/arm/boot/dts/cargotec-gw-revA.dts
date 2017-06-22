@@ -738,17 +738,6 @@
         };
     };
     
-    esai {
-        pinctrl_esai_linkbox: esaigrp-linkbox {
-            fsl,pins = <
-                MX6QDL_PAD_GPIO_6__ESAI_TX_CLK      0x1b030
-                MX6QDL_PAD_GPIO_2__ESAI_TX_FS       0x1b030
-                MX6QDL_PAD_GPIO_17__ESAI_TX0        0x1b030
-                MX6QDL_PAD_GPIO_4__ESAI_TX_HF_CLK   0x80000000
-            >;
-        };
-    };
-    
     i2c1 {
         pinctrl_i2c1: i2c1grp {
             fsl,pins = <
@@ -846,19 +835,19 @@
 &uart2 {
 	pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_uart2>;
-    status = "disabled";
+    status = "okay";
 };
 
 &uart3 {
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_uart3>;
-    status = "disabled";
+    status = "okay";
 };
 
 &uart4 {
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_uart4>;
-    status = "disabled";
+    status = "okay";
 };
 
 
