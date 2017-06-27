@@ -217,7 +217,7 @@
 
 
         gpio-en-ani2 {
-        	gpios = <&gpio5 15 GPIO_ACTIVE_HIGH>;
+        	gpios = <&gpio5 17 GPIO_ACTIVE_HIGH>;
         	status = "okay";
         	value = <0>;
         };
@@ -292,6 +292,12 @@
         gpio-lcuart-enable {
         	gpios = <&gpio7 13 GPIO_ACTIVE_HIGH>;
         	value = <0>;
+        	status = "okay";
+        };
+        
+        gpio-nint-mcu {
+        	gpios = <&gpio5 15 GPIO_ACTIVE_LOW>;
+        	value = <1>;
         	status = "okay";
         };
         
@@ -547,31 +553,31 @@
                 MX6QDL_PAD_NANDF_D5__GPIO2_IO05     0x0001b000      /* WL_IRQ (WiFI interrupt */
                 MX6QDL_PAD_NANDF_D6__GPIO2_IO06     0x1b0b1         /* GP--WL_HOST_WAKE */
                 MX6QDL_PAD_NANDF_D7__GPIO2_IO07     0x1b8b1         /* GP--WL_DEV_WAKE */
-                MX6QDL_PAD_EIM_D20__GPIO3_IO20      0x80000000      /* GP--nWP--flash (SPI flash WP) */
                 
                 MX6QDL_PAD_EIM_D23__GPIO3_IO23      0x80000000      /* GP--WL_BAT_PWR_EN */
                 MX6QDL_PAD_EIM_D29__GPIO3_IO29      0x0001b000      /* PPWR_BTN_SNS */
-                MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25  0x80000000      /* Phy reset (low) */
+                MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25  0x80000000	    /* Phy reset (low) */
                 MX6QDL_PAD_ENET_RXD1__GPIO1_IO26    0x80000000      /* Phy IRQ */
-                MX6QDL_PAD_DISP0_DAT21__GPIO5_IO15	0x80000000		/* EN_ANI2 */
-                MX6QDL_PAD_DISP0_DAT22__GPIO5_IO16	0x80000000		/* EN_ANI1 */
-                MX6QDL_PAD_DISP0_DAT5__GPIO4_IO26	0x80000000		/* GP_EN_PWR--ANT_GPS */
-				MX6QDL_PAD_DISP0_DAT6__GPIO4_IO27	0x80000000 		/* GP_nPRST_WWAN */
-				MX6QDL_PAD_DISP0_DAT7__GPIO4_IO28	0x80000000		/* GP_nDISABLE_WWAN   */
-				MX6QDL_PAD_DISP0_DAT8__GPIO4_IO29	0x1b0b1			/* GP_nWAKE_L--WWAN   */
-				MX6QDL_PAD_DISP0_DAT9__GPIO4_IO30	0x80000000		/* LED_nWWAN   */
-				MX6QDL_PAD_DISP0_DAT3__GPIO4_IO24	0x80000000		/* GP_EN--GPO1  */
-				MX6QDL_PAD_DISP0_DAT4__GPIO4_IO25	0x80000000		/* GP_EN--GPO2  */
-				MX6QDL_PAD_DISP0_DAT10__GPIO4_IO31 	0x80000000		/* GP_Status--CPU */
+                MX6QDL_PAD_DISP0_DAT21__GPIO5_IO15	0x1b060			/* GP_NINT_MCU */
+                MX6QDL_PAD_DISP0_DAT23__GPIO5_IO17	0x00002060		/* EN_ANI2 */
+                MX6QDL_PAD_DISP0_DAT22__GPIO5_IO16	0x00002060		/* EN_ANI1 */
+                MX6QDL_PAD_DISP0_DAT5__GPIO4_IO26	0x00002060		/* GP_EN_PWR--ANT_GPS */
+				MX6QDL_PAD_DISP0_DAT6__GPIO4_IO27	0x0000b0b0 		/* GP_nPRST_WWAN */
+				MX6QDL_PAD_DISP0_DAT7__GPIO4_IO28	0x0000b0b0		/* GP_nDISABLE_WWAN   */
+				MX6QDL_PAD_DISP0_DAT8__GPIO4_IO29	0x0000b0b0		/* GP_nWAKE_L--WWAN   */
+				MX6QDL_PAD_DISP0_DAT9__GPIO4_IO30	0x00002060		/* LED_nWWAN   */
+				MX6QDL_PAD_DISP0_DAT3__GPIO4_IO24	0x00000060		/* GP_EN--GPO1  */
+				MX6QDL_PAD_DISP0_DAT4__GPIO4_IO25	0x00000060		/* GP_EN--GPO2  */
+				MX6QDL_PAD_DISP0_DAT10__GPIO4_IO31 	0x1b060			/* GP_Status--CPU */
 				MX6QDL_PAD_DISP0_DAT20__GPIO5_IO14 	0x1b040			/* TPM nIRQ */
-	            MX6QDL_PAD_KEY_COL1__GPIO4_IO08 	0x80000000		/* TPM nRESET */
+	            MX6QDL_PAD_KEY_COL1__GPIO4_IO08 	0x1b060			/* TPM nRESET */
 	            MX6QDL_PAD_DISP0_DAT13__GPIO5_IO07 	0x1b040			/* Gyro IRQ */
-	            MX6QDL_PAD_DISP0_DAT14__GPIO5_IO08 	0x1b040			/* Gyri IRQ */
+	            MX6QDL_PAD_DISP0_DAT14__GPIO5_IO08 	0x1b040			/* Gyro IRQ */
 				MX6QDL_PAD_DISP0_DAT11__GPIO5_IO05 	0x1b040			/* RTC */
 	            MX6QDL_PAD_DISP0_DAT12__GPIO5_IO06 	0x1b040			/* RTC */
-                MX6QDL_PAD_SD2_DAT3__GPIO1_IO12     0x00012000		/* GPI_1 */
-                MX6QDL_PAD_SD2_DAT1__GPIO1_IO14     0x00012000		/* GPI_2 */
-                MX6QDL_PAD_SD2_DAT2__GPIO1_IO13     0x00012000		/* GPI_3 */
+                MX6QDL_PAD_SD2_DAT3__GPIO1_IO12     0x12000			/* GPI_1 */
+                MX6QDL_PAD_SD2_DAT1__GPIO1_IO14     0x12000			/* GPI_2 */
+                MX6QDL_PAD_SD2_DAT2__GPIO1_IO13     0x12000			/* GPI_3 */
             >;
         };
     };
