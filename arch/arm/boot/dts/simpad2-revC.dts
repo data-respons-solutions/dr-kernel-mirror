@@ -16,7 +16,7 @@
 
 / {
     model = "Laerdal Medical SIMPAD PLUS (REV C)";
-    compatible = "datarespons,laerdal2";
+    compatible = "datarespons,laerdal2", "fsl,imx6dl";
     
     aliases {
         mmc0 = &usdhc3;
@@ -329,7 +329,7 @@
     flash: m25p80@0 {
         #address-cells = <1>;
         #size-cells = <1>;
-        compatible = "mx25l3206d", "jedec,spi-nor";
+        compatible = "mx25l3205d", "jedec,spi-nor";
         spi-max-frequency = <20000000>;
         reg = <0>;
         partition@0 {
