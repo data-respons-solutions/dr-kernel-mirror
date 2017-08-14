@@ -43,6 +43,7 @@
 #include "imx-audmux.h"
 
 #define DAI_NAME_SIZE	32
+#define LM_WM8960_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
 
 struct imx_wm8960_data {
 	struct snd_soc_dai_link dai;
@@ -124,6 +125,7 @@ static int imx_hifi_hw_params(struct snd_pcm_substream *substream,
 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
 	data->clk_frequency = clk_get_rate(data->codec_clk);
 
+
 	data->stream_active[tx] = true;
 	dev_dbg(dev, "%s: [%s]\n", __func__, tx ? "tx" : "rx");
 	if (data->stream_active[!tx]) {
@@ -175,6 +177,7 @@ static int imx_hifi_startup(struct snd_pcm_substream *substream)
 	struct snd_soc_card *card = rtd->card;
 	struct imx_wm8960_data *data = snd_soc_card_get_drvdata(card);
 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
+	substream->runtime->hw.formats = LM_WM8960_FORMATS;
 	int ret = clk_prepare_enable(data->codec_clk);
 	if (ret)
 		dev_err(card->dev, "Failed to enable MCLK: %d\n", ret);
