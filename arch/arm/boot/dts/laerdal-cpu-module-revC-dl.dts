@@ -16,7 +16,7 @@
 #include <dt-bindings/gpio/gpio.h>
 
 / {
-    model = "Laerdal Medical CPU Module revC (Duallite)";
+    model = "Laerdal Medical CPU Module (rev C - Duallite)";
     compatible = "datarespons,laerdal2", "fsl,imx6dl";
 
     aliases {

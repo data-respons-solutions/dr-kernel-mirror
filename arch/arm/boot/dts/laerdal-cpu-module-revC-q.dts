@@ -16,7 +16,7 @@
 #include <dt-bindings/gpio/gpio.h>
 
 / {
-    model = "Laerdal Medical CPU Module revC (Quad)";
+    model = "Laerdal Medical CPU Module (rev C - Quad)";
     compatible = "datarespons,laerdal2", "fsl,imx6q";
 
     aliases {
