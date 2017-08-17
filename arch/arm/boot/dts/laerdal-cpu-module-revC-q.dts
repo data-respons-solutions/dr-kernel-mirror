@@ -200,13 +200,13 @@
         gpio-gpo-d1 {
         	gpios = <&gpio7 13 GPIO_ACTIVE_HIGH>;
         	status = "okay";
-        	value = <0>;
+        	value = <1>;
         };
         
         gpio-gpo-d2 {
         	gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>;
         	status = "okay";
-        	value = <0>;
+        	value = <1>;
         };
         
         
@@ -497,8 +497,8 @@
                 MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25  0x80000000      /* Phy reset (low) */
                 MX6QDL_PAD_ENET_RXD0__GPIO1_IO27    0x80000000      /* Schematic error, set to input */
                 MX6QDL_PAD_ENET_RXD1__GPIO1_IO26    0x80000000      /* Phy IRQ */
-                MX6QDL_PAD_GPIO_18__GPIO7_IO13		0x80000000		/* GPO_D1 */
-                MX6QDL_PAD_GPIO_19__GPIO4_IO05		0x80000000		/* GPO_D2 */
+                MX6QDL_PAD_GPIO_18__GPIO7_IO13		0x00000859		/* GPO_D1 */
+                MX6QDL_PAD_GPIO_19__GPIO4_IO05		0x00000859		/* GPO_D2 */
             >;
         };
     };
