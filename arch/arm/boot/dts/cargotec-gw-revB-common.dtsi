@@ -273,6 +273,12 @@
         	status = "okay";
         };
         
+        gpio-status-mcu {
+        	gpios = <&gpio4 31 GPIO_ACTIVE_HIGH>;
+        	value = <1>;
+        	status = "okay";
+        };
+        
     };
     
 };
