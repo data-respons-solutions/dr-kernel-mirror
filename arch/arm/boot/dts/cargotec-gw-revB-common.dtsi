@@ -77,7 +77,7 @@
             startup-delay-us = <300>;
             regulator-always-on;
         };
-*/  
+*/
 		reg_vref_adc: regulator-vref-adc {
 			compatible = "regulator-fixed";
 			regulator-name = "vref-adc";
@@ -824,12 +824,14 @@
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_uart5_dte_ctgw>;
     fsl,uart-has-rtscts;
+    fsl,dte-mode;
     status = "okay";
     
     bluetooth {
     	compatible = "ti,wl1837-st";
     	enable-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
 	};
+
 };
 
 &usbh1 {
