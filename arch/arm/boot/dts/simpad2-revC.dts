@@ -217,13 +217,13 @@
             status = "okay";
             value = <0>;
         };
-        */
+		*/        
         gpio-bt-enable {
             gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <1>;
         };
-        
+
         gpio-spinor-wp {
             gpios = <&gpio3 20 GPIO_ACTIVE_HIGH>;
             status = "okay";
@@ -264,6 +264,12 @@
             gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <1>;
+        };
+        
+        gpio-bt-clk_req {
+            gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
+            status = "okay";
+            bidir;
         };
         
     };

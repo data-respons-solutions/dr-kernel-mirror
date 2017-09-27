@@ -485,7 +485,7 @@
                 MX6QDL_PAD_NANDF_D4__GPIO2_IO04     0x80000000      /* BT_REG_ON (Bluetooth power) */
                 MX6QDL_PAD_NANDF_D5__GPIO2_IO05     0x0001b000      /* WL_IRQ (WiFI interrupt */
                 MX6QDL_PAD_NANDF_D6__GPIO2_IO06     0x1b0b1         /* GP--WL_HOST_WAKE */
-                MX6QDL_PAD_NANDF_D7__GPIO2_IO07     0x1b8b1         /* GP--WL_DEV_WAKE */
+                MX6QDL_PAD_NANDF_D7__GPIO2_IO07     0x2058          /* GP--WL_DEV_WAKE */
                 MX6QDL_PAD_EIM_D20__GPIO3_IO20      0x80000000      /* GP--nWP--flash (SPI flash WP) */
                 MX6QDL_PAD_EIM_D26__GPIO3_IO26      0x80000000      /* GP--WL_BAT_PWR_EN */
                 MX6QDL_PAD_EIM_D27__GPIO3_IO27      0x0001b000      /* HW_Setting_0 */
