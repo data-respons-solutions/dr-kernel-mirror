@@ -53,6 +53,11 @@
 
 #define ST_LSM6DSX_MAX_FIFO_ODR_VAL		0x08
 
+
+
+
+
+
 struct st_lsm6dsx_decimator_entry {
 	u8 decimator;
 	u8 val;
@@ -82,13 +87,13 @@ static int st_lsm6dsx_get_decimator_val(u8 val)
 	return i == max_size ? 0 : st_lsm6dsx_decimator_table[i].val;
 }
 
-static void st_lsm6dsx_get_max_min_odr(struct st_lsm6dsx_hw *hw,
-				       u16 *max_odr, u16 *min_odr)
+static void st_lsm6dsx_get_max_min_odr(struct st_lsm6dsx_hw* hw,
+	u16* max_odr, u16* min_odr)
 {
-	struct st_lsm6dsx_sensor *sensor;
+	struct st_lsm6dsx_sensor* sensor;
 	int i;
 
-	*max_odr = 0, *min_odr = ~0;
+	*max_odr = 0, * min_odr = ~0;
 	for (i = 0; i < ST_LSM6DSX_ID_MAX; i++) {
 		sensor = iio_priv(hw->iio_devs[i]);
 
@@ -100,9 +105,9 @@ static void st_lsm6dsx_get_max_min_odr(struct st_lsm6dsx_hw *hw,
 	}
 }
 
-static int st_lsm6dsx_update_decimators(struct st_lsm6dsx_hw *hw)
+static int st_lsm6dsx_update_decimators(struct st_lsm6dsx_hw* hw)
 {
-	struct st_lsm6dsx_sensor *sensor;
+	struct st_lsm6dsx_sensor* sensor;
 	u16 max_odr, min_odr, sip = 0;
 	int err, i;
 	u8 data;
@@ -117,15 +122,16 @@ static int st_lsm6dsx_update_decimators(struct st_lsm6dsx_hw *hw)
 			sensor->sip = sensor->odr / min_odr;
 			sensor->decimator = max_odr / sensor->odr;
 			data = st_lsm6dsx_get_decimator_val(sensor->decimator);
-		} else {
+		}
+		else {
 			sensor->sip = 0;
 			sensor->decimator = 0;
 			data = 0;
 		}
 
 		err = st_lsm6dsx_write_with_mask(hw,
-					ST_LSM6DSX_REG_FIFO_DEC_GXL_ADDR,
-					sensor->decimator_mask, data);
+			ST_LSM6DSX_REG_FIFO_DEC_GXL_ADDR,
+			sensor->decimator_mask, data);
 		if (err < 0)
 			return err;
 
@@ -136,8 +142,8 @@ static int st_lsm6dsx_update_decimators(struct st_lsm6dsx_hw *hw)
 	return 0;
 }
 
-int st_lsm6dsx_set_fifo_mode(struct st_lsm6dsx_hw *hw,
-			     enum st_lsm6dsx_fifo_mode fifo_mode)
+int st_lsm6dsx_set_fifo_mode(struct st_lsm6dsx_hw* hw,
+	enum st_lsm6dsx_fifo_mode fifo_mode)
 {
 	u8 data;
 	int err;
@@ -155,7 +161,7 @@ int st_lsm6dsx_set_fifo_mode(struct st_lsm6dsx_hw *hw,
 	}
 
 	err = hw->tf->write(hw->dev, ST_LSM6DSX_REG_FIFO_MODE_ADDR,
-			    sizeof(data), &data);
+		sizeof(data), &data);
 	if (err < 0)
 		return err;
 
@@ -164,11 +170,11 @@ int st_lsm6dsx_set_fifo_mode(struct st_lsm6dsx_hw *hw,
 	return 0;
 }
 
-int st_lsm6dsx_update_watermark(struct st_lsm6dsx_sensor *sensor, u16 watermark)
+int st_lsm6dsx_update_watermark(struct st_lsm6dsx_sensor* sensor, u16 watermark)
 {
 	u16 fifo_watermark = ~0, cur_watermark, sip = 0;
-	struct st_lsm6dsx_hw *hw = sensor->hw;
-	struct st_lsm6dsx_sensor *cur_sensor;
+	struct st_lsm6dsx_hw* hw = sensor->hw;
+	struct st_lsm6dsx_sensor* cur_sensor;
 	__le16 wdata;
 	int i, err;
 	u8 data;
@@ -180,7 +186,7 @@ int st_lsm6dsx_update_watermark(struct st_lsm6dsx_sensor *sensor, u16 watermark)
 			continue;
 
 		cur_watermark = (cur_sensor == sensor) ? watermark
-						       : cur_sensor->watermark;
+			: cur_sensor->watermark;
 
 		fifo_watermark = min_t(u16, fifo_watermark, cur_watermark);
 		sip += cur_sensor->sip;
@@ -196,16 +202,16 @@ int st_lsm6dsx_update_watermark(struct st_lsm6dsx_sensor *sensor, u16 watermark)
 	mutex_lock(&hw->lock);
 
 	err = hw->tf->read(hw->dev, ST_LSM6DSX_REG_FIFO_THH_ADDR,
-			   sizeof(data), &data);
+		sizeof(data), &data);
 	if (err < 0)
 		goto out;
 
 	fifo_watermark = ((data << 8) & ~ST_LSM6DSX_FIFO_TH_MASK) |
-			 (fifo_watermark & ST_LSM6DSX_FIFO_TH_MASK);
+		(fifo_watermark & ST_LSM6DSX_FIFO_TH_MASK);
 
 	wdata = cpu_to_le16(fifo_watermark);
 	err = hw->tf->write(hw->dev, ST_LSM6DSX_REG_FIFO_THL_ADDR,
-			    sizeof(wdata), (u8 *)&wdata);
+		sizeof(wdata), (u8*)&wdata);
 out:
 	mutex_unlock(&hw->lock);
 
@@ -220,18 +226,18 @@ out:
  *
  * Return: Number of bytes read from the FIFO
  */
-static int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *hw)
+static int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw* hw)
 {
 	u16 fifo_len, pattern_len = hw->sip * ST_LSM6DSX_SAMPLE_SIZE;
 	int err, acc_sip, gyro_sip, read_len, samples, offset;
-	struct st_lsm6dsx_sensor *acc_sensor, *gyro_sensor;
+	struct st_lsm6dsx_sensor* acc_sensor, * gyro_sensor;
 	s64 acc_ts, acc_delta_ts, gyro_ts, gyro_delta_ts;
 	u8 iio_buff[ALIGN(ST_LSM6DSX_SAMPLE_SIZE, sizeof(s64)) + sizeof(s64)];
 	u8 buff[pattern_len];
 	__le16 fifo_status;
 
 	err = hw->tf->read(hw->dev, ST_LSM6DSX_REG_FIFO_DIFFL_ADDR,
-			   sizeof(fifo_status), (u8 *)&fifo_status);
+		sizeof(fifo_status), (u8*)&fifo_status);
 	if (err < 0)
 		return err;
 
@@ -239,7 +245,7 @@ static int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *hw)
 		return 0;
 
 	fifo_len = (le16_to_cpu(fifo_status) & ST_LSM6DSX_FIFO_DIFF_MASK) *
-		   ST_LSM6DSX_CHAN_SIZE;
+		ST_LSM6DSX_CHAN_SIZE;
 	samples = fifo_len / ST_LSM6DSX_SAMPLE_SIZE;
 	fifo_len = (fifo_len / pattern_len) * pattern_len;
 
@@ -251,16 +257,16 @@ static int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *hw)
 	acc_sensor = iio_priv(hw->iio_devs[ST_LSM6DSX_ID_ACC]);
 	acc_ts = acc_sensor->ts - acc_sensor->delta_ts;
 	acc_delta_ts = div_s64(acc_sensor->delta_ts * acc_sensor->decimator,
-			       samples);
+		samples);
 
 	gyro_sensor = iio_priv(hw->iio_devs[ST_LSM6DSX_ID_GYRO]);
 	gyro_ts = gyro_sensor->ts - gyro_sensor->delta_ts;
 	gyro_delta_ts = div_s64(gyro_sensor->delta_ts * gyro_sensor->decimator,
-				samples);
+		samples);
 
 	for (read_len = 0; read_len < fifo_len; read_len += pattern_len) {
 		err = hw->tf->read(hw->dev, ST_LSM6DSX_REG_FIFO_OUTL_ADDR,
-				   sizeof(buff), buff);
+			sizeof(buff), buff);
 		if (err < 0)
 			return err;
 
@@ -286,7 +292,7 @@ static int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *hw)
 		while (acc_sip > 0 || gyro_sip > 0) {
 			if (gyro_sip-- > 0) {
 				memcpy(iio_buff, &buff[offset],
-				       ST_LSM6DSX_SAMPLE_SIZE);
+					ST_LSM6DSX_SAMPLE_SIZE);
 				iio_push_to_buffers_with_timestamp(
 					hw->iio_devs[ST_LSM6DSX_ID_GYRO],
 					iio_buff, gyro_ts);
@@ -296,7 +302,7 @@ static int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *hw)
 
 			if (acc_sip-- > 0) {
 				memcpy(iio_buff, &buff[offset],
-				       ST_LSM6DSX_SAMPLE_SIZE);
+					ST_LSM6DSX_SAMPLE_SIZE);
 				iio_push_to_buffers_with_timestamp(
 					hw->iio_devs[ST_LSM6DSX_ID_ACC],
 					iio_buff, acc_ts);
@@ -309,7 +315,7 @@ static int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *hw)
 	return read_len;
 }
 
-int st_lsm6dsx_flush_fifo(struct st_lsm6dsx_hw *hw)
+int st_lsm6dsx_flush_fifo(struct st_lsm6dsx_hw* hw)
 {
 	int err;
 
@@ -323,10 +329,10 @@ int st_lsm6dsx_flush_fifo(struct st_lsm6dsx_hw *hw)
 	return err;
 }
 
-static int st_lsm6dsx_update_fifo(struct iio_dev *iio_dev, bool enable)
+static int st_lsm6dsx_update_fifo(struct iio_dev* iio_dev, bool enable)
 {
-	struct st_lsm6dsx_sensor *sensor = iio_priv(iio_dev);
-	struct st_lsm6dsx_hw *hw = sensor->hw;
+	struct st_lsm6dsx_sensor* sensor = iio_priv(iio_dev);
+	struct st_lsm6dsx_hw* hw = sensor->hw;
 	int err;
 
 	if (hw->fifo_mode != ST_LSM6DSX_FIFO_BYPASS) {
@@ -339,7 +345,8 @@ static int st_lsm6dsx_update_fifo(struct iio_dev *iio_dev, bool enable)
 		err = st_lsm6dsx_sensor_enable(sensor);
 		if (err < 0)
 			return err;
-	} else {
+	}
+	else {
 		err = st_lsm6dsx_sensor_disable(sensor);
 		if (err < 0)
 			return err;
@@ -368,10 +375,10 @@ static int st_lsm6dsx_update_fifo(struct iio_dev *iio_dev, bool enable)
 	return 0;
 }
 
-static irqreturn_t st_lsm6dsx_handler_irq(int irq, void *private)
+static irqreturn_t st_lsm6dsx_handler_irq(int irq, void* private)
 {
-	struct st_lsm6dsx_hw *hw = private;
-	struct st_lsm6dsx_sensor *sensor;
+	struct st_lsm6dsx_hw* hw = private;
+	struct st_lsm6dsx_sensor* sensor;
 	int i;
 
 	if (!hw->sip)
@@ -392,11 +399,21 @@ static irqreturn_t st_lsm6dsx_handler_irq(int irq, void *private)
 	return IRQ_WAKE_THREAD;
 }
 
-static irqreturn_t st_lsm6dsx_handler_thread(int irq, void *private)
+static irqreturn_t st_lsm6dsx_handler_thread(int irq, void* private)
 {
-	struct st_lsm6dsx_hw *hw = private;
+	struct st_lsm6dsx_hw* hw = private;
+	int count, err;
 	int fifo_len = 0, len;
+	u8 func_src1;
 
+	err = hw->tf->read(hw->dev, ST_LSM6DSX_FUNC_SRC1_ADDR, 1, &func_src1);
+	if (err < 0) {
+		dev_err(hw->dev, "%s: failed reading reg %d\n", __func__, ST_LSM6DSX_FUNC_SRC1_ADDR);
+		return IRQ_NONE;
+	}
+	if (func_src1 & ST_LSM6DSX_FUNC_SRC1_SIGNM_MASK) {
+		dev_info(hw->dev, "Significant movement\n");
+	}
 	/*
 	 * If we are using edge IRQs, new samples can arrive while
 	 * processing current interrupt since there are no hw
@@ -420,12 +437,12 @@ static irqreturn_t st_lsm6dsx_handler_thread(int irq, void *private)
 	return fifo_len ? IRQ_HANDLED : IRQ_NONE;
 }
 
-static int st_lsm6dsx_buffer_preenable(struct iio_dev *iio_dev)
+static int st_lsm6dsx_buffer_preenable(struct iio_dev* iio_dev)
 {
 	return st_lsm6dsx_update_fifo(iio_dev, true);
 }
 
-static int st_lsm6dsx_buffer_postdisable(struct iio_dev *iio_dev)
+static int st_lsm6dsx_buffer_postdisable(struct iio_dev* iio_dev)
 {
 	return st_lsm6dsx_update_fifo(iio_dev, false);
 }
@@ -435,11 +452,11 @@ static const struct iio_buffer_setup_ops st_lsm6dsx_buffer_ops = {
 	.postdisable = st_lsm6dsx_buffer_postdisable,
 };
 
-int st_lsm6dsx_fifo_setup(struct st_lsm6dsx_hw *hw)
+int st_lsm6dsx_fifo_setup(struct st_lsm6dsx_hw* hw)
 {
-	struct device_node *np = hw->dev->of_node;
-	struct st_sensors_platform_data *pdata;
-	struct iio_buffer *buffer;
+	struct device_node* np = hw->dev->of_node;
+	struct st_sensors_platform_data* pdata;
+	struct iio_buffer* buffer;
 	unsigned long irq_type;
 	bool irq_active_low;
 	int i, err;
@@ -461,16 +478,16 @@ int st_lsm6dsx_fifo_setup(struct st_lsm6dsx_hw *hw)
 	}
 
 	err = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_HLACTIVE_ADDR,
-					 ST_LSM6DSX_REG_HLACTIVE_MASK,
-					 irq_active_low);
+		ST_LSM6DSX_REG_HLACTIVE_MASK,
+		irq_active_low);
 	if (err < 0)
 		return err;
 
-	pdata = (struct st_sensors_platform_data *)hw->dev->platform_data;
+	pdata = (struct st_sensors_platform_data*)hw->dev->platform_data;
 	if ((np && of_property_read_bool(np, "drive-open-drain")) ||
-	    (pdata && pdata->open_drain)) {
+		(pdata && pdata->open_drain)) {
 		err = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_PP_OD_ADDR,
-						 ST_LSM6DSX_REG_PP_OD_MASK, 1);
+			ST_LSM6DSX_REG_PP_OD_MASK, 1);
 		if (err < 0)
 			return err;
 
@@ -478,10 +495,10 @@ int st_lsm6dsx_fifo_setup(struct st_lsm6dsx_hw *hw)
 	}
 
 	err = devm_request_threaded_irq(hw->dev, hw->irq,
-					st_lsm6dsx_handler_irq,
-					st_lsm6dsx_handler_thread,
-					irq_type | IRQF_ONESHOT,
-					"lsm6dsx", hw);
+		st_lsm6dsx_handler_irq,
+		st_lsm6dsx_handler_thread,
+		irq_type | IRQF_ONESHOT,
+		"lsm6dsx", hw);
 	if (err) {
 		dev_err(hw->dev, "failed to request trigger irq %d\n",
 			hw->irq);
