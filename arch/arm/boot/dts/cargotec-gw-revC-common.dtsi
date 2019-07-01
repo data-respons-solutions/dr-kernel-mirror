@@ -354,8 +354,6 @@
 
 &wdog2 {
     status = "okay";
-    fsl,ext-reset-output;
-    status = "disabled";
 };
 
 

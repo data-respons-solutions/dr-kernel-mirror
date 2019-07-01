@@ -198,7 +198,7 @@ static void __init imx6q_enet_phy_init(void)
 				ksz9021rn_phy_fixup);
 		phy_register_fixup_for_uid(PHY_ID_KSZ9031, MICREL_PHY_ID_MASK,
 				ksz9031rn_phy_fixup);
-		phy_register_fixup_for_uid(PHY_ID_AR8031, 0xffffffff,
+		phy_register_fixup_for_uid(PHY_ID_AR8031, 0xffffffef,
 				ar8031_phy_fixup);
 		phy_register_fixup_for_uid(PHY_ID_AR8035, 0xffffffef,
 				ar8035_phy_fixup);
@@ -453,6 +453,7 @@ static int imx_get_boot_mode_reg(u32 *cfg, u32* bmr)
 	return 0;
 }
 
+#ifdef CHECK_MX6_WD
 static int __init imx6q_set_wdog_status(struct device_node *np, bool ok)
 {
 	struct property *status;
@@ -500,6 +501,7 @@ static struct device_node* __init imx6q_wdog_started(void)
 	}
 	return NULL;
 }
+#endif
 
 static void __init imx6q_init_machine(void)
 {
@@ -516,7 +518,7 @@ static void __init imx6q_init_machine(void)
 	parent = imx_soc_device_init();
 	if (parent == NULL)
 		pr_warn("failed to initialize soc device\n");
-
+#ifdef CHECK_MX6_WD
 	np = imx6q_wdog_started();
 
 	if (np) {
@@ -531,7 +533,7 @@ static void __init imx6q_init_machine(void)
 		}
 		of_node_put(np);
 	}
-
+#endif
 	of_platform_default_populate(NULL, NULL, parent);
 
 	imx_anatop_init();
