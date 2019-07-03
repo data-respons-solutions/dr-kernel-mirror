@@ -111,7 +111,7 @@ NotificationMsg_t notify_get_message(const u8 *buffer)
 int mpu_msg_len(const MpuMsgHeader_t *hdr)
 {
 	unsigned len = hdr->payloadLen + sizeof(MpuMsgHeader_t);
-	if (hdr->type < msg_max &&  len <= mpu_max_message_size)
+	if (hdr->type < msg_max &&  len <= MPU_MAX_MESSAGE_SIZE)
 		return len;
 	else
 		return 0;

@@ -40,7 +40,7 @@ extern "C" {
 u8 mpu_compute_checksum(const u8 *msg, int len);
 int mpu_copy_message(u8 *to, const u8 *from);
 
-static const u32 mpu_max_message_size = 32;
+#define MPU_MAX_MESSAGE_SIZE 32
 
 /*!	\brief Defines the commands supported by the protocol.
  *
