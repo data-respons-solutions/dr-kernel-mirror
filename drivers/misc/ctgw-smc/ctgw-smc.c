@@ -242,8 +242,8 @@ static int set_led(struct smc_data *data, int led,
 	enum led_brightness brightness)
 {
 	int ret = 0;
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 reply[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 reply[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	u8 ledCmd[2];
 	ledCmd[0] = led;
 	ledCmd[1] = brightness > 0 ? 1 : 0;
@@ -330,8 +330,8 @@ static ssize_t get_ignition_delay(struct device *dev,
 	int ret = 0;
 	struct i2c_client *client = to_i2c_client(dev);
 
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	u8 ignMsg[2];
 
 	ignMsg[0] = IgnitionDelayGet;
@@ -355,8 +355,8 @@ static ssize_t set_ignition_delay(struct device *dev,
 	struct i2c_client *client = to_i2c_client(dev);
 	int ignition_delay = 0;
 
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	u8 ignMsg[2];
 	ret = kstrtoint(buf, 10, &ignition_delay);
 	if (ret < 0 || ret > 10)
@@ -388,8 +388,8 @@ static ssize_t set_debug(struct device *dev, struct device_attribute *attr,
 	int dbg = 0;
 	struct smc_data *priv = dev_get_drvdata(dev);
 
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	u8 msg[2];
 
 	if (compare_version(priv->version, 2, 1) < 0)
@@ -416,8 +416,8 @@ static ssize_t command(struct device *dev, struct device_attribute *attr,
 	struct i2c_client *client = to_i2c_client(dev);
 	MpuMsgHeader_t hdr;
 
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	if (sysfs_streq(buf, "reset")) {
 
 		dev_warn(dev, "Reset MCU\n");
@@ -448,8 +448,8 @@ static int fetch_firmware_version(struct smc_data *priv)
 {
 	int ret = 0;
 
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 
 	ret = mpu_create_message(msg_version, mpu_status_ok, outbuf, 0, 0);
 	ret = smc_transaction(priv->client, outbuf, ret, result,
@@ -464,8 +464,8 @@ static int fetch_firmware_version(struct smc_data *priv)
 static int send_async(struct smc_data *priv)
 {
 	int ret = 0;
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	ret = mpu_create_message(msg_async, mpu_status_ok, outbuf, 0, 0);
 	ret = smc_transaction(priv->client, outbuf, ret, result, ret);
 
@@ -478,8 +478,8 @@ static int send_async(struct smc_data *priv)
 static int send_reboot(struct smc_data *priv)
 {
 	int ret = 0;
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	ret = mpu_create_message(msg_reboot, mpu_status_ok, outbuf, 0, 0);
 	ret = smc_transaction(priv->client, outbuf, ret, result, ret);
 
@@ -493,8 +493,8 @@ static ssize_t smc_get_sensors(struct smc_data *priv)
 {
 	int ret = 0;
 	SensorMsg_t *s;
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 
 	ret = mpu_create_message(msg_sensors, mpu_status_ok, outbuf, 0, 0);
 	ret = smc_transaction(priv->client, outbuf, ret, result,
@@ -515,12 +515,12 @@ static ssize_t smc_get_psy(struct smc_data *priv)
 {
 	int ret = 0;
 	PowerSupplyMsg_t *s;
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 
 	ret = mpu_create_message(msg_power_supply, mpu_status_ok, outbuf, 0, 0);
 	ret = smc_transaction(priv->client, outbuf, ret, result,
-		mpu_max_message_size);
+		MPU_MAX_MESSAGE_SIZE);
 
 	if (ret < 0)
 		return -EINVAL;
@@ -539,15 +539,15 @@ static ssize_t smc_get_psy(struct smc_data *priv)
 static ssize_t smc_get_startup_cause(struct smc_data *priv)
 {
 	int ret = 0;
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	const u8 *res;
 
 	if (priv->start_cause != msg_init_none)
 		return 0;
 	ret = mpu_create_message(msg_init, mpu_status_ok, outbuf, 0, 0);
 	ret = smc_transaction(priv->client, outbuf, ret, result,
-		mpu_max_message_size);
+		MPU_MAX_MESSAGE_SIZE);
 
 	if (ret < 0)
 		return -EINVAL;
@@ -632,8 +632,8 @@ static void smc_set(struct gpio_chip *chip, unsigned offset, int value)
 	struct i2c_client *client = priv->client;
 	int ret = 0;
 
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	u8 msg[3];
 
 	msg[2] = value;
@@ -654,8 +654,8 @@ static int smc_get(struct gpio_chip *chip, unsigned offset)
 	const u8* resultPtr;
 	int value;
 
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 result[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	u8 msg[3];
 
 	msg[0] = GpoGet;
@@ -809,8 +809,8 @@ static int smc_rtc_read(struct device *dev, struct rtc_time *rtctime)
 	struct smc_data *priv = dev_get_drvdata(dev);
 	int status;
 	RtcMsg_t msg;
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 inbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 inbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	int sz = rtc_create_message(msg_rtc_get_time,
 		outbuf + sizeof(MpuMsgHeader_t), 0);
 	sz = mpu_create_message(msg_rtc, 0, outbuf, 0, sz);
@@ -844,8 +844,8 @@ static int smc_send_alarm(struct smc_data *priv)
 	time64_t now;
 	RtcMsgType_t msg_type;
 
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 inbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 inbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	if (priv->alarm_in_seconds == 0)
 		msg_type = msg_rtc_cancel_alarm;
 	else {
@@ -882,8 +882,8 @@ static int smc_rtc_set(struct device *dev, struct rtc_time *rtctime)
 	struct smc_data *priv = dev_get_drvdata(dev);
 	int status, sz;
 	RtcMsg_t msg;
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 inbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 inbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	msg.tm_sec = bin2bcd(rtctime->tm_sec);
 	msg.tm_min = bin2bcd(rtctime->tm_min);
 	msg.tm_hour = bin2bcd(rtctime->tm_hour);
@@ -956,8 +956,8 @@ static ssize_t smc_get_wakeup(struct device *dev, struct device_attribute *attr,
 	MpuMsgHeader_t hdr;
 	RtcAlarm_t alarm;
 
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 inbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 inbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	if (compare_version(priv->version, 3, 0) < 0)
 		return -EINVAL;
 	if (priv->alarm_pending)
@@ -991,8 +991,8 @@ static ssize_t smc_set_start_options(struct device *dev,
 	int status, sz;
 	MpuMsgHeader_t hdr;
 	InitMessage_t init;
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 inbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 inbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	init.event_mask = 0;
 	init.set_mask_cmd = 1;
 	if (compare_version(priv->version, 3, 1) < 0)
@@ -1031,8 +1031,8 @@ static ssize_t smc_get_start_options(struct device *dev,
 	int status, sz;
 	MpuMsgHeader_t hdr;
 	InitMessage_t init;
-	u8 outbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
-	u8 inbuf[mpu_max_message_size] __attribute__((aligned(0x10)));
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 inbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	if (compare_version(priv->version, 3, 1) < 0)
 		return sprintf(buf, "not supported\n");
 	init.set_mask_cmd = 0;
@@ -1223,10 +1223,10 @@ static int smc_setup_gpio(struct smc_data *priv)
 	struct device_node *np = priv->client->dev.of_node;
 	if (np == 0)
 		return -EINVAL;
-	n = of_property_count_strings(np, "smc-gpios");
+	n = of_property_count_strings(np, "smc-gpio-names");
 	if (n <= 0)
 		return -ENOKEY;
-	err = of_property_read_string_array(np, "smc-gpios", gpio_names, n);
+	err = of_property_read_string_array(np, "smc-gpio-names", gpio_names, n);
 	if (err < 0) {
 		dev_warn(&priv->client->dev, "%s: No DT gpios\n", __func__);
 		return err;
@@ -1253,10 +1253,20 @@ static int smc_setup_gpio(struct smc_data *priv)
 	priv->gpio_ctl.get = smc_get;
 
 	err = devm_gpiochip_add_data(&priv->client->dev, &priv->gpio_ctl, priv);
+	if (err < 0) {
+		dev_err(&priv->client->dev, "%s: failed to alloc gpiochip (%d)\n", __func__, err);
+		return err;
+	}
 
 	for (n = 0; n < priv->gpio_ctl.ngpio; n++) {
 		priv->gpio_descs[n] = gpiochip_request_own_desc(&priv->gpio_ctl,
 			n, gpio_names[n]);
+		if (IS_ERR(priv->gpio_descs[n])) {
+			dev_err(&priv->client->dev,
+				"%s: Failed to request own desc (%ld)\n",
+				__func__, PTR_ERR(priv->gpio_descs[n]));
+			return PTR_ERR(priv->gpio_descs[n]);
+		}
 		gpiod_export(priv->gpio_descs[n], true);
 		priv->gpio_dev[n] = gpiod_to_dev(priv->gpio_descs[n]);
 		dev_info(&priv->client->dev, "Add GPIO %s from DT\n",

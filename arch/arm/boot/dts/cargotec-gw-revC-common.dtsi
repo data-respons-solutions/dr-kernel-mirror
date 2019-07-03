@@ -377,7 +377,7 @@
 	compatible = "dallas,ds2482";
     };
 
-    pmic: pfuze100@08 {
+    pmic: pfuze100@8 {
         compatible = "fsl,pfuze100";
         reg = <0x08>;
 
@@ -494,7 +494,7 @@
         reg = <0x51>;
         interrupt-parent = <&gpio5>;
         interrupts = <15 IRQ_TYPE_EDGE_FALLING>;
-        smc-gpios = "gpio_dc_on", "gpio_can_on", "gpi_ignition", "gpi_wakeup";
+        smc-gpio-names = "gpio_dc_on", "gpio_can_on", "gpi_ignition", "gpi_wakeup";
         smc-gpio-input = <0 0 1 1>;
         has-rtc;
     };
@@ -842,6 +842,7 @@
 &usbh1 {
     vbus-supply = <&swbst_reg>;
     status = "okay";
+    disable-over-current;
 };
 
 &usbotg {
@@ -849,7 +850,7 @@
     pinctrl-0 = <&pinctrl_usbotg>;
     status = "okay";
     vbus-supply = <&swbst_reg>;
-    disable-over-current;
+    over-current-active-low;
     dr_mode = "host";
 };
 
