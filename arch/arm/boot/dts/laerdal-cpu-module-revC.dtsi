@@ -303,8 +303,6 @@
     };
 };
 
-
-
 &gpc {
     fsl,ldo-bypass = <0>; /* use ldo-bypass, u-boot will check it and configure */
     fsl,wdog-reset = <1>; /* watchdog select of reset source */
@@ -318,7 +316,6 @@
     status = "okay";
 };
 
-
 &i2c1 {
     clock-frequency = <100000>;
     pinctrl-names = "default";
@@ -326,7 +323,7 @@
     status = "okay";
 
     codec: wm8960@1a {
-        compatible = "wlf,wm8960";
+        compatible = "wlf,wm8960-lm";
         reg = <0x1a>;
         clocks = <&clks IMX6QDL_CLK_CKO>;
         clock-names = "mclk";
