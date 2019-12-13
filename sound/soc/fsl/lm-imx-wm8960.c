@@ -298,6 +298,12 @@ static const struct snd_soc_dapm_widget imx_wm8960_dapm_widgets[] = {
 	SND_SOC_DAPM_MIC("AMIC", NULL),
 };
 
+static const struct snd_soc_dapm_widget cpum_dapm_widgets[] = {
+	SND_SOC_DAPM_OUTPUT("Headphone"),
+	SND_SOC_DAPM_INPUT("Right Input"),
+	SND_SOC_DAPM_INPUT("Left Input"),
+};
+
 static int imx_wm8960_jack_init(struct imx_wm8960_data *data)
 {
 	int ret;
@@ -516,9 +522,14 @@ static int imx_wm8960_probe(struct platform_device *pdev)
 	}
 	data->card.num_links = 1;
 	data->card.dai_link = &data->dai;
-	data->card.dapm_widgets = imx_wm8960_dapm_widgets;
-	data->card.num_dapm_widgets = ARRAY_SIZE(imx_wm8960_dapm_widgets);
-
+	if (strncmp(data->card.name, "cpu-module", 10) == 0) {
+		data->card.dapm_widgets = cpum_dapm_widgets;
+		data->card.num_dapm_widgets = ARRAY_SIZE(cpum_dapm_widgets);
+	} else
+	{
+		data->card.dapm_widgets = imx_wm8960_dapm_widgets;
+		data->card.num_dapm_widgets = ARRAY_SIZE(imx_wm8960_dapm_widgets);
+	}
 	platform_set_drvdata(pdev, &data->card);
 	snd_soc_card_set_drvdata(&data->card, data);
 	if (ret < 0)
