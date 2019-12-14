@@ -948,8 +948,8 @@ static int linkbox_plus_psy_probe(struct platform_device *pdev)
 	mutex_init(&priv->update_lock);
 
 	priv->ina219_dcin_pdata.platform_data = priv;
-	strncpy(priv->ina219_dcin_pdata.type, "ina219", I2C_NAME_SIZE);
-	priv->ina219_dcin_client = i2c_new_device(priv->i2c_adapter, &priv->ina219_dcin_pdata);
+	strncpy(priv->ina219_dcin_pdata.type, "ina219-linkbox", I2C_NAME_SIZE);
+	priv->ina219_dcin_client = i2c_new_client_device(priv->i2c_adapter, &priv->ina219_dcin_pdata);
 
 	if (NULL == priv->ina219_dcin_client) {
 		dev_err(&pdev->dev, "%s: Failed to register ina219 dcin\n", __func__);
@@ -957,8 +957,8 @@ static int linkbox_plus_psy_probe(struct platform_device *pdev)
 		goto cleanup;
 	}
 	priv->ina219_manikin_pdata.platform_data = priv;
-	strncpy(priv->ina219_manikin_pdata.type, "ina219", I2C_NAME_SIZE);
-	priv->ina219_manikin_client = i2c_new_device(priv->i2c_adapter, &priv->ina219_manikin_pdata);
+	strncpy(priv->ina219_manikin_pdata.type, "ina219-linkbox", I2C_NAME_SIZE);
+	priv->ina219_manikin_client = i2c_new_client_device(priv->i2c_adapter, &priv->ina219_manikin_pdata);
 	if (NULL == priv->ina219_manikin_client) {
 		dev_err(&pdev->dev, "%s: Failed to register ina219 manikin\n", __func__);
 		ret = -ENODEV;
