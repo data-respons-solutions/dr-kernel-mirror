@@ -139,6 +139,8 @@ static int brcmf_c_process_clm_blob(struct brcmf_if *ifp)
 		bphy_err(drvr, "get CLM blob file name failed (%d)\n", err);
 		return err;
 	}
+	else
+		brcmf_info("Blob name is %s\n", clm_name);
 
 	err = firmware_request_nowarn(&clm, clm_name, bus->dev);
 	if (err) {
@@ -248,14 +250,14 @@ int brcmf_c_preinit_dcmds(struct brcmf_if *ifp)
 	if (bus->chip)
 		brcmf_chip_name(bus->chip, bus->chiprev,
 				ri->chipname, sizeof(ri->chipname));
-
+#if 0
 	/* Do any CLM downloading */
 	err = brcmf_c_process_clm_blob(ifp);
 	if (err < 0) {
 		bphy_err(drvr, "download CLM blob file failed, %d\n", err);
 		goto done;
 	}
-
+#endif
 	/* query for 'ver' to get version info from firmware */
 	memset(buf, 0, sizeof(buf));
 	err = brcmf_fil_iovar_data_get(ifp, "ver", buf, sizeof(buf));
