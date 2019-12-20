@@ -109,6 +109,7 @@
         pwms = <&pwm1 0 40000>;
         status = "okay";
         inverted;
+        period = <40000>;
     };
     
     gpio-keys {
