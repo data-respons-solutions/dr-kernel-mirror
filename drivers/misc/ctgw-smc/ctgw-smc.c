@@ -1077,6 +1077,113 @@ static struct attribute *smc_attrs[] = {
 	NULL };
 
 static const struct attribute_group smc_attr_group = { .attrs = smc_attrs, };
+
+/* GPO boot values (from 3.5) */
+static ssize_t smc_set_gpo_boot(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct smc_data *priv = dev_get_drvdata(dev);
+	MpuMsgHeader_t hdr;
+	int ret = 0;
+	struct i2c_client *client = priv->client;
+	const u8* resultPtr;
+
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 msg[3];
+
+	msg[0] = GpoBootSet;
+	if (strncmp(attr->attr.name, "gpo_dc_on_boot", 14) == 0)
+		msg[1] = 0;
+	else if (strncmp(attr->attr.name, "gpo_can_on_boot", 14) == 0)
+		msg[1] = 1;
+	else
+		return -EINVAL;
+
+	if (strstr(buf, "persist"))
+		msg[2] = PmBootPinPersist;
+	else if (strstr(buf, "off"))
+		msg[2] = PmBootPinOff;
+	else if (strstr(buf, "on"))
+		msg[2] = PmBootPinOn;
+	else
+		return -EINVAL;
+
+	ret = mpu_create_message(msg_gpo, mpu_status_ok, outbuf, msg, 3);
+	ret = smc_transaction(client, outbuf, ret, result,
+		sizeof(MpuMsgHeader_t) + 3);
+	if (ret < 0)
+		return ret;
+	resultPtr = mpu_get_payload(result);
+	hdr = mpu_message_header(result);
+	if (hdr.replyStatus != mpu_status_ok)
+		return -EIO;
+	return count;
+}
+
+static ssize_t smc_get_gpo_boot(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct smc_data *priv = dev_get_drvdata(dev);
+	MpuMsgHeader_t hdr;
+	int ret = 0;
+	struct i2c_client *client = priv->client;
+	const u8* resultPtr;
+	enum BootStatePin value;
+
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 result[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 msg[3];
+
+	msg[0] = GpoBootGet;
+	if (strncmp(attr->attr.name, "gpo_dc_on_boot", 14) == 0)
+		msg[1] = 0;
+	else if (strncmp(attr->attr.name, "gpo_can_on_boot", 14) == 0)
+		msg[1] = 1;
+	else
+		return -EINVAL;
+	msg[2] = 0;
+
+	ret = mpu_create_message(msg_gpo, mpu_status_ok, outbuf, msg, 3);
+	ret = smc_transaction(client, outbuf, ret, result,
+		sizeof(MpuMsgHeader_t) + 3);
+	if (ret < 0)
+		return ret;
+	resultPtr = mpu_get_payload(result);
+	hdr = mpu_message_header(result);
+	if (hdr.replyStatus != mpu_status_ok)
+		return -EIO;
+	value = resultPtr[2];
+	switch (value) {
+	case PmBootPinPersist:
+		return sprintf(buf, "persist\n");
+		break;
+
+	case PmBootPinOff:
+		return sprintf(buf, "off\n");
+		break;
+
+	case PmBootPinOn:
+		return sprintf(buf, "on\n");
+		break;
+
+	default:
+		return sprintf(buf, "unknown\n");
+		break;
+	}
+}
+
+static DEVICE_ATTR(gpo_dc_on_boot, S_IWUSR | S_IRUGO, smc_get_gpo_boot, smc_set_gpo_boot);
+static DEVICE_ATTR(gpo_can_on_boot, S_IWUSR | S_IRUGO, smc_get_gpo_boot, smc_set_gpo_boot);
+
+static struct attribute *smc_attrs_gpo_boot[] = {
+	&dev_attr_gpo_dc_on_boot.attr,
+	&dev_attr_gpo_can_on_boot.attr,
+	NULL };
+
+static const struct attribute_group smc_attr_gpo_boot_group = { .attrs = smc_attrs_gpo_boot, };
+
+/* RTC */
 static struct rtc_class_ops smc_rtc_ops = {
 	.read_time = smc_rtc_read, .set_time = smc_rtc_set, };
 
@@ -1391,8 +1498,13 @@ static int smc_probe(struct i2c_client *client, const struct i2c_device_id *id)
 		}
 	}
 
-	exit: return err;
-	exit_sysfsg: cancel_work_sync(&priv->alert_work);
+	if (compare_version(priv->version, 3, 5) >= 0) {
+		err = sysfs_create_group(&client->dev.kobj, &smc_attr_gpo_boot_group);
+	}
+exit:
+	return err;
+exit_sysfsg:
+	cancel_work_sync(&priv->alert_work);
 	sysfs_remove_group(&client->dev.kobj, &smc_attr_group);
 	return err;
 }
@@ -1409,6 +1521,9 @@ static int smc_remove(struct i2c_client *client)
 	for (n = 0; n < priv->gpio_ctl.ngpio; n++) {
 		gpiod_unexport(priv->gpio_descs[n]);
 		gpiochip_free_own_desc(priv->gpio_descs[n]);
+	}
+	if (compare_version(priv->version, 3, 5) >= 0) {
+		sysfs_remove_group(&client->dev.kobj, &smc_attr_gpo_boot_group);
 	}
 	destroy_workqueue(priv->wq);
 	return 0;
