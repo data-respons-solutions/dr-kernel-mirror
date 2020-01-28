@@ -89,9 +89,8 @@ struct smc_data {
 	struct power_supply *psy_dcout2;
 	unsigned long psy_jiffies;
 	InitEventType_t start_cause;
-	int alarm_pending;
 	u32 alarm_in_seconds;
-	int rtc_updated;
+	int (*set_alarm)(struct smc_data *);
 };
 
 /*
@@ -836,41 +835,89 @@ static int smc_rtc_read(struct device *dev, struct rtc_time *rtctime)
 	return 0;
 }
 
+static int smc_cancel_alarm(struct smc_data *priv)
+{
+	int status, sz;
+	RtcMsgHeader_t hdr;
+
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 inbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	hdr.type = cpu_to_le16(msg_rtc_cancel_alarm);
+	hdr.payloadLen = 0;
+	sz = mpu_create_message(msg_rtc, 0, outbuf, (u8*)&hdr, sizeof(hdr));
+	status = smc_transaction(priv->client, outbuf, sz, inbuf,
+		sizeof(inbuf));
+	return status;
+}
+
 static int smc_send_alarm(struct smc_data *priv)
 {
 	int status, sz;
 	RtcAlarm_t msg;
 	struct rtc_time rtc_now, rtc_alarm;
 	time64_t now;
-	RtcMsgType_t msg_type;
 
 	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	u8 inbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
-	if (priv->alarm_in_seconds == 0)
-		msg_type = msg_rtc_cancel_alarm;
-	else {
-		msg_type = msg_rtc_set_alarm;
 
-		status = rtc_read_time(priv->rtc, &rtc_now);
-		if (status < 0)
-			return status;
+	status = rtc_read_time(priv->rtc, &rtc_now);
+	if (status < 0)
+		return status;
 
-		now = rtc_tm_to_time64(&rtc_now);
-		rtc_time64_to_tm(now + priv->alarm_in_seconds, &rtc_alarm);
+	now = rtc_tm_to_time64(&rtc_now);
+	rtc_time64_to_tm(now + priv->alarm_in_seconds, &rtc_alarm);
 
-		msg.tm_sec = bin2bcd(rtc_alarm.tm_sec);
-		msg.tm_min = bin2bcd(rtc_alarm.tm_min);
-		msg.tm_hour = bin2bcd(rtc_alarm.tm_hour);
-		msg.tm_mday = bin2bcd(rtc_alarm.tm_mday);
-		msg.pending = 0;
-		msg.enable = 1;
-		dev_info(&priv->client->dev, "Alarm set at %02d.%02d.%02d %02d:%02d:%02d\n",
-			rtc_alarm.tm_mday, rtc_alarm.tm_mon + 1,
-			rtc_alarm.tm_year - 100, rtc_alarm.tm_hour,
-			rtc_alarm.tm_min, rtc_alarm.tm_sec);
-	}
-	sz = rtc_create_alarm_message(msg_type, outbuf + sizeof(MpuMsgHeader_t),
-		&msg);
+	msg.tm_sec = bin2bcd(rtc_alarm.tm_sec);
+	msg.tm_min = bin2bcd(rtc_alarm.tm_min);
+	msg.tm_hour = bin2bcd(rtc_alarm.tm_hour);
+	msg.tm_mday = bin2bcd(rtc_alarm.tm_mday);
+	msg.pending = 0;
+	msg.enable = 1;
+	dev_info(&priv->client->dev,
+		"Alarm set at %02d.%02d.%02d %02d:%02d:%02d\n",
+		rtc_alarm.tm_mday, rtc_alarm.tm_mon + 1,
+		rtc_alarm.tm_year - 100, rtc_alarm.tm_hour, rtc_alarm.tm_min,
+		rtc_alarm.tm_sec);
+	sz = rtc_create_alarm_message(msg_rtc_set_alarm,
+		outbuf + sizeof(MpuMsgHeader_t), &msg);
+	sz = mpu_create_message(msg_rtc, 0, outbuf, 0, sz);
+	status = smc_transaction(priv->client, outbuf, sz, inbuf,
+		sizeof(inbuf));
+	return status;
+}
+
+static int smc_send_alarm2(struct smc_data *priv)
+{
+	int status, sz;
+	RtcAlarm2_t msg;
+	struct rtc_time rtc_now, rtc_alarm;
+	time64_t now;
+
+	u8 outbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+	u8 inbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
+
+	status = rtc_read_time(priv->rtc, &rtc_now);
+	if (status < 0)
+		return status;
+
+	now = rtc_tm_to_time64(&rtc_now);
+	rtc_time64_to_tm(now + priv->alarm_in_seconds, &rtc_alarm);
+
+	msg.tm_sec = bin2bcd(rtc_alarm.tm_sec);
+	msg.tm_min = bin2bcd(rtc_alarm.tm_min);
+	msg.tm_hour = bin2bcd(rtc_alarm.tm_hour);
+	msg.tm_mday = bin2bcd(rtc_alarm.tm_mday);
+	msg.tm_mon = bin2bcd(rtc_alarm.tm_mon + 1);
+	msg.tm_year = bin2bcd(rtc_alarm.tm_year - 100);
+	msg.pending = 0;
+	msg.enable = 1;
+	dev_info(&priv->client->dev,
+		"Alarm set at %02d.%02d.%02d %02d:%02d:%02d\n",
+		rtc_alarm.tm_mday, rtc_alarm.tm_mon + 1,
+		rtc_alarm.tm_year - 100, rtc_alarm.tm_hour, rtc_alarm.tm_min,
+		rtc_alarm.tm_sec);
+	sz = rtc_create_alarm_message2(msg_rtc_set_alarm2,
+		outbuf + sizeof(MpuMsgHeader_t), &msg);
 	sz = mpu_create_message(msg_rtc, 0, outbuf, 0, sz);
 	status = smc_transaction(priv->client, outbuf, sz, inbuf,
 		sizeof(inbuf));
@@ -913,39 +960,25 @@ static ssize_t smc_set_wakeup(struct device *dev, struct device_attribute *attr,
 	if (compare_version(priv->version, 3, 0) < 0)
 		return -EINVAL;
 	if (strncmp(buf, "cancel", 6) == 0) {
-		val = 0;
+		dev_info(dev, "Cancelled alarm\n");
+		status = smc_cancel_alarm(priv);
+		goto finish;
 	} else {
 		status = kstrtouint(buf, 10, &val);
 		if (status < 0)
 			return status;
-		else if (val > wakeup_max_seconds) {
-			dev_err(dev, "%s: Can not set alarm beyond %d days\n",
-				__func__, wakeup_max_seconds / (24 * 3600));
+		else if (val < 30 || val > wakeup_max_seconds) {
+			dev_err(dev, "%s: Can not set alarm(%d) less than 30 secs or beyond %d days\n",
+				__func__, val, wakeup_max_seconds / (24 * 3600));
 			return -EINVAL;
 		}
 	}
 	priv->alarm_in_seconds = val;
-	if (priv->alarm_in_seconds == 0) {
-		if (priv->alarm_pending) {
-			priv->alarm_pending = 0;
-			dev_info(dev, "Cancelled pending alarm\n");
-		} else {
-			status = smc_send_alarm(priv);
-			dev_info(dev, "Cancelled alarm\n");
-		}
-	} else {
-		if (priv->rtc_updated) {
-			priv->alarm_pending = 0;
-			status = smc_send_alarm(priv);
-		} else {
-			priv->alarm_pending = 1;
-			dev_info(dev, "Alarm pending %d seconds\n", priv->alarm_in_seconds);
-		}
-	}
-	if (status < 0)
-		return status;
-	else
-		return count;
+	if (compare_version(priv->version, 3, 0) >= 0)
+		status = priv->set_alarm(priv);
+
+finish:
+	return  (status < 0) ? status : count;
 }
 
 static ssize_t smc_get_wakeup(struct device *dev, struct device_attribute *attr,
@@ -960,8 +993,6 @@ static ssize_t smc_get_wakeup(struct device *dev, struct device_attribute *attr,
 	u8 inbuf[MPU_MAX_MESSAGE_SIZE] __attribute__((aligned(0x10)));
 	if (compare_version(priv->version, 3, 0) < 0)
 		return -EINVAL;
-	if (priv->alarm_pending)
-		return sprintf(buf, "Alarm pending at %d seconds\n", priv->alarm_in_seconds);
 	sz = rtc_create_alarm_message(msg_rtc_get_alarm,
 		outbuf + sizeof(MpuMsgHeader_t), 0);
 	sz = mpu_create_message(msg_rtc, 0, outbuf, 0, sz);
@@ -1501,6 +1532,10 @@ static int smc_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	if (compare_version(priv->version, 3, 5) >= 0) {
 		err = sysfs_create_group(&client->dev.kobj, &smc_attr_gpo_boot_group);
 	}
+	if (compare_version(priv->version, 3, 6) >= 0)
+		priv->set_alarm = smc_send_alarm2;
+	else
+		priv->set_alarm = smc_send_alarm;
 exit:
 	return err;
 exit_sysfsg:
@@ -1533,16 +1568,6 @@ static void smc_shutdown(struct i2c_client *client)
 {
 	struct smc_data *priv = i2c_get_clientdata(client);
 	int ret;
-	if (compare_version(priv->version, 3, 0) >= 0 && priv->alarm_pending) {
-		ret = smc_send_alarm(priv);
-		if (ret < 0)
-			dev_warn(&client->dev, "%s: Failed [%d] to send pending alarm\n",
-				__func__, ret);
-		else
-			dev_info(&client->dev, "%s: Send pending alarm @%d seconds\n",
-				__func__, priv->alarm_in_seconds);
-		priv->alarm_pending = 0;
-	}
 	ret = send_reboot(priv);
 	if (ret < 0)
 		dev_err(&client->dev, "%s: Failed to call SMC\n", __func__);

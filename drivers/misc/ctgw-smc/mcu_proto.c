@@ -23,18 +23,18 @@ int mpu_copy_message(u8 *to, const u8 *from)
 	return len;
 }
 
-int mpu_create_message(MpuMsgType_t type, MpuErrorCode_t status, u8 *buffer,  const u8 *payload, u16 len)
+int mpu_create_message(MpuMsgType_t type, MpuErrorCode_t status, u8 *buffer,
+	const u8 *payload, u16 len)
 {
-	MpuMsgHeader_t *msg = (MpuMsgHeader_t*)buffer;
+	MpuMsgHeader_t *msg = (MpuMsgHeader_t*) buffer;
 	int total_len;
-    msg->type = type;
-    msg->replyStatus = status;
+	msg->type = type;
+	msg->replyStatus = status;
 	msg->payloadLen = cpu_to_le16(len);
 	total_len = sizeof(MpuMsgHeader_t) + len;
 
-	if(len > 0 && payload != 0)
-	{
-		memcpy(buffer+sizeof(MpuMsgHeader_t), payload, len);
+	if (len > 0 && payload != 0) {
+		memcpy(buffer + sizeof(MpuMsgHeader_t), payload, len);
 	}
 	return total_len;
 }
@@ -56,19 +56,19 @@ const u8* mpu_get_payload(const u8 *buffer)
 
 MpuVersionHeader_t* mpu_get_version_header(const u8 *buffer)
 {
-	MpuVersionHeader_t *hdr = (MpuVersionHeader_t*)buffer;
-    hdr->ver_major = le16_to_cpu(hdr->ver_major);
+	MpuVersionHeader_t *hdr = (MpuVersionHeader_t*) buffer;
+	hdr->ver_major = le16_to_cpu(hdr->ver_major);
 	hdr->ver_minor = le16_to_cpu(hdr->ver_minor);
 
-    return hdr;
+	return hdr;
 }
 
-int mpu_create_version_message(u8 *buffer, const MpuVersionHeader_t* hdr)
+int mpu_create_version_message(u8 *buffer, const MpuVersionHeader_t *hdr)
 {
-    u16 *p = (u16*)buffer;
-    p[0] = cpu_to_le16(hdr->ver_major);
-    p[1] = cpu_to_le16(hdr->ver_minor);
-    return 4;
+	u16 *p = (u16*) buffer;
+	p[0] = cpu_to_le16(hdr->ver_major);
+	p[1] = cpu_to_le16(hdr->ver_minor);
+	return 4;
 }
 
 u32 valid_get_data(u8 *buffer)
@@ -167,6 +167,30 @@ int rtc_create_alarm_message(RtcMsgType_t type, u8 *buffer, RtcAlarm_t *alarm)
 	}
 }
 
+int rtc_create_alarm_message2(RtcMsgType_t type, u8 *buffer, RtcAlarm2_t *alarm)
+{
+	RtcAlarm2_t *alarm_p = (RtcAlarm2_t*)(buffer + sizeof(RtcMsgHeader_t));
+	RtcMsgHeader_t *msghdr = (RtcMsgHeader_t*)buffer;
+
+	msghdr->type = cpu_to_le16(type);
+	if (alarm) {
+		msghdr->payloadLen = cpu_to_le16(sizeof(RtcAlarm2_t));
+		alarm_p->enable = cpu_to_le16(alarm->enable);
+		alarm_p->pending = cpu_to_le16(alarm->pending);
+		alarm_p->tm_sec = (alarm->tm_sec);
+		alarm_p->tm_min = (alarm->tm_min);
+		alarm_p->tm_hour = (alarm->tm_hour);
+		alarm_p->tm_mday = (alarm->tm_mday);
+		alarm_p->tm_mon = alarm->tm_mon;
+		alarm_p->tm_year = alarm->tm_year;
+		return sizeof(RtcMsgHeader_t) + sizeof(RtcAlarm2_t);
+	}
+	else {
+		msghdr->payloadLen = 0;
+		return sizeof(RtcMsgHeader_t);
+	}
+}
+
 RtcMsgHeader_t rtc_message_header(u8 *buffer)
 {
 	RtcMsgHeader_t msg;
@@ -211,4 +235,23 @@ int rtc_alarm_get_payload(const u8 *buffer, RtcAlarm_t *msg)
 	}
 	return -1;
 }
+
+int rtc_alarm_get_payload2(const u8 *buffer, RtcAlarm2_t *msg)
+{
+	RtcMsgHeader_t *hdr = (RtcMsgHeader_t*)buffer;
+	RtcAlarm2_t* msg_p = (RtcAlarm2_t*)(buffer + sizeof(RtcMsgHeader_t));
+	if (le16_to_cpu(hdr->payloadLen) > 0) {
+		msg->enable = msg_p->enable;
+		msg->pending = msg_p->pending;
+		msg->tm_sec = msg_p->tm_sec;
+		msg->tm_min = msg_p->tm_min;
+		msg->tm_hour = msg_p->tm_hour;
+		msg->tm_mday = msg_p->tm_mday;
+		msg->tm_mon = msg_p->tm_mon;
+		msg->tm_year = msg_p->tm_year;
+		return 0;
+	}
+	return -1;
+}
+
 /* \} */
