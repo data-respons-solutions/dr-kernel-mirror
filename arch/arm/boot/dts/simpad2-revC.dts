@@ -230,11 +230,13 @@
             value = <1>;
         };
         
+        /*
         gpio-phy-rst {
-            gpios = <&gpio1 25 GPIO_ACTIVE_HIGH>;
+            gpios = <&gpio1 25 GPIO_ACTIVE_LOW>;
             status = "okay";
             value = <1>;
         };
+        */
         
         gpio-touch-rst {
             gpios = <&gpio4 10 GPIO_ACTIVE_HIGH>;
@@ -362,6 +364,7 @@
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_enet_lm>;
     phy-mode = "rgmii";
+    phy-reset-gpios = <&gpio1 25 GPIO_ACTIVE_LOW>;
     status = "okay";
     phy-handle = <&arphy>;
     phy-supply = <&vgen6_reg>;

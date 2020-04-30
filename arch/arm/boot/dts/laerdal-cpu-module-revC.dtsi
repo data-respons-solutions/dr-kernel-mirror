@@ -189,11 +189,13 @@
             value = <1>;
         };
 
+        /*
         gpio-phy-rst {
-            gpios = <&gpio1 25 GPIO_ACTIVE_HIGH>;
+            gpios = <&gpio1 25 GPIO_ACTIVE_LOW>;
             status = "okay";
             value = <1>;
         };
+        */
 
         gpio-gpo-d1 {
 		gpios = <&gpio7 13 GPIO_ACTIVE_HIGH>;
@@ -286,7 +288,7 @@
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_enet_linkbox2>;
     phy-mode = "rgmii";
-    /* phy-reset-gpios = <&gpio1 25 GPIO_ACTIVE_LOW>; */
+    phy-reset-gpios = <&gpio1 25 GPIO_ACTIVE_LOW>;
     status = "okay";
     /* phy-supply = <&vgen6_reg>; */
     phy-handle = <&arphy>;
