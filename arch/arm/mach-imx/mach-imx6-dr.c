@@ -108,6 +108,12 @@ static int ar8031_phy_fixup(struct phy_device *dev)
 {
 	u16 val;
 
+	phydev_info(dev, "Applying fixup for AR8031\n");
+
+	/* Set RGMII IO voltage to 1.8V */
+	phy_write(dev, 0x1d, 0x1f);
+	phy_write(dev, 0x1e, 0x8);
+
 	/* To enable AR8031 output a 125MHz clk from CLK_25M */
 	phy_write(dev, 0xd, 0x7);
 	phy_write(dev, 0xe, 0x8016);
