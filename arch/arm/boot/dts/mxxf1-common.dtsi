@@ -267,8 +267,10 @@ flash: m25p80@0 {
 	   arphy: ethernet-phy@1 {
 	       compatible = "ethernet-phy-ieee802.3-c22";
 	       reg = <0x1>;
+           /*
 	       interrupt-parent = <&gpio1>;
 	       interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
+           */
 	   };
 	};
 };
