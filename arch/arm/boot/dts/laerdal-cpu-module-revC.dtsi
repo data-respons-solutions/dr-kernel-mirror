@@ -26,10 +26,17 @@
         reg = <0x10000000 0x20000000>;
     };
 
+    clocks {
+        bt_clk: clock@1 {
+        	#clock-cells = <0>;
+            compatible = "fixed-clock";
+            clock-output-names = "lpo";
+            clock-frequency = <32768>;
+        };
+    };
 
     regulators {
         compatible = "simple-bus";
-
 
         reg_wifi: wifi_pwr {
             compatible = "regulator-fixed";
@@ -65,7 +72,6 @@
             startup-delay-us = <300>;
             regulator-always-on;
         };
-
 /*
         reg_bt_en: bt_enable {
             compatible = "regulator-fixed";
@@ -79,7 +85,6 @@
             regulator-always-on;
         };
 */
-
     };
 
     gpio-keys {
@@ -94,13 +99,6 @@
     };
 
     user-gpios {
-
-        gpio-bt-enable {
-            gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
-            status = "okay";
-            value = <1>;
-        };
-
         gpio-spinor-wp {
             gpios = <&gpio3 20 GPIO_ACTIVE_HIGH>;
             status = "okay";
@@ -130,15 +128,15 @@
         };
 
         gpio-can1-stb {
-		gpios = <&gpio4 11 GPIO_ACTIVE_HIGH>;
-		status = "okay";
-		value = <0>;
+            gpios = <&gpio4 11 GPIO_ACTIVE_HIGH>;
+            status = "okay";
+            value = <0>;
         };
 
         gpio-can1-resen {
-		gpios = <&gpio3 31 GPIO_ACTIVE_HIGH>;
-		status = "okay";
-		value = <0>;
+            gpios = <&gpio3 31 GPIO_ACTIVE_HIGH>;
+            status = "okay";
+            value = <0>;
         };
 
         gpio-can2-sdn {
@@ -148,15 +146,15 @@
         };
 
         gpio-can2-stb {
-		gpios = <&gpio4 7 GPIO_ACTIVE_HIGH>;
-		status = "okay";
-		value = <0>;
+            gpios = <&gpio4 7 GPIO_ACTIVE_HIGH>;
+            status = "okay";
+            value = <0>;
         };
 
         gpio-spk-sdn {
-		gpios = <&gpio1 5 GPIO_ACTIVE_LOW>;
-		status = "okay";
-		value = <0>;
+            gpios = <&gpio1 5 GPIO_ACTIVE_LOW>;
+            status = "okay";
+            value = <0>;
         };
 
         gpio-wlan-dev-wake {
@@ -165,51 +163,23 @@
             value = <1>;
         };
 
-        gpio-wifi-clk-req {
-		gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
-		status = "okay";
-		bidir;
-        };
-
         gpio-wlan-host-wake {
             gpios = <&gpio2 6 GPIO_ACTIVE_HIGH>;
             status = "okay";
             bidir;
         };
 
-        gpio-bt-host-wake {
-            gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
-            status = "okay";
-            bidir;
-        };
-
-        gpio-bt-dev-wake {
-            gpios = <&gpio6 8 GPIO_ACTIVE_LOW>;
-            status = "okay";
-            value = <1>;
-        };
-
-        /*
-        gpio-phy-rst {
-            gpios = <&gpio1 25 GPIO_ACTIVE_LOW>;
-            status = "okay";
-            value = <1>;
-        };
-        */
-
         gpio-gpo-d1 {
-		gpios = <&gpio7 13 GPIO_ACTIVE_HIGH>;
-		status = "okay";
-		value = <1>;
+            gpios = <&gpio7 13 GPIO_ACTIVE_HIGH>;
+            status = "okay";
+            value = <1>;
         };
 
         gpio-gpo-d2 {
-		gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>;
-		status = "okay";
-		value = <1>;
+            gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>;
+            status = "okay";
+            value = <1>;
         };
-
-
     };
 
 
@@ -251,9 +221,6 @@
     };
 
 };
-
-
-
 
 &ecspi1 {
     fsl,spi-num-chipselects = <1>;
@@ -467,39 +434,53 @@
     hog {
         pinctrl_hog_1: hoggrp-1 {
             fsl,pins = <
-		MX6QDL_PAD_KEY_COL2__GPIO4_IO10		0x80000000		/* CAN1_EN */
-		MX6QDL_PAD_KEY_ROW2__GPIO4_IO11		0x80000000		/* CAN1_STB */
-		MX6QDL_PAD_EIM_D31__GPIO3_IO31		0x80000000		/* CAN1_RES */
-		MX6QDL_PAD_KEY_COL0__GPIO4_IO06		0x80000000		/* CAN2_EN */
-		MX6QDL_PAD_KEY_ROW0__GPIO4_IO07		0x80000000		/* CAN2_STB */
-		MX6QDL_PAD_GPIO_5__GPIO1_IO05		0x80000000		/* GP--SPK_nSD */
-                MX6QDL_PAD_GPIO_0__CCM_CLKO1        0x130b0         /* External audio clk */
-                MX6QDL_PAD_NANDF_CLE__GPIO6_IO07    0x80000000      /* GP--BT_HOST_WAKE */
-                MX6QDL_PAD_NANDF_CS0__GPIO6_IO11    0x80000000      /* GP--WL_VDDIO_EN */
-                MX6QDL_PAD_NANDF_ALE__GPIO6_IO08    0x1b8b1         /* GP--BT_WAKE */
-                MX6QDL_PAD_NANDF_RB0__GPIO6_IO10    0x0001b000      /* PMIC_INT_B */
-                MX6QDL_PAD_NANDF_D3__GPIO2_IO03     0x80000000      /* WL_REG_ON (WiFI power) */
-                MX6QDL_PAD_NANDF_D4__GPIO2_IO04     0x80000000      /* BT_REG_ON (Bluetooth power) */
-                MX6QDL_PAD_NANDF_D5__GPIO2_IO05     0x0001b000      /* WL_IRQ (WiFI interrupt */
-                MX6QDL_PAD_NANDF_D6__GPIO2_IO06     0x1b0b1         /* GP--WL_HOST_WAKE */
-                MX6QDL_PAD_NANDF_D7__GPIO2_IO07     0x2058          /* GP--WL_DEV_WAKE */
-                MX6QDL_PAD_EIM_D20__GPIO3_IO20      0x80000000      /* GP--nWP--flash (SPI flash WP) */
-                MX6QDL_PAD_EIM_D26__GPIO3_IO26      0x80000000      /* GP--WL_BAT_PWR_EN */
-                MX6QDL_PAD_EIM_D27__GPIO3_IO27      0x0001b000      /* HW_Setting_0 */
-                MX6QDL_PAD_EIM_D28__GPIO3_IO28      0x0001b000      /* HW_Setting_1 */
-                MX6QDL_PAD_EIM_D29__GPIO3_IO29      0x0001b000      /* PPWR_BTN_SNS */
-                MX6QDL_PAD_SD1_CMD__GPIO1_IO18      0x80000000      /* LED_R_Status--CPU */
-                MX6QDL_PAD_SD1_CLK__GPIO1_IO20      0x80000000      /* LED_G_Status--CPU */
-                MX6QDL_PAD_SD1_DAT0__GPIO1_IO16     0x80000000      /* LED_B_Status--CPU */
-                MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25  0x80000000      /* Phy reset (low) */
-                MX6QDL_PAD_ENET_RXD0__GPIO1_IO27    0x80000000      /* Schematic error, set to input */
-                MX6QDL_PAD_ENET_RXD1__GPIO1_IO26    0x80000000      /* Phy IRQ */
-                MX6QDL_PAD_GPIO_18__GPIO7_IO13		0x00000859		/* GPO_D1 */
-                MX6QDL_PAD_GPIO_19__GPIO4_IO05		0x00000859		/* GPO_D2 */
+            MX6QDL_PAD_KEY_COL2__GPIO4_IO10		0x80000000		/* CAN1_EN */
+            MX6QDL_PAD_KEY_ROW2__GPIO4_IO11		0x80000000		/* CAN1_STB */
+            MX6QDL_PAD_EIM_D31__GPIO3_IO31		0x80000000		/* CAN1_RES */
+            MX6QDL_PAD_KEY_COL0__GPIO4_IO06		0x80000000		/* CAN2_EN */
+            MX6QDL_PAD_KEY_ROW0__GPIO4_IO07		0x80000000		/* CAN2_STB */
+            MX6QDL_PAD_GPIO_5__GPIO1_IO05		0x80000000		/* GP--SPK_nSD */
+            MX6QDL_PAD_GPIO_0__CCM_CLKO1        0x130b0         /* External audio clk */
+            MX6QDL_PAD_NANDF_CS0__GPIO6_IO11    0x00000060      /* GP--WL_VDDIO_EN */
+            MX6QDL_PAD_NANDF_ALE__GPIO6_IO08    0x1b8b1         /* GP--BT_WAKE */
+            MX6QDL_PAD_NANDF_RB0__GPIO6_IO10    0x0001b000      /* PMIC_INT_B */
+            MX6QDL_PAD_NANDF_D3__GPIO2_IO03     0X00000060      /* WL_REG_ON (WiFI power) */
+            MX6QDL_PAD_NANDF_D4__GPIO2_IO04     0X00000060      /* BT_REG_ON (Bluetooth power) */
+            MX6QDL_PAD_EIM_D20__GPIO3_IO20      0x80000000      /* GP--nWP--flash (SPI flash WP) */
+            MX6QDL_PAD_EIM_D26__GPIO3_IO26      0x00000060      /* GP--WL_BAT_PWR_EN */
+            MX6QDL_PAD_EIM_D27__GPIO3_IO27      0x0001b000      /* HW_Setting_0 */
+            MX6QDL_PAD_EIM_D28__GPIO3_IO28      0x0001b000      /* HW_Setting_1 */
+            MX6QDL_PAD_EIM_D29__GPIO3_IO29      0x0001b000      /* PPWR_BTN_SNS */
+            MX6QDL_PAD_SD1_CMD__GPIO1_IO18      0x80000000      /* LED_R_Status--CPU */
+            MX6QDL_PAD_SD1_CLK__GPIO1_IO20      0x80000000      /* LED_G_Status--CPU */
+            MX6QDL_PAD_SD1_DAT0__GPIO1_IO16     0x80000000      /* LED_B_Status--CPU */
+            MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25  0x80000000      /* Phy reset (low) */
+            MX6QDL_PAD_ENET_RXD0__GPIO1_IO27    0x80000000      /* Schematic error, set to input */
+            MX6QDL_PAD_ENET_RXD1__GPIO1_IO26    0x80000000      /* Phy IRQ */
+            MX6QDL_PAD_GPIO_18__GPIO7_IO13		0x00000859		/* GPO_D1 */
+            MX6QDL_PAD_GPIO_19__GPIO4_IO05		0x00000859		/* GPO_D2 */
             >;
         };
     };
 
+    bluetooth {
+        pinctrl_bt1: bt1grp {
+            fsl,pins = <
+                MX6QDL_PAD_NANDF_CLE__GPIO6_IO07    0x0001b010      /* GP--BT_HOST_WAKE */
+                MX6QDL_PAD_NANDF_ALE__GPIO6_IO08    0x00000060      /* GP--BT_WAKE */
+                MX6QDL_PAD_NANDF_D5__GPIO2_IO05     0x0001E060      /* BT clock request */
+            >;
+        };
+    };
+
+    wifi {
+        pinctrl_wifi1: wifi1grp {
+            fsl,pins = <
+                MX6QDL_PAD_NANDF_D6__GPIO2_IO06     0x0001b010      /* GP--WL_HOST_WAKE */
+                MX6QDL_PAD_NANDF_D7__GPIO2_IO07     0x00000060      /* GP--WL_DEV_WAKE */
+            >;
+        };
+    };
     ecspi1 {
         pinctrl_ecspi1: ecspi1grp {
             fsl,pins = <
@@ -788,6 +769,20 @@
     pinctrl-0 = <&pinctrl_uart5_linkbox2>;
     fsl,uart-has-rtscts;
     status = "okay";
+
+    bluetooth {
+		compatible = "brcm,bcm43438-bt";
+		clocks = <&bt_clk 0>;
+		clock-names = "lpo";
+        max-speed = <921600>;
+		device-wakeup-gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
+		host-wakeup-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+		shutdown-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_bt1>;
+		vbat-supply = <&reg_wifi>;
+		vddio-supply = <&reg_wifi_io>;
+	};
 };
 
 &usbh1 {
@@ -811,7 +806,7 @@
 
 &usdhc4 {
     pinctrl-names = "default";
-    pinctrl-0 = <&pinctrl_usdhc4>;
+    pinctrl-0 = <&pinctrl_usdhc4 &pinctrl_wifi1>;
     bus-width = <4>;
     non-removable;
     keep-power-in-suspend;

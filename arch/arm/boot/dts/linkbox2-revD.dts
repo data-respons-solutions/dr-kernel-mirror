@@ -8,9 +8,9 @@
  * http://www.opensource.org/licenses/gpl-license.html
  * http://www.gnu.org/copyleft/gpl.html
  */
- 
+
 /dts-v1/;
- 
+
 #include "imx6dl.dtsi"
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/pwm/pwm.h>
@@ -38,8 +38,15 @@
             clock-output-names = "esai-clock";
             clock-frequency = <27000000>;
         };
+
+        bt_clk: clock@1 {
+        	#clock-cells = <0>;
+            compatible = "fixed-clock";
+            clock-output-names = "lpo";
+            clock-frequency = <32768>;
+        };
     };
-    
+
     regulators {
         compatible = "simple-bus";
 
@@ -53,7 +60,7 @@
             regulator-boot-on;
             regulator-always-on;
         };
-        
+
         reg_wifi: wifi_pwr {
             compatible = "regulator-fixed";
             regulator-name = "reg_wifi";
@@ -63,7 +70,7 @@
             enable-active-high;
             regulator-always-on;
         };
-        
+
         reg_wifi_io: wifi_pwr_io {
             compatible = "regulator-fixed";
             regulator-name = "reg_wifi_io";
@@ -75,7 +82,7 @@
             startup-delay-us = <100>;
             regulator-always-on;
         };
-        
+
         reg_wifi_en: wifi_enable {
             compatible = "regulator-fixed";
             regulator-name = "reg_wifi_enable";
@@ -88,7 +95,7 @@
             regulator-always-on;
         };
 
-/*  
+/*
         reg_bt_en: bt_enable {
             compatible = "regulator-fixed";
             regulator-name = "reg_bt_enable";
@@ -100,8 +107,7 @@
             startup-delay-us = <300>;
             regulator-always-on;
         };
-*/  
-
+*/
     };
 
     pwm-manikin@0 {
@@ -111,7 +117,7 @@
         inverted;
         period = <40000>;
     };
-    
+
     gpio-keys {
         compatible = "gpio-keys";
         power {
@@ -122,31 +128,24 @@
         };
 
     };
-    
+
     user-gpios {
-    
-        gpio-bt-enable {
-            gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
-            status = "okay";
-            value = <1>;
-        };
-        
         gpio-spinor-wp {
             gpios = <&gpio3 20 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <1>;
         };
-        
+
         gpio-hw-setting0 {
             gpios = <&gpio3 27 GPIO_ACTIVE_HIGH>;
             status = "okay";
         };
-        
+
         gpio-hw-setting1 {
             gpios = <&gpio3 28 GPIO_ACTIVE_HIGH>;
             status = "okay";
         };
-        
+
         gpio-hw-setting2 {
             gpios = <&gpio4 10 GPIO_ACTIVE_HIGH>;
             status = "okay";
@@ -156,118 +155,93 @@
             gpios = <&gpio4 21 GPIO_ACTIVE_HIGH>;
             status = "okay";
         };
-        
+
         gpio-mcu-rst {
             gpios = <&gpio4 26 GPIO_ACTIVE_LOW>;
             status = "okay";
             bidir;
         };
-        
+
         gpio-mcu-boot0 {
             gpios = <&gpio4 27 GPIO_ACTIVE_HIGH>;
             status = "okay";
             bidir;
         };
-        
+
         gpio-mcu-boot1 {
             gpios = <&gpio4 28 GPIO_ACTIVE_HIGH>;
             status = "okay";
             bidir;
         };
-        
+
         gpio-can-en {
             gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <0>;
         };
-        
+
         gpio-wlan-dev-wake {
             gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <1>;
         };
-        
-        gpio-wifi-clk-req {
-        	gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
-        	status = "okay";
-        	value = <1>;
-        };
-        
+
         gpio-wlan-host-wake {
             gpios = <&gpio2 6 GPIO_ACTIVE_HIGH>;
             status = "okay";
             bidir;
         };
-        
-        gpio-bt-host-wake {
-            gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
-            status = "okay";
-            bidir;
-        };
-        
-        gpio-bt-dev-wake {
-            gpios = <&gpio6 8 GPIO_ACTIVE_LOW>;
-            status = "okay";
-            value = <1>;
-        };
-        /*
-        gpio-phy-rst {
-            gpios = <&gpio1 25 GPIO_ACTIVE_LOW>;
-            status = "okay";
-            value = <1>;
-        };
-        */
-        
+
         gpio-pwm3 {
             gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <0>;
         };
-        
+
         gpio-pwm2 {
             gpios = <&gpio1 19 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <0>;
         };
-        
+
     };
-    
-    
+
+
     leds {
         compatible = "gpio-leds";
-    
+
         status-red {
             gpios = <&gpio1 18 GPIO_ACTIVE_HIGH>;
             default-state = "off";
         };
-        
+
         status-green {
             gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
             default-state = "on";
             linux,default-trigger = "timer";
         };
-        
+
         status-blue {
             gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
             default-state = "off";
         };
-        
+
         wifi-red {
             gpios = <&gpio5 8 GPIO_ACTIVE_LOW>;
             default-state = "off";
         };
-        
+
         wifi-green {
             gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
             default-state = "off";
         };
-        
+
         wifi-blue {
             gpios = <&gpio5 7 GPIO_ACTIVE_LOW>;
             default-state = "off";
         };
     };
-    
+
     sound_2ch {
         compatible = "fsl,lm-imx-audio-wm8960";
         model = "wm8960-audio";
@@ -292,8 +266,8 @@
         audio-codec = <&codec_pcm1681>;
         hfclk-freq = <8192000>;
         extra-supply = "MANIKIN_12V", "MANIKIN_5V";
-        
-        audio-routing = 
+
+        audio-routing =
             "OUT1", "VOUT1",
             "OUT2", "VOUT2",
             "OUT3", "VOUT3",
@@ -303,9 +277,9 @@
             "OUT7", "VOUT7",
             "OUT8", "VOUT8";
     };
-    
+
     linkbox-plus-psy {
-		status = "okay";		
+		status = "okay";
        	compatible = "datarespons,linkbox-plus-psy";
        	valid-gpios = <&gpio5 13 GPIO_ACTIVE_HIGH &gpio5 14 GPIO_ACTIVE_LOW &gpio5 15 GPIO_ACTIVE_LOW>;
        	startup-gpios = <&gpio5 16 GPIO_ACTIVE_HIGH &gpio5 17 GPIO_ACTIVE_HIGH>;
@@ -321,7 +295,7 @@
        	ina219-dcin-addr = <0x40>;
        	ina219-manikin-addr = <0x41>;
     };
-    
+
     can-uart-mux {
     	pinctrl-names = "uart", "can";
     	pinctrl-0 = <&pinctrl_uart2>;
@@ -370,10 +344,10 @@
 &fec {
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_enet_linkbox2>;
-    phy-mode = "rgmii";
+    phy-mode = "rgmii-id";
     phy-reset-gpios = <&gpio1 25 GPIO_ACTIVE_LOW>;
     status = "okay";
-    /* phy-supply = <&vgen6_reg>; */
+    phy-supply = <&vgen6_reg>;
     phy-handle = <&arphy>;
     mdio {
        #address-cells = <1>;
@@ -407,7 +381,7 @@
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_i2c4>;
     status = "okay";
-    
+
         pmic: pfuze100@8 {
         compatible = "fsl,pfuze100";
         reg = <0x08>;
@@ -519,7 +493,7 @@
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_i2c1>;
     status = "okay";
-    
+
     codec: wm8960@1a {
         compatible = "wlf,wm8960-lm";
         reg = <0x1a>;
@@ -547,31 +521,31 @@
         compatible = "ti,tmp103";
         reg = <0x70>;
     };
-    
+
     onewire_1: ds2482@18 {
         reg = <0x18>;
         compatible = "dallas,ds2482";
     };
-    
+
     onewire_2: ds2482@19 {
         reg = <0x19>;
         compatible = "dallas,ds2482";
     };
-    
+
    si5351: clock-generator@60 {
         compatible = "silabs,si5351a-msop";
         reg = <0x60>;
         #address-cells = <1>;
         #size-cells = <0>;
         #clock-cells = <1>;
-    
+
         /* connect xtal input to 27MHz reference */
         clocks = <&audio_ref>;
         clock-names = "xtal";
-    
+
         /* connect xtal input as source of pll0 and pll1 */
         silabs,pll-source = <0 0>, <1 0>;
-    
+
         clkout0 {
             reg = <0>;
             silabs,drive-strength = <8>;
@@ -580,7 +554,7 @@
             silabs,pll-master;
             clock-frequency = <8192000>;
         };
-        
+
     };
 
     codec_pcm1681: pcm1681@4c {
@@ -588,7 +562,7 @@
         clocks = <&si5351 0>;
         reg = <0x4c>;
     };
-    
+
 	main_rtc: rtc-m41t82@68 {
 		compatible = "ds,m41t82";
 		reg = <0x68>;
@@ -609,21 +583,16 @@
                 MX6QDL_PAD_KEY_ROW1__GPIO4_IO09     0x80000000      /* AUX_5V_EN (manikin) */
                 MX6QDL_PAD_KEY_ROW2__GPIO4_IO11     0x80000000      /* VCC_5V_EN (system 5v) */
                 MX6QDL_PAD_KEY_ROW4__GPIO4_IO15     0x80000000      /* CLR_STATUS */
-                MX6QDL_PAD_GPIO_0__CCM_CLKO1        0x130b0         /* External audio clk */
+                MX6QDL_PAD_GPIO_0__CCM_CLKO1        0x000130b0      /* External audio clk */
                 MX6QDL_PAD_GPIO_1__WDOG2_B          0x80000000
                 MX6QDL_PAD_GPIO_5__GPIO1_IO05       0x80000000      /* SPK_SD_N */
                 MX6QDL_PAD_GPIO_9__GPIO1_IO09       0x0001b000      /* HP_DET, pullup */
-                MX6QDL_PAD_GPIO_18__GPIO7_IO13      0x1b0b1         /* Mic detect, pullup */
-                MX6QDL_PAD_GPIO_19__GPIO4_IO05      0x1b0b1         /* DC_IN_nFLG (used as alert) */
-                MX6QDL_PAD_NANDF_CLE__GPIO6_IO07    0x1b8b1         /* GP--BT_HOST_WAKE */
+                MX6QDL_PAD_GPIO_18__GPIO7_IO13      0x0001b0b1      /* Mic detect, pullup */
+                MX6QDL_PAD_GPIO_19__GPIO4_IO05      0x0001b0b1      /* DC_IN_nFLG (used as alert) */
                 MX6QDL_PAD_NANDF_CS0__GPIO6_IO11    0x00000060      /* GP--WL_VDDIO_EN */
-                MX6QDL_PAD_NANDF_ALE__GPIO6_IO08    0x00000060      /* GP--BT_WAKE */
+                MX6QDL_PAD_NANDF_D4__GPIO2_IO04     0x00000060      /* BT_REG_ON (Bluetooth power) */
                 MX6QDL_PAD_NANDF_RB0__GPIO6_IO10    0x0001b000      /* PMIC_INT_B */
                 MX6QDL_PAD_NANDF_D3__GPIO2_IO03     0x00000060      /* WL_REG_ON (WiFI power) */
-                MX6QDL_PAD_NANDF_D4__GPIO2_IO04     0x00000060      /* BT_REG_ON (Bluetooth power) */
-                MX6QDL_PAD_NANDF_D5__GPIO2_IO05     0x0000E060      /* WIFI clock request */
-                MX6QDL_PAD_NANDF_D6__GPIO2_IO06     0x1b0b1         /* GP--WL_HOST_WAKE */
-                MX6QDL_PAD_NANDF_D7__GPIO2_IO07     0x00000060      /* GP--WL_DEV_WAKE */
                 MX6QDL_PAD_EIM_A25__GPIO5_IO02      0x0001b000      /* Recovery_setting (control boot) */
                 MX6QDL_PAD_EIM_D20__GPIO3_IO20      0x80000000      /* GP--nWP--flash (SPI flash WP) */
                 MX6QDL_PAD_EIM_D21__GPIO3_IO21      0x80000000      /* CAN_EN */
@@ -641,7 +610,7 @@
                 MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25  0x80000000      /* Phy reset (low) */
                 MX6QDL_PAD_ENET_RXD0__GPIO1_IO27    0x80000000      /* Schematic error, set to input */
                 MX6QDL_PAD_ENET_RXD1__GPIO1_IO26    0x80000000      /* Phy IRQ */
-                MX6QDL_PAD_DISP0_DAT0__GPIO4_IO21   0x1b0b1			/* DDR Setting */
+                MX6QDL_PAD_DISP0_DAT0__GPIO4_IO21   0x0001b0b1	    /* DDR Setting */
                 MX6QDL_PAD_DISP0_DAT1__GPIO4_IO22	0x80000000		/* BAT1_CHP_L2	*/
                 MX6QDL_PAD_DISP0_DAT2__GPIO4_IO23   0x80000000      /* BAT2_CHP_L2  */
                 MX6QDL_PAD_DISP0_DAT4__GPIO4_IO25   0x80000000      /* AC5W_SD */
@@ -662,7 +631,26 @@
             >;
         };
     };
-    
+
+    bluetooth {
+        pinctrl_bt1: bt1grp {
+            fsl,pins = <
+                MX6QDL_PAD_NANDF_CLE__GPIO6_IO07    0x0001b010      /* GP--BT_HOST_WAKE */
+                MX6QDL_PAD_NANDF_ALE__GPIO6_IO08    0x00000060      /* GP--BT_WAKE */
+                MX6QDL_PAD_NANDF_D5__GPIO2_IO05     0x0001E060      /* BT clock request */
+            >;
+        };
+    };
+
+    wifi {
+        pinctrl_wifi1: wifi1grp {
+            fsl,pins = <
+                MX6QDL_PAD_NANDF_D6__GPIO2_IO06     0x0001b010      /* GP--WL_HOST_WAKE */
+                MX6QDL_PAD_NANDF_D7__GPIO2_IO07     0x00000060      /* GP--WL_DEV_WAKE */
+            >;
+        };
+    };
+
     ecspi1 {
         pinctrl_ecspi1: ecspi1grp {
             fsl,pins = <
@@ -673,7 +661,7 @@
             >;
         };
     };
-    
+
     ecspi2 {
         pinctrl_ecspi2: ecspi2grp {
             fsl,pins = <
@@ -684,7 +672,7 @@
             >;
         };
     };
-    
+
     flexcan1 {
     	pinctrl_flexcan1: flexcan1grp {
     		fsl,pins = <
@@ -693,7 +681,7 @@
     		>;
     	};
     };
-    
+
     uart1 {
         pinctrl_uart1: uart1grp {
             fsl,pins = <
@@ -702,7 +690,7 @@
             >;
         };
     };
-    
+
     uart2 {
         pinctrl_uart2: uart2grp {
             fsl,pins = <
@@ -711,7 +699,7 @@
             >;
         };
     };
-    
+
     uart3 {
         pinctrl_uart3: uart3grp {
             fsl,pins = <
@@ -720,7 +708,7 @@
             >;
         };
     };
-    
+
     uart4 {
         pinctrl_uart4: uart4grp {
             fsl,pins = <
@@ -737,7 +725,7 @@
             >;
         };
     };
-        
+
     pwm2 {
         pinctrl_pwm2: pwm2grp {
             fsl,pins = <
@@ -745,7 +733,7 @@
             >;
         };
     };
-    
+
     pwm3 {
         pinctrl_pwm3_lb: pwm3grp-lb {
             fsl,pins = <
@@ -753,7 +741,7 @@
             >;
         };
     };
-    
+
     usbotg {
         pinctrl_usbotg: usbotggrp {
             fsl,pins = <
@@ -761,13 +749,13 @@
             >;
         };
     };
-    
+
     usbh1 {
     	pinctrl_usbh1: usbh1grp {
     		fsl,pins = < MX6QDL_PAD_EIM_D30__USB_H1_OC 0x17059 >;
     	};
     };
-    
+
     usdhc3 {
         pinctrl_usdhc3: usdhc3grp {
             fsl,pins = <
@@ -813,7 +801,7 @@
             >;
         };
     };
-    
+
     esai {
         pinctrl_esai_linkbox: esaigrp-linkbox {
             fsl,pins = <
@@ -824,7 +812,7 @@
             >;
         };
     };
-    
+
     i2c1 {
         pinctrl_i2c1: i2c1grp {
             fsl,pins = <
@@ -833,8 +821,8 @@
             >;
         };
     };
-    
-    
+
+
     i2c2 {
         pinctrl_i2c2: i2c2grp {
             fsl,pins = <
@@ -843,7 +831,7 @@
             >;
         };
     };
-    
+
     i2c3 {
         pinctrl_i2c3: i2c3grp {
             fsl,pins = <
@@ -852,7 +840,7 @@
             >;
         };
     };
-    
+
     i2c4 {
         pinctrl_i2c4: i2c4grp {
             fsl,pins = <
@@ -861,7 +849,7 @@
             >;
         };
     };
-    
+
     enet {
         pinctrl_enet_linkbox2: enetgrp-lb2 {
             fsl,pins = <
@@ -883,7 +871,7 @@
             >;
         };
     };
-    
+
     uart5 {
         pinctrl_uart5_linkbox2: uart5grp-linkbox2 {
         fsl,pins = <
@@ -893,7 +881,7 @@
             MX6QDL_PAD_CSI0_DAT19__UART5_CTS_B   0x1b0b1
         >;
         };
-        
+
         pinctrl_uart5_dte_linkbox2: uart5grp-dte_linkbox2 {
         fsl,pins = <
             MX6QDL_PAD_CSI0_DAT14__UART5_RX_DATA 0x1b0b1
@@ -903,7 +891,7 @@
         >;
         };
     };
-    
+
 };
 
 &ldb {
@@ -936,12 +924,25 @@
     status = "okay";
 };
 
-
 &uart5 {
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_uart5_linkbox2>;
     fsl,uart-has-rtscts;
     status = "okay";
+
+    bluetooth {
+		compatible = "brcm,bcm43438-bt";
+		clocks = <&bt_clk 0>;
+		clock-names = "lpo";
+        max-speed = <921600>;
+		device-wakeup-gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
+		host-wakeup-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+		shutdown-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_bt1>;
+		vbat-supply = <&reg_wifi>;
+		vddio-supply = <&reg_wifi_io>;
+	};
 };
 
 &usbh1 {
@@ -968,12 +969,26 @@
 
 &usdhc4 {
     pinctrl-names = "default";
-    pinctrl-0 = <&pinctrl_usdhc4>;
+    pinctrl-0 = <&pinctrl_usdhc4 &pinctrl_wifi1>;
     bus-width = <4>;
     non-removable;
     keep-power-in-suspend;
     enable-sdio-wakeup;
     status = "okay";
+    #address-cells = <1>;
+	#size-cells = <0>;
+
+/*
+    brcmf: wifi@1 {
+		reg = <1>;
+		compatible = "brcm,bcm4329-fmac";
+		interrupt-parent = <&gpio2>;
+		interrupts = <5 GPIO_ACTIVE_HIGH>;
+		interrupt-names = "host-wake";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_wifi1>;
+	};
+*/
 };
 
 &usdhc3 {

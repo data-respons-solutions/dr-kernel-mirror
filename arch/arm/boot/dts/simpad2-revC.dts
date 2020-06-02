@@ -17,7 +17,7 @@
 / {
     model = "Laerdal Medical SIMPAD PLUS (REV C)";
     compatible = "datarespons,imx6", "fsl,imx6dl";
-    
+
     aliases {
         mmc0 = &usdhc3;
         mmc1 = &usdhc4;
@@ -28,7 +28,14 @@
         reg = <0x10000000 0x40000000>;
     };
 
-    regulators {
+   clocks {
+        bt_clk: clock@1 {
+        	#clock-cells = <0>;
+            compatible = "fixed-clock";
+            clock-output-names = "lpo";
+            clock-frequency = <32768>;
+        };
+    };    regulators {
         compatible = "simple-bus";
 
         reg_5v: ext_5v {
@@ -40,7 +47,7 @@
             enable-active-high;
             regulator-always-on;
         };
-        
+
         reg_wifi: wifi_pwr {
             compatible = "regulator-fixed";
             regulator-name = "reg_wifi";
@@ -50,7 +57,7 @@
             enable-active-high;
             regulator-always-on;
         };
-        
+
         reg_wifi_io: wifi_pwr_io {
             compatible = "regulator-fixed";
             regulator-name = "reg_wifi_io";
@@ -62,7 +69,7 @@
             startup-delay-us = <0>;
             regulator-always-on;
         };
-    
+
         reg_wifi_en: wifi_enable {
             compatible = "regulator-fixed";
             regulator-name = "reg_wifi_enable";
@@ -88,7 +95,6 @@
             regulator-always-on;
         };
 */
-    
         reg_usb_otg_vbus: usb_otg_vbus {
             compatible = "regulator-fixed";
             regulator-name = "usb_otg_vbus";
@@ -116,7 +122,7 @@
         };
 
     };
-    
+
     bl0: backlight  {
         compatible = "pwm-backlight";
         pwms = <&pwm1 0 25000>;
@@ -148,7 +154,7 @@
 				remote-endpoint = <&ipu1_di0_disp0>;
 			};
 		};
-		
+
 		port@1 {
 			reg = <1>;
 
@@ -178,7 +184,7 @@
 		};
 		*/
 	};
-	
+
 	lcd_panel {
 		compatible = "edt,et057090dhu";
 		backlight = <&bl0>;
@@ -189,37 +195,16 @@
 			};
 		};
 	};
-	
 
     user-gpios {
-    	/*
-        gpio-lcd-enable {
-            gpios = <&gpio1 30 GPIO_ACTIVE_LOW>;
-            status = "okay";
-            value = <0>;
-        };
-    	*/
         gpio-lcd-flip-h {
             gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <0>;
         };
-        
+
         gpio-lcd-flip-v {
             gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
-            status = "okay";
-            value = <1>;
-        };
-        
-        /*
-        gpio-wifi-enable {
-            gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-            status = "okay";
-            value = <0>;
-        };
-		*/        
-        gpio-bt-enable {
-            gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <1>;
         };
@@ -229,73 +214,45 @@
             status = "okay";
             value = <1>;
         };
-        
-        /*
-        gpio-phy-rst {
-            gpios = <&gpio1 25 GPIO_ACTIVE_LOW>;
-            status = "okay";
-            value = <1>;
-        };
-        */
-        
+
         gpio-touch-rst {
             gpios = <&gpio4 10 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <1>;
         };
-        
+
         gpio-wlan-dev-wake {
             gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
             status = "okay";
             value = <1>;
         };
-        
+
         gpio-wlan-host-wake {
             gpios = <&gpio2 6 GPIO_ACTIVE_HIGH>;
             status = "okay";
             bidir;
         };
-        
-        gpio-bt-host-wake {
-            gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
-            status = "okay";
-            bidir;
-        };
-        
-        gpio-bt-dev-wake {
-            gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
-            status = "okay";
-            value = <1>;
-        };
-        
-        gpio-bt-clk_req {
-            gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
-            status = "okay";
-            bidir;
-        };
-        
     };
-    
+
     leds {
         compatible = "gpio-leds";
-    
         status-red {
             gpios = <&gpio1 18 GPIO_ACTIVE_HIGH>;
             default-state = "off";
         };
-        
+
         status-green {
             gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
             default-state = "on";
             linux,default-trigger = "timer";
         };
-        
+
         status-blue {
             gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
             default-state = "off";
         };
     };
-    
+
     sound {
         compatible = "fsl,lm-imx-audio-wm8960";
         model = "wm8960-audio";
@@ -315,9 +272,9 @@
         hp-det-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
         mic-det-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
     };
-    
+
     simpad-plus-psy {
-		status = "okay";		
+		status = "okay";
        	compatible = "datarespons,simpad-plus-psy";
        	startup-gpios = <&gpio5 16 GPIO_ACTIVE_HIGH &gpio5 17 GPIO_ACTIVE_HIGH>;
        	bat-ce-gpios = <&gpio4 14 GPIO_ACTIVE_HIGH &gpio3 23 GPIO_ACTIVE_LOW>;
@@ -403,7 +360,7 @@
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_i2c4>;
     status = "okay";
-    
+
         pmic: pfuze100@8 {
         compatible = "fsl,pfuze100";
         reg = <0x08>;
@@ -514,7 +471,7 @@
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_i2c1>;
     status = "okay";
-    
+
     codec: wm8960@1a {
         compatible = "wlf,wm8960-lm";
         reg = <0x1a>;
@@ -522,7 +479,7 @@
         clock-names = "mclk";
         wlf,shared-lrclk;
        };
-       
+
     mma8451@1c {
         compatible = "fsl,mma8451";
         reg = <0x1c>;
@@ -550,19 +507,19 @@
         wakeup-gpios = <&gpio7 13 0>;
         disable-suspend = <1>;
         };
-    
+
     bq27x00-battery@55 {
         compatible = "ti,bq27500";
         reg = <0x55>;
         status = "okay";
     };
-    
+
 	main_rtc: rtc-m41t82@68 {
 		compatible = "ds,m41t82";
 		reg = <0x68>;
 		xtal-cap = /bits/ 8 <0xc8>;		/* Fix for HW bug, turn off capacitance */
 	};
-    
+
 };
 
 
@@ -573,7 +530,6 @@
     hog {
         pinctrl_hog_1: hoggrp-1 {
             fsl,pins = <
-                MX6QDL_PAD_NANDF_CLE__GPIO6_IO07    0x80000000      /* GP--BT_HOST_WAKE */
                 MX6QDL_PAD_GPIO_4__GPIO1_IO04       0x0001b000      /* Function key (active low, pullup) */
                 MX6QDL_PAD_KEY_COL2__GPIO4_IO10     0x80000000      /* Touch reset (low)    */
                 MX6QDL_PAD_KEY_ROW1__GPIO4_IO09     0x80000000      /* AUX_5V_EN */
@@ -586,15 +542,11 @@
                 MX6QDL_PAD_GPIO_9__GPIO1_IO09       0x00010000      /* GP--HP_DET, pullup */
                 MX6QDL_PAD_GPIO_18__GPIO7_IO13      0x0001b8b1      /* GP--CTP_nINT (touch interrupt */
                 MX6QDL_PAD_GPIO_19__GPIO4_IO05      0x1b0b1         /* DC_IN_nFLG (used as alert) */
-                MX6QDL_PAD_NANDF_CS0__GPIO6_IO11    0x80000000      /* GP--WL_VDDIO_EN */
-                MX6QDL_PAD_NANDF_ALE__GPIO6_IO08    0x80000000      /* GP--BT_WAKE */
+                MX6QDL_PAD_NANDF_CS0__GPIO6_IO11    0x00000060      /* GP--WL_VDDIO_EN */
                 MX6QDL_PAD_NANDF_RB0__GPIO6_IO10    0x0001b000      /* PMIC_INT_B */
                 MX6QDL_PAD_NANDF_D1__GPIO2_IO01     0x0001b000      /* ACCL_INT_IN */
-                MX6QDL_PAD_NANDF_D3__GPIO2_IO03     0x80000000      /* WL_REG_ON (WiFI power) */
-                MX6QDL_PAD_NANDF_D4__GPIO2_IO04     0x80000000      /* BT_REG_ON (Bluetooth power) */
-                MX6QDL_PAD_NANDF_D5__GPIO2_IO05     0x0001b000      /* WL_IRQ (WiFI interrupt */
-                MX6QDL_PAD_NANDF_D6__GPIO2_IO06     0x80000000      /* GP--WL_HOST_WAKE */
-                MX6QDL_PAD_NANDF_D7__GPIO2_IO07     0x80000000      /* GP--WL_DEV_WAKE */
+                MX6QDL_PAD_NANDF_D3__GPIO2_IO03     0x00000060      /* WL_REG_ON (WiFI power) */
+                MX6QDL_PAD_NANDF_D4__GPIO2_IO04     0x00000060      /* BT_REG_ON (Bluetooth power) */
                 MX6QDL_PAD_EIM_A25__GPIO5_IO02      0x0001b000      /* Recovery_setting (control boot) */
                 MX6QDL_PAD_EIM_D20__GPIO3_IO20      0x80000000      /* GP--nWP--flash (SPI flash WP) */
                 MX6QDL_PAD_EIM_D23__GPIO3_IO23      0x1b0b1        /* GP--CHarger_ISET */
@@ -616,7 +568,26 @@
             >;
         };
     };
-    
+
+    bluetooth {
+        pinctrl_bt1: bt1grp {
+            fsl,pins = <
+                MX6QDL_PAD_NANDF_CLE__GPIO6_IO07    0x0001b010      /* GP--BT_HOST_WAKE */
+                MX6QDL_PAD_NANDF_ALE__GPIO6_IO08    0x00000060      /* GP--BT_WAKE */
+                MX6QDL_PAD_NANDF_D5__GPIO2_IO05     0x0001E060      /* BT clock request */
+            >;
+        };
+    };
+
+    wifi {
+        pinctrl_wifi1: wifi1grp {
+            fsl,pins = <
+                MX6QDL_PAD_NANDF_D6__GPIO2_IO06     0x0001b010      /* GP--WL_HOST_WAKE */
+                MX6QDL_PAD_NANDF_D7__GPIO2_IO07     0x00000060      /* GP--WL_DEV_WAKE */
+            >;
+        };
+    };
+
     ecspi1 {
         pinctrl_ecspi1: ecspi1grp {
             fsl,pins = <
@@ -627,7 +598,7 @@
             >;
         };
     };
-    
+
     ecspi2 {
         pinctrl_ecspi2: ecspi2grp {
             fsl,pins = <
@@ -638,7 +609,7 @@
             >;
         };
     };
-    
+
     uart1 {
         pinctrl_uart1: uart1grp {
             fsl,pins = <
@@ -647,7 +618,7 @@
             >;
         };
     };
-    
+
     uart2 {
         pinctrl_uart2: uart2grp {
             fsl,pins = <
@@ -656,7 +627,7 @@
             >;
         };
     };
-    
+
     uart3 {
         pinctrl_uart3: uart3grp {
             fsl,pins = <
@@ -665,7 +636,7 @@
             >;
         };
     };
-    
+
     uart4 {
         pinctrl_uart4: uart4grp {
             fsl,pins = <
@@ -682,7 +653,7 @@
             >;
         };
     };
-    
+
     pwm2 {
         pinctrl_pwm2: pwm2grp {
             fsl,pins = <
@@ -690,7 +661,7 @@
             >;
         };
     };
-    
+
     i2c3 {
         pinctrl_i2c3: i2c3grp {
             fsl,pins = <
@@ -699,7 +670,7 @@
             >;
         };
     };
-    
+
     i2c4 {
         pinctrl_i2c4: i2c4grp {
             fsl,pins = <
@@ -708,18 +679,18 @@
             >;
         };
     };
-    
+
     usbotg {
         pinctrl_usbotg_lm: usbotggrp-lm {
             fsl,pins = <
                 MX6QDL_PAD_ENET_RX_ER__USB_OTG_ID   0x17059
                 MX6QDL_PAD_EIM_D21__USB_OTG_OC      0x17059
                 MX6QDL_PAD_EIM_D22__GPIO3_IO22      0x80000000
-                 
+
             >;
         };
     };
-    
+
     usdhc3 {
         pinctrl_usdhc3: usdhc3grp {
             fsl,pins = <
@@ -749,7 +720,7 @@
             >;
         };
     };
-    
+
     audmux {
         pinctrl_audmux: audmuxgrp {
             fsl,pins = <
@@ -764,7 +735,7 @@
             >;
         };
     };
-    
+
     i2c1 {
         pinctrl_i2c1: i2c1grp {
             fsl,pins = <
@@ -794,7 +765,7 @@
             >;
         };
     };
-    
+
     uart5 {
         pinctrl_uart5_simpad2: uart5grp-simpad2 {
         fsl,pins = <
@@ -805,7 +776,7 @@
         >;
         };
     };
-    
+
     ipu1 {
         pinctrl_ipu1_simpad: ipu1grp-simpad {
             fsl,pins = <
@@ -834,7 +805,7 @@
                 MX6QDL_PAD_DISP0_DAT17__IPU1_DISP0_DATA17  0x10
             >;
         };
-        
+
       pinctrl_wdog: wdoggrp {
 		fsl,pins = <
 			MX6QDL_PAD_GPIO_1__WDOG2_B		0x1b0b0
@@ -869,6 +840,20 @@
     fsl,uart-has-rtscts;
     /* fsl,dte-mode; */
     status = "okay";
+
+    bluetooth {
+		compatible = "brcm,bcm43438-bt";
+		clocks = <&bt_clk 0>;
+		clock-names = "lpo";
+        max-speed = <921600>;
+		device-wakeup-gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
+		host-wakeup-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+		shutdown-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_bt1>;
+		vbat-supply = <&reg_wifi>;
+		vddio-supply = <&reg_wifi_io>;
+	};
 };
 
 &usbh1 {
@@ -897,7 +882,7 @@
 
 &usdhc4 {
     pinctrl-names = "default";
-    pinctrl-0 = <&pinctrl_usdhc4>;
+    pinctrl-0 = <&pinctrl_usdhc4 &pinctrl_wifi1>;
     bus-width = <4>;
     non-removable;
     keep-power-in-suspend;
