@@ -362,12 +362,6 @@
     };
 };
 
-
-&gpc {
-    fsl,ldo-bypass = <0>; /* use ldo-bypass, u-boot will check it and configure */
-    fsl,wdog-reset = <1>; /* watchdog select of reset source */
-};
-
 &wdog1 {
     status = "disabled";
 };

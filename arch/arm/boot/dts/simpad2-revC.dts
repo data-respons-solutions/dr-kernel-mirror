@@ -35,7 +35,9 @@
             clock-output-names = "lpo";
             clock-frequency = <32768>;
         };
-    };    regulators {
+    };
+    
+    regulators {
         compatible = "simple-bus";
 
         reg_5v: ext_5v {
@@ -338,20 +340,12 @@
     };
 };
 
-
-&gpc {
-    fsl,ldo-bypass = <0>; /* use ldo-bypass, u-boot will check it and configure */
-    fsl,wdog-reset = <1>; /* watchdog select of reset source */
-};
-
 &wdog1 {
     status = "disabled";
 };
 
 &wdog2 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_wdog>;
-	fsl,ext-reset-output;
 	status = "okay";
 };
 
@@ -550,7 +544,7 @@
                 MX6QDL_PAD_EIM_A25__GPIO5_IO02      0x0001b000      /* Recovery_setting (control boot) */
                 MX6QDL_PAD_EIM_D20__GPIO3_IO20      0x80000000      /* GP--nWP--flash (SPI flash WP) */
                 MX6QDL_PAD_EIM_D23__GPIO3_IO23      0x1b0b1        /* GP--CHarger_ISET */
-                MX6QDL_PAD_EIM_D26__GPIO3_IO26      0x80000000      /* GP--WL_BAT_PWR_EN */
+                MX6QDL_PAD_EIM_D26__GPIO3_IO26      0x00000060      /* GP--WL_BAT_PWR_EN */
                 MX6QDL_PAD_EIM_D27__GPIO3_IO27      0x0001b000      /* HW_Setting_0 */
                 MX6QDL_PAD_EIM_D28__GPIO3_IO28      0x0001b000      /* HW_Setting_1 */
                 MX6QDL_PAD_EIM_D29__GPIO3_IO29      0x0001b000      /* PPWR_BTN_SNS */
@@ -806,11 +800,6 @@
             >;
         };
 
-      pinctrl_wdog: wdoggrp {
-		fsl,pins = <
-			MX6QDL_PAD_GPIO_1__WDOG2_B		0x1b0b0
-		>;
-		};
     };
 };
 
@@ -866,9 +855,7 @@
     vbus-supply = <&reg_usb_otg_vbus>;
     over-current-active-low;
     disable_over_current;
-    srp-disable;
-    hnp-disable;
-    adp-disable;
+    dr_mode = "otg";
     status = "okay";
 };
 

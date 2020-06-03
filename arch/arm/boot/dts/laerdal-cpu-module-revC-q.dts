@@ -10,7 +10,7 @@
  */
 
 /dts-v1/;
-
+#include "imx6q.dtsi"
 #include "laerdal-cpu-module-revC.dtsi"
 
 / {

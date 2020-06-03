@@ -10,10 +10,18 @@
  */
 
 /dts-v1/;
-
+#include "imx6dl.dtsi"
 #include "laerdal-cpu-module-revC.dtsi"
 
 / {
     model = "Laerdal Medical CPU Module (rev C - Duallite)";
 	compatible = "datarespons,imx6", "fsl,imx6dl";
+};
+
+&epdc {
+    status = "disabled";
+};
+
+&i2c4 {
+    status = "disabled";
 };

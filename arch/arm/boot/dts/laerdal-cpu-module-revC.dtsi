@@ -9,9 +9,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-/dts-v1/;
 
-#include "imx6dl.dtsi"
 #include <dt-bindings/pwm/pwm.h>
 #include <dt-bindings/gpio/gpio.h>
 
@@ -272,11 +270,6 @@
     };
 };
 
-&gpc {
-    fsl,ldo-bypass = <0>; /* use ldo-bypass, u-boot will check it and configure */
-    fsl,wdog-reset = <1>; /* watchdog select of reset source */
-};
-
 &wdog1 {
     status = "disabled";
 };
@@ -309,8 +302,8 @@
     status = "okay";
 
     ina219_1: ina2xx@40 {
-	compatible = "ti,ina219";
-	reg = <0x40>;
+        compatible = "ti,ina219";
+        reg = <0x40>;
     };
 
     pmic: pmic@8 {
@@ -442,7 +435,6 @@
             MX6QDL_PAD_GPIO_5__GPIO1_IO05		0x80000000		/* GP--SPK_nSD */
             MX6QDL_PAD_GPIO_0__CCM_CLKO1        0x130b0         /* External audio clk */
             MX6QDL_PAD_NANDF_CS0__GPIO6_IO11    0x00000060      /* GP--WL_VDDIO_EN */
-            MX6QDL_PAD_NANDF_ALE__GPIO6_IO08    0x1b8b1         /* GP--BT_WAKE */
             MX6QDL_PAD_NANDF_RB0__GPIO6_IO10    0x0001b000      /* PMIC_INT_B */
             MX6QDL_PAD_NANDF_D3__GPIO2_IO03     0X00000060      /* WL_REG_ON (WiFI power) */
             MX6QDL_PAD_NANDF_D4__GPIO2_IO04     0X00000060      /* BT_REG_ON (Bluetooth power) */
@@ -678,15 +670,6 @@
         };
     };
 
-    i2c4 {
-        pinctrl_i2c4: i2c4grp {
-            fsl,pins = <
-                MX6QDL_PAD_NANDF_WP_B__I2C4_SCL 0x4001b8b1
-                MX6QDL_PAD_NANDF_CS3__I2C4_SDA 0x4001b8b1
-            >;
-        };
-    };
-
     enet {
         pinctrl_enet_linkbox2: enetgrp-lb2 {
             fsl,pins = <
@@ -795,9 +778,7 @@
     status = "okay";
     vbus-supply = <&swbst_reg>;
     disable-over-current;
-    srp-disable;
-    hnp-disable;
-    adp-disable;
+    dr_mode = "otg";
 };
 
 &usdhc2 {
@@ -843,9 +824,7 @@
     status = "disabled";
 };
 
-&epdc {
-    status = "disabled";
-};
+
 
 &audmux {
     pinctrl-names = "default";
