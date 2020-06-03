@@ -1615,6 +1615,11 @@ static int spi_imx_probe(struct platform_device *pdev)
 		spi_drctl = 0;
 	}
 
+	if (of_property_read_bool(np, "nodma")) {
+		use_dma = false;
+		dev_info(&pdev->dev, "Disabled DMA from DT\n");
+	}
+
 	platform_set_drvdata(pdev, master);
 
 	master->bits_per_word_mask = SPI_BPW_RANGE_MASK(1, 32);
