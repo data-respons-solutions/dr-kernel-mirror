@@ -850,7 +850,7 @@
     pinctrl-0 = <&pinctrl_usbotg>;
     status = "okay";
     vbus-supply = <&swbst_reg>;
-    over-current-active-low;
+    disable-over-current;
     dr_mode = "host";
 };
 
