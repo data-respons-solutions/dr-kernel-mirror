@@ -1,0 +1,25 @@
+/*
+ * Copyright DATA RESPONS AS
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
+/dts-v1/;
+
+#include "imx6q.dtsi"
+#include "dr-imx6-gw-revD-common.dtsi"
+
+/ {
+    model = "DR imx6 GW board (rev D - quad)";
+    compatible = "fsl,imx6q";
+
+    memory {
+        reg = <0x10000000 0xF0000000>;
+    };
+
+};
