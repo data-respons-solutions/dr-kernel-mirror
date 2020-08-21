@@ -16,7 +16,7 @@
 
 / {
     model = "DR imx6 GW board (rev D - quad)";
-    compatible = "fsl,imx6q";
+    compatible = "dr,dr-imx6-gw-dl", "fsl,imx6q";
 
     memory {
         reg = <0x10000000 0xF0000000>;
