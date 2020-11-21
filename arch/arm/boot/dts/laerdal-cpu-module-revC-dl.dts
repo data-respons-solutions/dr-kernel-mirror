@@ -14,14 +14,14 @@
 #include "laerdal-cpu-module-revC.dtsi"
 
 / {
-    model = "Laerdal Medical CPU Module (rev C - Duallite)";
+	model = "Laerdal Medical CPU Module (rev C - Duallite)";
 	compatible = "datarespons,imx6", "fsl,imx6dl";
 };
 
 &epdc {
-    status = "disabled";
+	status = "disabled";
 };
 
 &i2c4 {
-    status = "disabled";
+	status = "disabled";
 };

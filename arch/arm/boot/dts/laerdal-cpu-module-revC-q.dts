@@ -14,6 +14,6 @@
 #include "laerdal-cpu-module-revC.dtsi"
 
 / {
-    model = "Laerdal Medical CPU Module (rev C - Quad)";
+	model = "Laerdal Medical CPU Module (rev C - Quad)";
 	compatible = "datarespons,imx6", "fsl,imx6q";
 };
