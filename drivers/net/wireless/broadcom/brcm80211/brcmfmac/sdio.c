@@ -4188,6 +4188,7 @@ static const struct brcmf_bus_ops brcmf_sdio_bus_ops = {
 
 #define BRCMF_SDIO_FW_CODE	0
 #define BRCMF_SDIO_FW_NVRAM	1
+static int fw_ready = 0;
 
 static void brcmf_sdio_firmware_callback(struct device *dev, int err,
 					 struct brcmf_fw_request *fwreq)
@@ -4384,7 +4385,7 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
 		brcmf_err("brcmf_attach failed\n");
 		goto free;
 	}
-
+	fw_ready = 1;
 	/* ready */
 	return;
 
@@ -4401,6 +4402,12 @@ fail:
 	device_release_driver(&sdiod->func2->dev);
 	device_release_driver(dev);
 }
+
+int brcmf_sdio_fw_ready(void)
+{
+	return fw_ready;
+}
+EXPORT_SYMBOL(brcmf_sdio_fw_ready);
 
 static struct brcmf_fw_request *
 brcmf_sdio_prepare_fw_request(struct brcmf_sdio *bus)
