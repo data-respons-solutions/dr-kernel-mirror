@@ -275,6 +275,7 @@ config SND_SOC_ALL_CODECS
 	imply SND_SOC_WM9713
 	imply SND_SOC_WSA881X
 	imply SND_SOC_ZL38060
+	imply SND_SOC_WM8960_LM
 	help
 	  Normally ASoC codec drivers are only built if a machine driver which
 	  uses them is also built since they are only usable with a machine
@@ -1576,6 +1577,10 @@ config SND_SOC_WM8955
 
 config SND_SOC_WM8960
 	tristate "Wolfson Microelectronics WM8960 CODEC"
+	depends on I2C
+
+config SND_SOC_WM8960_LM
+	tristate "Wolfson Microelectronics WM8960 CODEC (working one)"
 	depends on I2C
 
 config SND_SOC_WM8961

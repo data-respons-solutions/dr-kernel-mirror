@@ -36,7 +36,7 @@
 			clock-frequency = <32768>;
 		};
 	};
-	
+
 	regulators {
 		compatible = "simple-bus";
 
@@ -231,7 +231,7 @@
 	sound {
 		compatible = "fsl,lm-imx-audio-wm8960";
 		model = "wm8960-audio";
-		ssi-controller = <&ssi2>;
+		audio-cpu = <&ssi2>;
 		audio-codec = <&codec>;
 		audio-routing =
 			"Headphone Jack", "HP_L",
@@ -246,6 +246,7 @@
 		speaker-auto-switch;
 		hp-det-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
 		mic-det-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+		status = "okay";
 	};
 
 	simpad-plus-psy {
@@ -803,14 +804,14 @@
 	status = "okay";
 
 	bluetooth {
-		compatible = "brcm,bcm4329-bt";
+		compatible = "brcm,bcm43241-bt";
 		clocks = <&bt_clk 0>;
 		clock-names = "lpo";
 		max-speed = <921600>;
 		device-wakeup-gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
 		interrupt-parent = <&gpio6>;
 		interrupts = <7 IRQ_TYPE_LEVEL_HIGH>;
-		interrupt-names = "host-wake";
+		interrupt-names = "host-wakeup";
 		shutdown-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_bt1>;

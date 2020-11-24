@@ -205,7 +205,7 @@
 	sound_2ch {
 		compatible = "fsl,lm-imx-audio-wm8960";
 		model = "cpu-module";
-		ssi-controller = <&ssi2>;
+		audio-cpu = <&ssi2>;
 		audio-codec = <&codec>;
 		audio-routing =
 			"Headphone", "HP_L",
