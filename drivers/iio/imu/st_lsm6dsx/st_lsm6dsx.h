@@ -83,6 +83,7 @@ enum st_lsm6dsx_fifo_mode {
  * @sip: Number of samples in a given pattern.
  * @decimator: FIFO decimation factor.
  * @decimator_mask: Sensor mask for decimation register.
+ * @enable_wake: Enable significant motion wake
  * @delta_ts: Delta time between two consecutive interrupts.
  * @ts: Latest timestamp from the interrupt handler.
  */
@@ -99,7 +100,6 @@ struct st_lsm6dsx_sensor {
 	u8 decimator;
 	u8 decimator_mask;
 	u8 enable_wake;
-
 	s64 delta_ts;
 	s64 ts;
 };
@@ -117,6 +117,7 @@ struct st_lsm6dsx_sensor {
  * @settings: Pointer to the specific sensor settings in use.
  * @tf: Transfer function structure used by I/O operations.
  * @tb: Transfer buffers used by SPI I/O operations.
+ * @sigmo_ths: Significant motion treshhold
  */
 struct st_lsm6dsx_hw {
 	struct device *dev;
@@ -137,6 +138,7 @@ struct st_lsm6dsx_hw {
 #if defined(CONFIG_SPI_MASTER)
 	struct st_lsm6dsx_transfer_buffer tb;
 #endif /* CONFIG_SPI_MASTER */
+	u8 sigmo_tsh;
 };
 
 extern const struct dev_pm_ops st_lsm6dsx_pm_ops;

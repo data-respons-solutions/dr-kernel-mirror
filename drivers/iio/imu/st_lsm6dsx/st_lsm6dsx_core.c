@@ -89,6 +89,9 @@
 #define ST_LSM6DSX_CTRL10_C_FUNC_EN_MASK	BIT(2)
 #define ST_LSM6DSX_CTRL10_C_SIGN_MOTION_EN_MASK	BIT(0)
 
+#define ST_LSM6DSX_REG_FUNC_CFG_ADDR	0x01
+#define ST_LSM6DSX_REG_FUNC_CFG_EN_MASK	0x80
+
 struct st_lsm6dsx_odr {
 	u16 hz;
 	u8 val;
@@ -248,6 +251,40 @@ out:
 	mutex_unlock(&hw->lock);
 
 	return err;
+}
+
+static int st_lsm6dsx_read_embedded(struct st_lsm6dsx_hw* hw, u8 addr)
+{
+	u8 val;
+	u8 func = ST_LSM6DSX_REG_FUNC_CFG_EN_MASK;
+	int rc = hw->tf->write(hw->dev, ST_LSM6DSX_REG_FUNC_CFG_ADDR, 1, &func);
+	if (rc < 0)
+		return rc;
+
+	rc = hw->tf->read(hw->dev, addr, 1, &val);
+	if (rc < 0) {
+		dev_err(hw->dev, "failed to read %02x register\n", addr);
+		return rc;
+	}
+	func = 0;
+	rc = hw->tf->write(hw->dev, ST_LSM6DSX_REG_FUNC_CFG_ADDR, 1, &func);
+	return rc < 0 ? rc : val;
+}
+
+static int st_lsm6dsx_write_embedded(struct st_lsm6dsx_hw* hw, u8 addr, u8 val)
+{
+	u8 func = ST_LSM6DSX_REG_FUNC_CFG_EN_MASK;
+	int rc = hw->tf->write(hw->dev, ST_LSM6DSX_REG_FUNC_CFG_ADDR, 1, &func);
+	if (rc < 0)
+		return rc;
+
+	rc = hw->tf->write(hw->dev, addr, 1, &val);
+	if (rc < 0) {
+		dev_err(hw->dev, "failed to read %02x register\n", addr);
+		return rc;
+	}
+	func = 0;
+	return  hw->tf->write(hw->dev, ST_LSM6DSX_REG_FUNC_CFG_ADDR, 1, &func);
 }
 
 static int st_lsm6dsx_check_whoami(struct st_lsm6dsx_hw *hw, int id)
@@ -538,11 +575,33 @@ static ssize_t st_lsm6dsx_sysfs_wos_set(struct device *dev,
 	return len;
 }
 
+static ssize_t st_lsm6dsx_sysfs_wos_tsh_get(struct device* dev,
+	struct device_attribute* attr,
+	char* buf)
+{
+	struct st_lsm6dsx_sensor* sensor = iio_priv(dev_get_drvdata(dev));
+	return sprintf(buf, "%d\n", sensor->hw->sigmo_tsh);
+}
+
+static ssize_t st_lsm6dsx_sysfs_wos_tsh_set(struct device* dev,
+	struct device_attribute* attr,
+	const char* buf, size_t len)
+{
+	struct st_lsm6dsx_sensor* sensor = iio_priv(dev_get_drvdata(dev));
+	unsigned int val;
+	int ret = kstrtouint(buf, 10, &val);
+	if (ret < 0 || val > 255)
+		return ret;
+	sensor->hw->sigmo_tsh = val;
+	return len;
+}
+
 static IIO_DEV_ATTR_SAMP_FREQ_AVAIL(st_lsm6dsx_sysfs_sampling_frequency_avail);
 static IIO_DEVICE_ATTR(in_accel_scale_available, 0444,
 		       st_lsm6dsx_sysfs_scale_avail, NULL, 0);
 
 static IIO_DEVICE_ATTR(wake_on_shake, 0644, st_lsm6dsx_sysfs_wos_get, st_lsm6dsx_sysfs_wos_set, 0);
+static IIO_DEVICE_ATTR(sigmo_treshhold, 0644, st_lsm6dsx_sysfs_wos_tsh_get, st_lsm6dsx_sysfs_wos_tsh_set, 0);
 
 static IIO_DEVICE_ATTR(in_anglvel_scale_available, 0444,
 		       st_lsm6dsx_sysfs_scale_avail, NULL, 0);
@@ -551,6 +610,7 @@ static struct attribute *st_lsm6dsx_acc_attributes[] = {
 	&iio_dev_attr_sampling_frequency_available.dev_attr.attr,
 	&iio_dev_attr_in_accel_scale_available.dev_attr.attr,
 	&iio_dev_attr_wake_on_shake.dev_attr.attr,
+	& iio_dev_attr_sigmo_treshhold.dev_attr.attr,
 	NULL,
 };
 
@@ -648,6 +708,12 @@ static int st_lsm6dsx_init_device(struct st_lsm6dsx_hw *hw)
 					 ST_LSM6DSX_REG_LIR_MASK, 1);
 	if (err < 0)
 		return err;
+
+	/* Get the sigmo threshhold */
+	st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_ACC_ODR_ADDR, 0xf0, 0);
+	err = st_lsm6dsx_read_embedded(hw, 0x13);
+	hw->sigmo_tsh = err < 0 ? 0x6 : err;
+	dev_info(hw->dev, "Sigmo reg is %d\n", hw->sigmo_tsh);
 
 	/* enable Block Data Update */
 	err = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_BDU_ADDR,
@@ -837,21 +903,24 @@ void st_lsm6dsx_shutdown(struct device *dev)
 	u8 drdy_int_reg;
 	struct st_lsm6dsx_hw *hw = dev_get_drvdata(dev);
 	struct st_lsm6dsx_sensor *sensor = iio_priv(hw->iio_devs[ST_LSM6DSX_ID_ACC]);
+	/* Power down to set embedded register */
+	st_lsm6dsx_write_with_mask(hw,
+		st_lsm6dsx_odr_table[ST_LSM6DSX_ID_ACC].reg.addr,
+		st_lsm6dsx_odr_table[ST_LSM6DSX_ID_ACC].reg.mask, 0);
+	st_lsm6dsx_write_embedded(hw, 0x13, hw->sigmo_tsh);
+
 	if ( sensor->enable_wake) {
+		dev_info(dev, "Set sigmo_treshhold to %d\n", hw->sigmo_tsh);
 		/* Enable the significant motion interrupt */
 		dev_warn(dev, "Enabling SMO interrupt in power down mode\n");
 		st_lsm6dsx_get_drdy_reg(hw, &drdy_int_reg);
 		st_lsm6dsx_write_with_mask(hw, drdy_int_reg, BIT(6), 1);
-		st_lsm6dsx_enable_sigmo(hw, 1);
 
 		/* Keep accelerometer running at 26 Hz */
 		st_lsm6dsx_set_odr(iio_priv(hw->iio_devs[ST_LSM6DSX_ID_ACC]),
 				st_lsm6dsx_odr_table[ST_LSM6DSX_ID_ACC].odr_avl[1].hz);
+		st_lsm6dsx_enable_sigmo(hw, 1);
 	}
-	else
-		st_lsm6dsx_write_with_mask(hw,
-				st_lsm6dsx_odr_table[ST_LSM6DSX_ID_ACC].reg.addr,
-				st_lsm6dsx_odr_table[ST_LSM6DSX_ID_ACC].reg.mask, 0);
 
 	st_lsm6dsx_write_with_mask(hw,
 			st_lsm6dsx_odr_table[ST_LSM6DSX_ID_GYRO].reg.addr,
