@@ -100,6 +100,7 @@ struct st_lsm6dsx_sensor {
 	u8 decimator;
 	u8 decimator_mask;
 	u8 enable_wake;
+	u8 enable_wake_v2;
 	s64 delta_ts;
 	s64 ts;
 };
