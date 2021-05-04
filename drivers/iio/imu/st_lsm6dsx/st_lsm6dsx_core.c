@@ -92,6 +92,24 @@
 #define ST_LSM6DSX_REG_FUNC_CFG_ADDR	0x01
 #define ST_LSM6DSX_REG_FUNC_CFG_EN_MASK	0x80
 
+#define ST_LSM6DSX_REG_WAKE_UP_DUR_ADDR				0x5c
+#define ST_LSM6DSX_REG_WAKE_UP_DUR_WAKE_DUR_MASK	GENMASK(6, 5)
+
+#define ST_LSM6DSX_REG_WAKE_UP_THS_ADDR				0x5b
+#define ST_LSM6DSX_REG_WAKE_UP_THS_WK_THS_MASK		GENMASK(5, 0)
+
+#define ST_LSM6DSX_REG_TAP_CFG_ADDR					0x58
+#define ST_LSM6DSX_REG_TAP_CFG_SLOPE_FDS_MASK		BIT(4)
+#define ST_LSM6DSX_REG_TAP_CFG_INTERRUPTS_ENABLE_MASK BIT(7)
+
+#define ST_LSM6DSX_REG_WAKE_UP_SRC_ADDR				0x1b
+
+#define ST_LSM6DSX_REG_MD1_CFG_ADDR					0x5e
+#define ST_LSM6DSX_REG_MD1_CFG_INT1_WU_MASK			BIT(5)
+
+#define ST_LSM6DSX_REG_MD2_CFG_ADDR					0x5f
+#define ST_LSM6DSX_REG_MD2_CFG_INT2_WU_MASK			BIT(5)
+
 struct st_lsm6dsx_odr {
 	u16 hz;
 	u8 val;
@@ -596,12 +614,267 @@ static ssize_t st_lsm6dsx_sysfs_wos_tsh_set(struct device* dev,
 	return len;
 }
 
+/*
+ * Read/Write value bits defined in mask.
+ * Will never write bits outside mask, value capped to mask.
+ *
+ * Returns negative errno for error.
+ */
+static int st_lsm6dsx_read_reg(struct st_lsm6dsx_hw* hw, u8 addr, u8 mask, char* buf)
+{
+	int r;
+	u8 val;
+
+	mutex_lock(&hw->lock);
+	r = hw->tf->read(hw->dev, addr, sizeof(val), &val);
+	mutex_unlock(&hw->lock);
+	if (r < 0) {
+		dev_err(hw->dev, "failed to read %02x register: %d\n", addr, r);
+		return r;
+	}
+	val = (val & mask) >> __ffs(mask);
+	return sprintf(buf, "%d\n", val);
+}
+
+static int st_lsm6dsx_write_reg(struct st_lsm6dsx_hw* hw, u8 addr, u8 mask, const char* buf)
+{
+	int r;
+	unsigned int val;
+	const size_t max_val = mask >> __ffs(mask);
+
+	r = kstrtouint(buf, 10, &val);
+	if (r < 0)
+		return r;
+	if (val > max_val)
+		return -EINVAL;
+
+	return st_lsm6dsx_write_with_mask(hw, addr, mask, val);
+}
+
+
+static ssize_t st_lsm6dsx_sysfs_wake_up_ths_set(struct device* dev, struct device_attribute* attr,
+									const char* buf, size_t len)
+{
+	struct st_lsm6dsx_sensor* sensor = iio_priv(dev_get_drvdata(dev));
+	int r;
+
+	r = st_lsm6dsx_write_reg(sensor->hw,
+			ST_LSM6DSX_REG_WAKE_UP_THS_ADDR, ST_LSM6DSX_REG_WAKE_UP_THS_WK_THS_MASK,
+			buf);
+	if (r < 0)
+		return r;
+
+	return len;
+}
+
+static ssize_t st_lsm6dsx_sysfs_wake_up_ths_get(struct device* dev, struct device_attribute* attr,
+									char* buf)
+{
+	struct st_lsm6dsx_sensor* sensor = iio_priv(dev_get_drvdata(dev));
+
+	return st_lsm6dsx_read_reg(sensor->hw, ST_LSM6DSX_REG_WAKE_UP_THS_ADDR, ST_LSM6DSX_REG_WAKE_UP_THS_WK_THS_MASK, buf);
+}
+
+static ssize_t st_lsm6dsx_sysfs_wake_up_dur_set(struct device* dev, struct device_attribute* attr,
+									const char* buf, size_t len)
+{
+	struct st_lsm6dsx_sensor* sensor = iio_priv(dev_get_drvdata(dev));
+	int r;
+
+	r = st_lsm6dsx_write_reg(sensor->hw,
+			ST_LSM6DSX_REG_WAKE_UP_DUR_ADDR, ST_LSM6DSX_REG_WAKE_UP_DUR_WAKE_DUR_MASK,
+			buf);
+	if (r < 0)
+		return r;
+
+	return len;
+}
+
+static ssize_t st_lsm6dsx_sysfs_wake_up_dur_get(struct device* dev, struct device_attribute* attr,
+									char* buf)
+{
+	struct st_lsm6dsx_sensor* sensor = iio_priv(dev_get_drvdata(dev));
+
+	return st_lsm6dsx_read_reg(sensor->hw, ST_LSM6DSX_REG_WAKE_UP_DUR_ADDR, ST_LSM6DSX_REG_WAKE_UP_DUR_WAKE_DUR_MASK, buf);
+}
+
+static ssize_t st_lsm6dsx_sysfs_slope_fds_set(struct device* dev, struct device_attribute* attr,
+									const char* buf, size_t len)
+{
+	struct st_lsm6dsx_sensor* sensor = iio_priv(dev_get_drvdata(dev));
+	int r;
+
+	r = st_lsm6dsx_write_reg(sensor->hw,
+			ST_LSM6DSX_REG_TAP_CFG_ADDR, ST_LSM6DSX_REG_TAP_CFG_SLOPE_FDS_MASK,
+			buf);
+	if (r < 0)
+		return r;
+
+	return len;
+}
+
+static ssize_t st_lsm6dsx_sysfs_slope_fds_get(struct device* dev, struct device_attribute* attr,
+									char* buf)
+{
+	struct st_lsm6dsx_sensor* sensor = iio_priv(dev_get_drvdata(dev));
+
+	return st_lsm6dsx_read_reg(sensor->hw, ST_LSM6DSX_REG_TAP_CFG_ADDR, ST_LSM6DSX_REG_TAP_CFG_SLOPE_FDS_MASK, buf);
+}
+
+static ssize_t st_lsm6dsx_sysfs_wake_up_src_get(struct device* dev, struct device_attribute* attr,
+									char* buf)
+{
+	struct st_lsm6dsx_sensor* sensor = iio_priv(dev_get_drvdata(dev));
+
+	return st_lsm6dsx_read_reg(sensor->hw, ST_LSM6DSX_REG_WAKE_UP_SRC_ADDR, 0xff, buf);
+}
+
+static ssize_t st_lsm6dsx_sysfs_wake_on_shake_v2_get(struct device *dev, struct device_attribute *attr,
+				       char *buf)
+{
+	struct st_lsm6dsx_sensor *sensor = iio_priv(dev_get_drvdata(dev));
+	return sprintf(buf, "%d\n", sensor->enable_wake_v2 ? 1 : 0);
+}
+
+static ssize_t st_lsm6dsx_sysfs_wake_on_shake_v2_set(struct device *dev, struct device_attribute *attr,
+				       const char *buf, size_t len)
+{
+	struct st_lsm6dsx_sensor *sensor = iio_priv(dev_get_drvdata(dev));
+	unsigned int val;
+	int r;
+
+	r = kstrtouint(buf, 10, &val);
+	if (r < 0)
+		return r;
+	if (val > 1)
+		return -EINVAL;
+
+	sensor->enable_wake_v2 = val;
+	return len;
+}
+
+static ssize_t st_lsm6dsx_sysfs_wake_on_shake_debug_v2_get(struct device *dev, struct device_attribute *attr,
+				       char *buf)
+{
+	struct st_lsm6dsx_sensor* sensor = iio_priv(dev_get_drvdata(dev));
+	/* INT2_WU only set by debug function -- if active debug is active -- */
+	return st_lsm6dsx_read_reg(sensor->hw, ST_LSM6DSX_REG_MD2_CFG_ADDR, ST_LSM6DSX_REG_MD2_CFG_INT2_WU_MASK, buf);
+}
+
+enum wake_on_shake_interrupt {
+	WAKE_ON_SHAKE_INT1,
+	WAKE_ON_SHAKE_INT2,
+};
+
+static int wake_on_shake_v2(struct st_lsm6dsx_hw* hw, enum wake_on_shake_interrupt interrupt, int enable)
+{
+	int r;
+	u8 val;
+
+	if (enable) {
+		/* Set +/- 2g */
+		r = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_ACC_FS_ADDR, ST_LSM6DSX_REG_ACC_FS_MASK, 0);
+		if (r < 0)
+			return r;
+
+		/* Keep accelerometer running at 26 Hz */
+		r = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_ACC_ODR_ADDR, ST_LSM6DSX_REG_ACC_ODR_MASK, 2);
+		if (r < 0)
+			return r;
+		/* wait for 2 clock ticks before proceeding */
+		msleep(100);
+
+		/* Route wake-up to interrupt and enable interrupts */
+		if (interrupt == WAKE_ON_SHAKE_INT1)
+			r = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_MD1_CFG_ADDR, ST_LSM6DSX_REG_MD1_CFG_INT1_WU_MASK, 1);
+		else
+			r = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_MD2_CFG_ADDR, ST_LSM6DSX_REG_MD2_CFG_INT2_WU_MASK, 1);
+
+		if (r < 0)
+			return r;
+
+		r = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_TAP_CFG_ADDR, ST_LSM6DSX_REG_TAP_CFG_INTERRUPTS_ENABLE_MASK, 1);
+		if (r < 0)
+			return r;
+
+		/* clear any pending interrupt */
+		mutex_lock(&hw->lock);
+		r = hw->tf->read(hw->dev, ST_LSM6DSX_REG_WAKE_UP_SRC_ADDR, sizeof(val), &val);
+		mutex_unlock(&hw->lock);
+		if (r < 0)
+			return r;
+	}
+	else {
+		r = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_ACC_ODR_ADDR, ST_LSM6DSX_REG_ACC_ODR_MASK, 0);
+		if (r < 0)
+			return r;
+		if (interrupt == WAKE_ON_SHAKE_INT1)
+			r = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_MD1_CFG_ADDR, ST_LSM6DSX_REG_MD1_CFG_INT1_WU_MASK, 0);
+		else
+			r = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_MD2_CFG_ADDR, ST_LSM6DSX_REG_MD2_CFG_INT2_WU_MASK, 0);
+
+		if (r < 0)
+			return r;
+
+		r = st_lsm6dsx_write_with_mask(hw, ST_LSM6DSX_REG_TAP_CFG_ADDR, ST_LSM6DSX_REG_TAP_CFG_INTERRUPTS_ENABLE_MASK, 0);
+		if (r < 0)
+			return r;
+	}
+
+	return 0;
+}
+
+static void print_reg(struct st_lsm6dsx_hw *hw, const char* name, u8 addr)
+{
+	int r;
+	u8 val;
+
+	mutex_lock(&hw->lock);
+	r = hw->tf->read(hw->dev, addr, sizeof(val), &val);
+	mutex_unlock(&hw->lock);
+	if (r >= 0)
+		dev_info(hw->dev, "wake_on_shake_debug_v2: %s (0x%x): 0x%x\n", name, addr, val);
+}
+
+static ssize_t st_lsm6dsx_sysfs_wake_on_shake_debug_v2_set(struct device *dev, struct device_attribute *attr,
+				       const char *buf, size_t len)
+{
+	struct st_lsm6dsx_sensor *sensor = iio_priv(dev_get_drvdata(dev));
+	unsigned int val;
+	int r;
+
+	r = kstrtouint(buf, 10, &val);
+	if (r < 0)
+		return r;
+	if (val > 1)
+		return -EINVAL;
+
+	r = wake_on_shake_v2(sensor->hw, WAKE_ON_SHAKE_INT2, val);
+	if (r < 0)
+		return r;
+
+	print_reg(sensor->hw, "CTRL1_XL", 0x10);
+	print_reg(sensor->hw, "MD2_CFG", 0x5f);
+	print_reg(sensor->hw, "WAKE_UP_DUR", 0x5c);
+	print_reg(sensor->hw, "WAKE_UP_THS", 0X5b);
+	print_reg(sensor->hw, "TAP_CFG", 0x58);
+
+	return len;
+}
+
+
 static IIO_DEV_ATTR_SAMP_FREQ_AVAIL(st_lsm6dsx_sysfs_sampling_frequency_avail);
 static IIO_DEVICE_ATTR(in_accel_scale_available, 0444,
 		       st_lsm6dsx_sysfs_scale_avail, NULL, 0);
 
 static IIO_DEVICE_ATTR(wake_on_shake, 0644, st_lsm6dsx_sysfs_wos_get, st_lsm6dsx_sysfs_wos_set, 0);
 static IIO_DEVICE_ATTR(sigmo_treshhold, 0644, st_lsm6dsx_sysfs_wos_tsh_get, st_lsm6dsx_sysfs_wos_tsh_set, 0);
+static IIO_DEVICE_ATTR(wake_up_ths_v2, 0644, st_lsm6dsx_sysfs_wake_up_ths_get, st_lsm6dsx_sysfs_wake_up_ths_set, 0);
+static IIO_DEVICE_ATTR(wake_up_dur_v2, 0644, st_lsm6dsx_sysfs_wake_up_dur_get, st_lsm6dsx_sysfs_wake_up_dur_set, 0);
+static IIO_DEVICE_ATTR(slope_fds_v2, 0644, st_lsm6dsx_sysfs_slope_fds_get, st_lsm6dsx_sysfs_slope_fds_set, 0);
+static IIO_DEVICE_ATTR(wake_up_src_v2, 0644, st_lsm6dsx_sysfs_wake_up_src_get, NULL, 0);
+static IIO_DEVICE_ATTR(wake_on_shake_v2, 0644, st_lsm6dsx_sysfs_wake_on_shake_v2_get, st_lsm6dsx_sysfs_wake_on_shake_v2_set, 0);
+static IIO_DEVICE_ATTR(wake_on_shake_debug_v2, 0644, st_lsm6dsx_sysfs_wake_on_shake_debug_v2_get, st_lsm6dsx_sysfs_wake_on_shake_debug_v2_set, 0);
 
 static IIO_DEVICE_ATTR(in_anglvel_scale_available, 0444,
 		       st_lsm6dsx_sysfs_scale_avail, NULL, 0);
@@ -610,7 +883,13 @@ static struct attribute *st_lsm6dsx_acc_attributes[] = {
 	&iio_dev_attr_sampling_frequency_available.dev_attr.attr,
 	&iio_dev_attr_in_accel_scale_available.dev_attr.attr,
 	&iio_dev_attr_wake_on_shake.dev_attr.attr,
-	& iio_dev_attr_sigmo_treshhold.dev_attr.attr,
+	&iio_dev_attr_sigmo_treshhold.dev_attr.attr,
+	&iio_dev_attr_wake_up_ths_v2.dev_attr.attr,
+	&iio_dev_attr_wake_up_dur_v2.dev_attr.attr,
+	&iio_dev_attr_slope_fds_v2.dev_attr.attr,
+	&iio_dev_attr_wake_up_src_v2.dev_attr.attr,
+	&iio_dev_attr_wake_on_shake_v2.dev_attr.attr,
+	&iio_dev_attr_wake_on_shake_debug_v2.dev_attr.attr,
 	NULL,
 };
 
@@ -909,7 +1188,13 @@ void st_lsm6dsx_shutdown(struct device *dev)
 		st_lsm6dsx_odr_table[ST_LSM6DSX_ID_ACC].reg.mask, 0);
 	st_lsm6dsx_write_embedded(hw, 0x13, hw->sigmo_tsh);
 
-	if ( sensor->enable_wake) {
+	if (sensor->enable_wake_v2) {
+		/* Expects slope filter, duration and threshold already configured */
+		dev_warn(dev, "Enabling wake_on_shake_v2 interrupt in power down mode\n");
+		wake_on_shake_v2(hw, WAKE_ON_SHAKE_INT1, 1);
+	}
+	else
+	if (sensor->enable_wake) {
 		dev_info(dev, "Set sigmo_treshhold to %d\n", hw->sigmo_tsh);
 		/* Enable the significant motion interrupt */
 		dev_warn(dev, "Enabling SMO interrupt in power down mode\n");
