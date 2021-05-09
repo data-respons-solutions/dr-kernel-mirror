@@ -1342,8 +1342,6 @@ static int imx_startup(struct uart_port *port)
 
 	/* Can we enable the DMA support? */
 
-	if (sport->nodma)
-		dev_info(port->dev, "DMA disabled in DT\n");
 	if (!sport->nodma && !uart_console(port) && !sport->dma_is_inited)
 		imx_uart_dma_init(sport);
 
@@ -2122,8 +2120,10 @@ static int serial_imx_probe_dt(struct imx_port *sport,
 	if (of_get_property(np, "rts-gpios", NULL))
 		sport->have_rtsgpio = 1;
 
-	if (of_get_property(np, "nodma", NULL))
+	if (of_get_property(np, "nodma", NULL)) {
 		sport->nodma = 1;
+		dev_info(&pdev->dev, "DMA disabled in DT\n");
+	}
 
 	return 0;
 }
