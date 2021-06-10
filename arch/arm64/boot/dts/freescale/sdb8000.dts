@@ -422,6 +422,10 @@
 	};
 };
 
+&lcdif {
+	status = "okay";
+};
+
 &mipi_dsi {
    status = "okay";
    port@1 {
