@@ -398,7 +398,7 @@
 	lvds_bridge: sn65dsi84@2c {
 		compatible = "ti,sn65dsi84";
 		reg = <0x2c>;
-		enable-gpio = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+		enable-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
 
 		ports {
 			#address-cells = <1>;
