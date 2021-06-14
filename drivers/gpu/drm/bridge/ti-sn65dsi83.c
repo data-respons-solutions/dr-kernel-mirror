@@ -546,9 +546,9 @@ static bool sn65dsi83_mode_fixup(struct drm_bridge *bridge,
 			 */
 			ctx->lvds_format_24bpp = true;
 			ctx->lvds_format_jeida = false;
-			dev_warn(ctx->dev,
-				 "Unsupported LVDS bus format 0x%04x, please check output bridge driver. Falling back to SPWG24.\n",
-				 connector->display_info.bus_formats[0]);
+			//dev_warn(ctx->dev,
+			//	 "Unsupported LVDS bus format 0x%04x, please check output bridge driver. Falling back to SPWG24.\n",
+			//	 connector->display_info.bus_formats[0]);
 			break;
 		}
 
