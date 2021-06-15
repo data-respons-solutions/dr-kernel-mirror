@@ -695,11 +695,13 @@ static int goodix_reset(struct goodix_ts_data *ts)
 
 	usleep_range(6000, 10000);		/* T4: > 5ms */
 
+	dev_info(&ts->client->dev, "Leave gpiod_rst high\n");
 	/* end select I2C slave addr */
+	/*
 	error = gpiod_direction_input(ts->gpiod_rst);
 	if (error)
 		return error;
-
+	*/
 	error = goodix_int_sync(ts);
 	if (error)
 		return error;
