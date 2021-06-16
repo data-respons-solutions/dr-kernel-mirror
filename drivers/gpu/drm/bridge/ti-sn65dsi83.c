@@ -297,13 +297,13 @@ static void sn65dsi83_pre_enable(struct drm_bridge *bridge)
 
 	/*
 	 * Reset the chip, pull EN line low for t_reset=10ms,
-	 * then high for t_en=1ms.
+	 * then high for t_en=10ms.
 	 */
 	regcache_mark_dirty(ctx->regmap);
 	gpiod_set_value(ctx->enable_gpio, 0);
 	usleep_range(10000, 11000);
 	gpiod_set_value(ctx->enable_gpio, 1);
-	usleep_range(1000, 1100);
+	usleep_range(10000, 11000);
 }
 
 static u8 sn65dsi83_get_lvds_range(struct sn65dsi83 *ctx)
@@ -371,6 +371,9 @@ static void sn65dsi83_enable(struct drm_bridge *bridge)
 	__le16 le16val;
 	u16 val;
 	int ret;
+
+	/* sn65dsi84 datasheet defines reset after MIPI CLK available */
+	sn65dsi83_pre_enable(bridge);
 
 	/* Clear reset, disable PLL */
 	regmap_write(ctx->regmap, REG_RC_RESET, 0x00);
@@ -454,12 +457,14 @@ static void sn65dsi83_enable(struct drm_bridge *bridge)
 
 	/* Enable PLL */
 	regmap_write(ctx->regmap, REG_RC_PLL_EN, REG_RC_PLL_EN_PLL_EN);
-	usleep_range(3000, 4000);
+	usleep_range(10000, 11000);
 	ret = regmap_read_poll_timeout(ctx->regmap, REG_RC_LVDS_PLL, pval,
 				       pval & REG_RC_LVDS_PLL_PLL_EN_STAT,
 				       1000, 100000);
 	if (ret) {
 		dev_err(ctx->dev, "failed to lock PLL, ret=%i\n", ret);
+		regmap_read(ctx->regmap, REG_IRQ_STAT, &pval);
+		dev_err(ctx->dev, "Reg 0xE5: 0x%02x\n", pval);
 		/* On failure, disable PLL again and exit. */
 		regmap_write(ctx->regmap, REG_RC_PLL_EN, 0x00);
 		return;
@@ -471,6 +476,8 @@ static void sn65dsi83_enable(struct drm_bridge *bridge)
 	/* Clear all errors that got asserted during initialization. */
 	regmap_read(ctx->regmap, REG_IRQ_STAT, &pval);
 	regmap_write(ctx->regmap, REG_IRQ_STAT, pval);
+
+	dev_info(ctx->dev, "Locked PLL\n");
 }
 
 static void sn65dsi83_disable(struct drm_bridge *bridge)
@@ -561,7 +568,7 @@ static bool sn65dsi83_mode_fixup(struct drm_bridge *bridge,
 
 static const struct drm_bridge_funcs sn65dsi83_funcs = {
 	.attach		= sn65dsi83_attach,
-	.pre_enable	= sn65dsi83_pre_enable,
+	/*.pre_enable	= sn65dsi83_pre_enable,*/
 	.enable		= sn65dsi83_enable,
 	.disable	= sn65dsi83_disable,
 	.post_disable	= sn65dsi83_post_disable,
