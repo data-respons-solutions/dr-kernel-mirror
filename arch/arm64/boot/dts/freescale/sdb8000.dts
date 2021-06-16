@@ -413,9 +413,9 @@
 		};
 	};
 
-    touch: gt5688@28 {
+    touch: gt5688@14 {
       compatible = "goodix,gt5688";
-      reg = <0x28>;
+      reg = <0x14>;
       interrupt-parent = <&gpio4>;
       interrupts = <26 IRQ_TYPE_NONE>;
       irq-gpios = <&gpio4 26 GPIO_ACTIVE_LOW>;
