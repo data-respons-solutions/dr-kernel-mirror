@@ -15,6 +15,11 @@
 		stdout-path = &uart4;
 	};
 
+	aliases {
+		rtc0 = &smc;
+		rtc1 = &snvs_rtc;
+	};
+
 	memory@40000000 {
 		device_type = "memory";
 		reg = <0x0 0x40000000 0 0x80000000>;
@@ -365,6 +370,15 @@
 			};
 		};
 	};
+
+
+	smc: vmcu@51 {
+		compatible = "drs,vmcu";
+		reg = <0x51>;
+		//FIXME: move interrupt
+		//interrupt-parent = <&gpio5>;
+		//interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
+	};
 };
 
 &i2c2 {
@@ -413,14 +427,14 @@
 		};
 	};
 
-    touch: gt5688@14 {
-      compatible = "goodix,gt5688";
-      reg = <0x14>;
-      interrupt-parent = <&gpio4>;
-      interrupts = <26 IRQ_TYPE_NONE>;
-      irq-gpios = <&gpio4 26 GPIO_ACTIVE_LOW>;
-      reset-gpios = <&gpio4 25 GPIO_ACTIVE_HIGH>;
-    };
+	touch: gt5688@14 {
+    	compatible = "goodix,gt5688";
+    	reg = <0x14>;
+    	interrupt-parent = <&gpio4>;
+    	interrupts = <26 IRQ_TYPE_NONE>;
+    	irq-gpios = <&gpio4 26 GPIO_ACTIVE_LOW>;
+    	reset-gpios = <&gpio4 25 GPIO_ACTIVE_HIGH>;
+	};
 };
 
 &lcdif {
@@ -428,13 +442,13 @@
 };
 
 &mipi_dsi {
-   status = "okay";
-   port@1 {
-	   dsim_to_bridge: endpoint {
-		   remote-endpoint = <&bridge_from_dsim>;
-		   attach-bridge;
-	   };
-   };
+	status = "okay";
+	port@1 {
+		dsim_to_bridge: endpoint {
+			remote-endpoint = <&bridge_from_dsim>;
+			attach-bridge;
+		};
+	};
 };
 
 &pcie0{
@@ -535,16 +549,16 @@
 };
 
 &iomuxc {
-    pinctrl-names = "default";
-    pinctrl-0 = <&pinctrl_hog_1>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_hog_1>;
 
-    pinctrl_hog_1: hog1grp {
-    	fsl,pins = <
+	pinctrl_hog_1: hog1grp {
+		fsl,pins = <
 			// Used by panel
 			MX8MM_IOMUXC_SAI5_MCLK_GPIO3_IO25	0x0 /* LCD_CON-RESET */
 			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11	0x0 /* LCD_CON-STBY */
 		>;
-    };
+	};
 
 	pinctrl_ecspi1: ecspi1grp {
 		fsl,pins = <
