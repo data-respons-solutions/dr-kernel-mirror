@@ -474,14 +474,18 @@
 &uart1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart1>;
-	fsl,uart-has-rtscts;
+	cts-gpios = <&gpio4 24 GPIO_ACTIVE_LOW>;
+	rts-gpios = <&gpio4 23 GPIO_ACTIVE_LOW>;
 	status = "okay";
 };
 
 &uart2 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart2>;
-	fsl,uart-has-rtscts;
+	cts-gpios = <&gpio4 30 GPIO_ACTIVE_LOW>;
+	rts-gpios = <&gpio4 29 GPIO_ACTIVE_LOW>;
+	fsl,dte-mode;
+	status = "okay";
 };
 
 &uart4 {
@@ -637,17 +641,17 @@
 		fsl,pins = <
 			MX8MM_IOMUXC_UART1_RXD_UART1_DCE_RX		0x80
 			MX8MM_IOMUXC_UART1_TXD_UART1_DCE_TX		0x80
-			MX8MM_IOMUXC_SAI2_TXFS_UART1_DCE_CTS_B	0x80
-			MX8MM_IOMUXC_SAI2_RXD0_UART1_DCE_RTS_B	0x80
+			MX8MM_IOMUXC_SAI2_TXFS_GPIO4_IO24		0x80
+			MX8MM_IOMUXC_SAI2_RXD0_GPIO4_IO23		0x80
 		>;
 	};
 
 	pinctrl_uart2: uart2grp {
 		fsl,pins = <
-			MX8MM_IOMUXC_UART2_RXD_UART2_DCE_RX		0x80
-			MX8MM_IOMUXC_UART2_TXD_UART2_DCE_TX		0x80
-			MX8MM_IOMUXC_SAI3_RXC_UART2_DCE_CTS_B	0x80
-			MX8MM_IOMUXC_SAI3_RXD_UART2_DCE_RTS_B	0x80
+			MX8MM_IOMUXC_UART2_RXD_UART2_DTE_TX		0x80
+			MX8MM_IOMUXC_UART2_TXD_UART2_DTE_RX		0x80
+			MX8MM_IOMUXC_SAI3_RXC_GPIO4_IO29		0x80
+			MX8MM_IOMUXC_SAI3_RXD_GPIO4_IO30		0x80
 		>;
 	};
 
