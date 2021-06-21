@@ -70,6 +70,51 @@
 		off-on-delay-us = <20000>;
 		enable-active-high;
 	};
+
+	reg_vio_m2_con: regulator-vio-m2-con {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_reg_vio_m2_con>;
+		regulator-name = "VIO-M2_CON";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		gpio = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+		off-on-delay-us = <20000>;
+		enable-active-high;
+	};
+
+	reg_wifi_ndisable_m2_con: reg-wifi-ndisable-m2-con {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_reg_wifi_ndisable_m2_con>;
+		vin-supply = <&reg_vio_m2_con>;
+		regulator-name = "WIFI_nDISABLE-M2_CON";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&gpio4 27 GPIO_ACTIVE_HIGH>;
+		startup-delay-us = <1000>;
+		enable-active-high;
+	};
+
+	usdhc1_pwrseq: usdhc1_pwrseq {
+		compatible = "mmc-pwrseq-simple";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_usdhc1_pwrseq>;
+		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+		post-power-on-delay-ms = <1>;
+		clocks = <&clk_32k_in_m2_con>;
+		clock-names = "ext_clock";
+	};
+
+	clk_32k_in_m2_con: clk-32k-in-m2-con {
+		compatible = "gpio-gate-clock";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_clk_32k_in_m2_con>;
+		clocks = <&osc_32k>;
+		#clock-cells = <0>;
+		enable-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+	};
+
 /*
 	backlight_j5: backlight-j5 {
 		compatible = "pwm-backlight";
@@ -500,6 +545,28 @@
 	status = "okay";
 };
 
+&usdhc1 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+	pinctrl-0 = <&pinctrl_usdhc1>;
+	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
+	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
+	bus-width = <4>;
+	cap-power-off-card;
+	pm-ignore-notify;
+	keep-power-in-suspend;
+	non-removable;
+	mmc-pwrseq = <&usdhc1_pwrseq>;
+	vmmc-supply = <&reg_wifi_ndisable_m2_con>;
+	status = "okay";
+
+	wifi: wifi@1 {
+		compatible = "marvell,sd8997";
+		reg = <1>;
+	};
+};
+
 &usdhc3 {
 	assigned-clocks = <&clk IMX8MM_CLK_USDHC3_ROOT>;
 	assigned-clock-rates = <400000000>;
@@ -680,6 +747,45 @@
 		>;
 	};
 
+	pinctrl_usdhc1_pwrseq: usdhc1pwrseqgrp{
+		fsl,pins = <
+			MX8MM_IOMUXC_SD1_RESET_B_GPIO2_IO10	0x0 /* WL_REG_ON */
+		>;
+	};
+
+	pinctrl_usdhc1: usdhc1grp {
+		fsl,pins = <
+			MX8MM_IOMUXC_SD1_CLK_USDHC1_CLK		0x190
+			MX8MM_IOMUXC_SD1_CMD_USDHC1_CMD		0x1d0
+			MX8MM_IOMUXC_SD1_DATA0_USDHC1_DATA0	0x1d0
+			MX8MM_IOMUXC_SD1_DATA1_USDHC1_DATA1	0x1d0
+			MX8MM_IOMUXC_SD1_DATA2_USDHC1_DATA2	0x1d0
+			MX8MM_IOMUXC_SD1_DATA3_USDHC1_DATA3	0x1d0
+		>;
+	};
+
+	pinctrl_usdhc1_100mhz: usdhc1grp100mhz {
+		fsl,pins = <
+			MX8MM_IOMUXC_SD1_CLK_USDHC1_CLK		0x194
+			MX8MM_IOMUXC_SD1_CMD_USDHC1_CMD		0x1d4
+			MX8MM_IOMUXC_SD1_DATA0_USDHC1_DATA0	0x1d4
+			MX8MM_IOMUXC_SD1_DATA1_USDHC1_DATA1	0x1d4
+			MX8MM_IOMUXC_SD1_DATA2_USDHC1_DATA2	0x1d4
+			MX8MM_IOMUXC_SD1_DATA3_USDHC1_DATA3	0x1d4
+		>;
+	};
+
+	pinctrl_usdhc1_200mhz: usdhc1grp200mhz {
+		fsl,pins = <
+			MX8MM_IOMUXC_SD1_CLK_USDHC1_CLK		0x196
+			MX8MM_IOMUXC_SD1_CMD_USDHC1_CMD		0x1d6
+			MX8MM_IOMUXC_SD1_DATA0_USDHC1_DATA0	0x1d6
+			MX8MM_IOMUXC_SD1_DATA1_USDHC1_DATA1	0x1d6
+			MX8MM_IOMUXC_SD1_DATA2_USDHC1_DATA2	0x1d6
+			MX8MM_IOMUXC_SD1_DATA3_USDHC1_DATA3	0x1d6
+		>;
+	};
+
 	pinctrl_usdhc3: usdhc3grp {
 		fsl,pins = <
 			MX8MM_IOMUXC_NAND_WE_B_USDHC3_CLK               0x190
@@ -747,6 +853,25 @@
 	pinctrl_reg_lcd_con: reglcdcongrp {
 		fsl,pins = <
 			MX8MM_IOMUXC_GPIO1_IO14_GPIO1_IO14	0x0 /* LCD_PWR_EN */
+		>;
+	};
+
+	pinctrl_reg_vio_m2_con: regviom2congrp {
+		fsl,pins = <
+			MX8MM_IOMUXC_GPIO1_IO10_GPIO1_IO10	0x0 /* SOC_M2_PEN */
+		>;
+	};
+
+	pinctrl_reg_wifi_ndisable_m2_con: regwifindisablem2grp {
+		fsl,pins = <
+			MX8MM_IOMUXC_SAI2_MCLK_GPIO4_IO27	0x0 /* PCIe_nDIS_LV */
+		>;
+	};
+
+	pinctrl_clk_32k_in_m2_con: clk32kinm2congrp {
+		fsl,pins = <
+			MX8MM_IOMUXC_GPIO1_IO05_GPIO1_IO5	0x0 /* CLK_32KOUT-CTRL */
+			MX8MM_IOMUXC_GPIO1_IO00_ANAMIX_REF_CLK_32K	0x141 /* REF_CLK_32K */
 		>;
 	};
 };
