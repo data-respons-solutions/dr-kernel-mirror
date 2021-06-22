@@ -38,15 +38,6 @@
 		regulator-always-on;
 	};
 
-	//FIXME: Find better type for VDC_IN 9-36V
-	vdc_in: vdc-in {
-		compatible = "regulator-fixed";
-		regulator-name = "VDC_IN";
-		regulator-min-microvolt = <9000000>;
-		regulator-max-microvolt = <9000000>;
-		regulator-always-on;
-	};
-
 	reg_vled_bl: regulator-vled-bl {
 		compatible = "regulator-fixed";
 		pinctrl-names = "default";
@@ -55,18 +46,6 @@
 		regulator-min-microvolt = <12210000>;
 		regulator-max-microvolt = <12210000>;
 		gpio = <&gpio1 6 GPIO_ACTIVE_HIGH>;
-		off-on-delay-us = <20000>;
-		enable-active-high;
-	};
-
-	reg_lcd_con: regulator-lcd-con {
-		compatible = "regulator-fixed";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_reg_lcd_con>;
-		regulator-name = "LCD_CON-VDD";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
 		off-on-delay-us = <20000>;
 		enable-active-high;
 	};
@@ -126,46 +105,6 @@
 		power-supply = <&reg_vled_bl>;
 	};
 */
-	backlight_j7: backlight-j7 {
-		compatible = "pwm-backlight";
-		pwms = <&pwm1 0 1000000 0>;
-        brightness-levels = <	0 1 2 3 4 5 6 7 8 9 10 15 20 25
-        						30 40 50 60 70 80 90 100 120 150
-        					>;
-		default-brightness-level = <23>;
-		power-supply = <&vdc_in>;
-		status = "okay";
-	};
-
-	panel_lvds: xt70618a {
-		compatible = "panel-lvds";
-		label = "xt70618a";
-		data-mapping = "jeida-24";
-		width-mm = <154>;
-		height-mm = <86>;
-		reset-gpios = <&gpio3 25 GPIO_ACTIVE_HIGH>;
-		enable-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
-		power-supply = <&reg_lcd_con>;
-		backlight = <&backlight_j7>;
-
-		panel-timing {
-			clock-frequency = <51200000>; // 40,8 ~ 67,2
-			hactive = <1024>;
-			vactive = <600>;
-			hback-porch = <30>;
-			hfront-porch = <30>;
-			vback-porch = <10>;
-			vfront-porch = <10>;
-			hsync-len = <260>;
-			vsync-len = <15>;
-		};
-
-		port {
-			xt70618a_from_bridge: endpoint {
-				remote-endpoint = <&bridge_to_xt70618a>;
-			};
-		};
-	};
 };
 
 &ddrc {
@@ -432,9 +371,9 @@
 	pinctrl-0 = <&pinctrl_i2c2>;
 	status = "okay";
 
-	pcie_clk: pi6cfgl201bzdie@d0 {
+	pcie_clk: pi6cfgl201bzdie@68 {
 		compatible = "diodes,pi6cfgl201bzdie", "fixed-clock";
-		reg = <0xd0>;
+		reg = <0x68>;
 		#clock-cells = <0>;
 		clock-frequency = <100000000>;
 	};
@@ -462,23 +401,7 @@
 					data-lanes = <1 2 3 4>;
 				};
 			};
-
-			port@2 {
-				reg = <2>;
-				bridge_to_xt70618a: endpoint {
-					remote-endpoint = <&xt70618a_from_bridge>;
-				};
-			};
 		};
-	};
-
-	touch: gt5688@14 {
-    	compatible = "goodix,gt5688";
-    	reg = <0x14>;
-    	interrupt-parent = <&gpio4>;
-    	interrupts = <26 IRQ_TYPE_NONE>;
-    	irq-gpios = <&gpio4 26 GPIO_ACTIVE_LOW>;
-    	reset-gpios = <&gpio4 25 GPIO_ACTIVE_HIGH>;
 	};
 };
 
@@ -619,17 +542,6 @@
 };
 
 &iomuxc {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_hog_1>;
-
-	pinctrl_hog_1: hog1grp {
-		fsl,pins = <
-			// Used by panel
-			MX8MM_IOMUXC_SAI5_MCLK_GPIO3_IO25	0x0 /* LCD_CON-RESET */
-			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11	0x0 /* LCD_CON-STBY */
-		>;
-	};
-
 	pinctrl_ecspi1: ecspi1grp {
 		fsl,pins = <
 			MX8MM_IOMUXC_ECSPI1_SCLK_ECSPI1_SCLK	0x82
@@ -689,8 +601,6 @@
 			MX8MM_IOMUXC_I2C3_SDA_I2C3_SDA		0x40000083
 			MX8MM_IOMUXC_GPIO1_IO09_GPIO1_IO9	0x0 /* MIPI_DSI_EN */
 			MX8MM_IOMUXC_GPIO1_IO13_GPIO1_IO13	0x80 /* MIPI_DSI_INT */
-			MX8MM_IOMUXC_SAI2_TXD0_GPIO4_IO26	0x80 /* INT_TP */
-			MX8MM_IOMUXC_SAI2_TXC_GPIO4_IO25	0x0 /* RST_TP */
 		>;
 	};
 
@@ -846,12 +756,6 @@
 	pinctrl_reg_vled_bl: regvledblgrp {
 		fsl,pins = <
 			MX8MM_IOMUXC_GPIO1_IO06_GPIO1_IO6 0x0 /* LCD_BK_EN-CPU */
-		>;
-	};
-
-	pinctrl_reg_lcd_con: reglcdcongrp {
-		fsl,pins = <
-			MX8MM_IOMUXC_GPIO1_IO14_GPIO1_IO14	0x0 /* LCD_PWR_EN */
 		>;
 	};
 
