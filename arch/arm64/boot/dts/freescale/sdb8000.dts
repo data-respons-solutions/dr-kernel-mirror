@@ -530,7 +530,6 @@
 	cts-gpios = <&gpio4 30 GPIO_ACTIVE_LOW>;
 	rts-gpios = <&gpio4 29 GPIO_ACTIVE_LOW>;
 	fsl,dte-mode;
-	status = "okay";
 };
 
 &uart4 {
