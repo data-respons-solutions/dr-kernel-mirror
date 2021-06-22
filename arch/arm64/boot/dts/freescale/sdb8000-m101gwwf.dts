@@ -1,0 +1,122 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2021 Data Respons Solutions AB
+ */
+
+/dts-v1/;
+
+#include "sdb8000.dts"
+
+/ {
+	model = "Data Respons Solutions SDB8000-M101GWWF";
+
+	reg_lcd_con: regulator-lcd-con {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_reg_lcd_con>;
+		regulator-name = "LCD_CON-VDD";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+		startup-delay-us = <30000>;
+		enable-active-high;
+	};
+
+	reg_vled_bl: regulator-vled-bl {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_reg_vled_bl>;
+		regulator-name = "VLED_BL";
+		regulator-min-microvolt = <12210000>;
+		regulator-max-microvolt = <12210000>;
+		gpio = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+		startup-delay-us = <200000>;
+		enable-active-high;
+	};
+
+	backlight_j5: backlight-j5 {
+		compatible = "pwm-backlight";
+		pwms = <&pwm1 0 1000000>;
+        brightness-levels = <	0 1 2 3 4 5 6 7 8 9 10 15 20 25
+        						30 40 50 60 70 80 90 100 120 150
+        					>;
+		default-brightness-level = <23>;
+		power-supply = <&reg_vled_bl>;
+	};
+
+	panel_lvds: m101gwwf {
+		compatible = "panel-lvds";
+		label = "m101gwwf";
+		data-mapping = "jeida-24";
+		width-mm = <217>;
+		height-mm = <136>;
+		power-supply = <&reg_lcd_con>;
+		backlight = <&backlight_j5>;
+
+		panel-timing {
+			clock-frequency = <72400000>; // 70,0 ~ 76,6
+			hactive = <1280>;
+			vactive = <800>;
+			hback-porch = <70>;
+			hfront-porch = <70>;
+			vback-porch = <10>;
+			vfront-porch = <10>;
+			hsync-len = <20>;
+			vsync-len = <18>;
+		};
+
+		port {
+			m101gwwf_from_bridge: endpoint {
+				remote-endpoint = <&bridge_to_m101gwwf>;
+			};
+		};
+	};
+};
+
+&lvds_bridge {
+	ports {
+		port@2 {
+			reg = <2>;
+			bridge_to_m101gwwf: endpoint {
+				remote-endpoint = <&m101gwwf_from_bridge>;
+			};
+		};
+	};
+};
+
+&i2c3 {
+	touch: ili2511@41 {
+    	compatible = "ilitek,ili251x";
+    	reg = <0x41>;
+    	interrupt-parent = <&gpio4>;
+    	interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
+    	reset-gpios = <&gpio4 25 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&iomuxc {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_hog_1>;
+
+	pinctrl_hog_1: hog1grp {
+		fsl,pins = <
+			// Used by panel
+			MX8MM_IOMUXC_SAI5_MCLK_GPIO3_IO25	0x0 /* LCD_CON-RESET */
+			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11	0x0 /* LCD_CON-STBY */
+			MX8MM_IOMUXC_SAI2_TXD0_GPIO4_IO26	0x80 /* INT_TP */
+			MX8MM_IOMUXC_SAI2_TXC_GPIO4_IO25	0x0 /* RST_TP */
+		>;
+	};
+
+	pinctrl_reg_lcd_con: reglcdcongrp {
+		fsl,pins = <
+			MX8MM_IOMUXC_GPIO1_IO14_GPIO1_IO14	0x0 /* LCD_PWR_EN */
+		>;
+	};
+
+	pinctrl_reg_vled_bl: regvledblgrp {
+		fsl,pins = <
+			MX8MM_IOMUXC_GPIO1_IO06_GPIO1_IO6 0x0 /* LCD_BK_EN-CPU */
+		>;
+	};
+};
