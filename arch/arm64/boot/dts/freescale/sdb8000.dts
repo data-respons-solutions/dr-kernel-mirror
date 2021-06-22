@@ -38,18 +38,6 @@
 		regulator-always-on;
 	};
 
-	reg_vled_bl: regulator-vled-bl {
-		compatible = "regulator-fixed";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_reg_vled_bl>;
-		regulator-name = "VLED_BL";
-		regulator-min-microvolt = <12210000>;
-		regulator-max-microvolt = <12210000>;
-		gpio = <&gpio1 6 GPIO_ACTIVE_HIGH>;
-		off-on-delay-us = <20000>;
-		enable-active-high;
-	};
-
 	reg_vio_m2_con: regulator-vio-m2-con {
 		compatible = "regulator-fixed";
 		pinctrl-names = "default";
@@ -93,18 +81,6 @@
 		#clock-cells = <0>;
 		enable-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
 	};
-
-/*
-	backlight_j5: backlight-j5 {
-		compatible = "pwm-backlight";
-		pwms = <&pwm1 0 1000000>;
-        brightness-levels = <	0 1 2 3 4 5 6 7 8 9 10 15 20 25
-        						30 40 50 60 70 80 90 100 120 150
-        					>;
-		default-brightness-level = <23>;
-		power-supply = <&reg_vled_bl>;
-	};
-*/
 };
 
 &ddrc {
@@ -750,12 +726,6 @@
 	pinctrl_pwm1: pwm1grp {
 		fsl,pins = <
 			MX8MM_IOMUXC_I2C4_SDA_PWM1_OUT	0x0 /* LCD_BK_PWM-CPU */
-		>;
-	};
-
-	pinctrl_reg_vled_bl: regvledblgrp {
-		fsl,pins = <
-			MX8MM_IOMUXC_GPIO1_IO06_GPIO1_IO6 0x0 /* LCD_BK_EN-CPU */
 		>;
 	};
 
