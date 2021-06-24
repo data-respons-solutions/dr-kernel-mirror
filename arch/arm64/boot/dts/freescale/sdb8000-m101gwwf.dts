@@ -57,12 +57,12 @@
 			clock-frequency = <72400000>; // 70,0 ~ 76,6
 			hactive = <1280>;
 			vactive = <800>;
-			hback-porch = <70>;
+			hback-porch = <88>;
 			hfront-porch = <70>;
-			vback-porch = <10>;
-			vfront-porch = <10>;
-			hsync-len = <20>;
-			vsync-len = <18>;
+			vback-porch = <21>;
+			vfront-porch = <15>;
+			hsync-len = <2>;
+			vsync-len = <2>;
 		};
 
 		port {
