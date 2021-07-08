@@ -81,6 +81,20 @@
 		#clock-cells = <0>;
 		enable-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
 	};
+
+	vin-voltage {
+		compatible = "voltage-divider";
+		io-channels = <&smc 0>;
+		output-ohms = <10000>;
+		full-ohms = <110000>;
+	};
+
+	vbat-voltage {
+		compatible = "voltage-divider";
+		io-channels = <&smc 1>;
+		output-ohms = <1>;
+		full-ohms = <2>;
+	};
 };
 
 &ddrc {
@@ -331,10 +345,10 @@
 		};
 	};
 
-
 	smc: vmcu@51 {
 		compatible = "drs,vmcu";
 		reg = <0x51>;
+		#io-channel-cells = <1>;
 		//FIXME: move interrupt
 		//interrupt-parent = <&gpio5>;
 		//interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
