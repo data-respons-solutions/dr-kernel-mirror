@@ -47,22 +47,22 @@
 	panel_lvds: m101gwwf {
 		compatible = "panel-lvds";
 		label = "m101gwwf";
-		data-mapping = "jeida-24";
+		data-mapping = "vesa-24";
 		width-mm = <217>;
 		height-mm = <136>;
 		power-supply = <&reg_lcd_con>;
 		backlight = <&backlight_j5>;
 
 		panel-timing {
-			clock-frequency = <72400000>; // 70,0 ~ 76,6
+			clock-frequency = <70000000>; // 70,0 ~ 76,6
 			hactive = <1280>;
 			vactive = <800>;
-			hback-porch = <88>;
-			hfront-porch = <70>;
-			vback-porch = <21>;
-			vfront-porch = <15>;
-			hsync-len = <2>;
-			vsync-len = <2>;
+			hback-porch = <130>;
+			hfront-porch = <12>;
+			vback-porch = <13>;
+			vfront-porch = <8>;
+			hsync-len = <15>;
+			vsync-len = <15>;
 		};
 
 		port {
