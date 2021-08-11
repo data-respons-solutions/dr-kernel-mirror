@@ -25,6 +25,19 @@
 		reg = <0x0 0x40000000 0 0x80000000>;
 	};
 
+	thermal-zones {
+		cpu-thermal {
+			trips {
+				trip0 {
+					temperature = <95000>;
+				};
+				trip1 {
+					temperature = <105000>;
+				};
+			};
+		};
+	};
+
 	reg_usb_otg1: regulator-usb-otg1 {
 		compatible = "regulator-fixed";
 		pinctrl-names = "default";
