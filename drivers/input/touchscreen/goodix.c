@@ -727,7 +727,7 @@ static int goodix_reset(struct goodix_ts_data *ts)
 	msleep(20);				/* T2: > 10ms */
 
 	/* HIGH: 0x28/0x29, LOW: 0xBA/0xBB */
-	error = goodix_irq_direction_output(ts, ts->client->addr == 0x14);
+	error = goodix_irq_direction_output(ts, ts->client->addr != 0x14);
 	if (error)
 		return error;
 
