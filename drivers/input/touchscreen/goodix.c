@@ -1283,9 +1283,11 @@ reset:
 	}
 
 	ts->chip = goodix_get_chip_data(ts->id);
-
+	/*
+	 *  We don't have firmware
+	 *
 	if (ts->load_cfg_from_disk) {
-		/* update device config */
+		// update device config
 		ts->cfg_name = devm_kasprintf(&client->dev, GFP_KERNEL,
 					      "goodix_%s_cfg.bin", ts->id);
 		if (!ts->cfg_name)
@@ -1302,11 +1304,11 @@ reset:
 		}
 
 		return 0;
-	} else {
-		error = goodix_configure_dev(ts);
-		if (error)
-			return error;
-	}
+	} else {*/
+	error = goodix_configure_dev(ts);
+	if (error)
+		return error;
+	//}
 
 	return 0;
 }
