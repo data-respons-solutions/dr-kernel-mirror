@@ -82,6 +82,9 @@
 		interrupts = <26 IRQ_TYPE_NONE>;
 		irq-gpios = <&gpio4 26 GPIO_ACTIVE_LOW>;
 		reset-gpios = <&gpio4 25 GPIO_ACTIVE_HIGH>;
+		touchscreen-swapped-x-y = <1>;
+		touchscreen-inverted-x = <1>;
+		touchscreen-inverted-y = <1>;
 	};
 };
 
