@@ -501,6 +501,13 @@ config HISI_HIKEY_USB
 	  switching between the dual-role USB-C port and the USB-A host ports
 	  using only one USB controller.
 
+config VMCU
+	tristate "Vehicle MCU driver"
+	depends on I2C && SYSFS && LEDS_CLASS_MULTICOLOR && LEDS_TRIGGER_TIMER
+	help
+	  This driver handles the vehicle MCU on the SDB8000 hardware and makes
+	  its functions available through sysfs.
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"
