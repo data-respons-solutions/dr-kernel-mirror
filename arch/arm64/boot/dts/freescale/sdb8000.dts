@@ -281,7 +281,7 @@
 	phy-mode = "rgmii-id";
 	phy-handle = <&ethphy0>;
 	fsl,magic-packet;
-	status = "okay";
+	status = "disabled";
 
 	mdio {
 		#address-cells = <1>;
@@ -307,8 +307,8 @@
 		reg = <0x4b>;
 		pinctrl-0 = <&pinctrl_pmic>;
 		pinctrl-names = "default";
-		interrupt-parent = <&gpio1>;
-		interrupts = <3 GPIO_ACTIVE_LOW>;
+		interrupt-parent = <&gpio3>;
+		interrupts = <1 GPIO_ACTIVE_LOW>;
 		rohm,reset-snvs-powered;
 
 		#clock-cells = <0>;
@@ -418,9 +418,8 @@
 		compatible = "drs,vmcu";
 		reg = <0x51>;
 		#io-channel-cells = <1>;
-		//FIXME: move interrupt
-		//interrupt-parent = <&gpio5>;
-		//interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
+		interrupt-parent = <&gpio4>;
+		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
 	};
 };
 
@@ -501,8 +500,7 @@
 &uart1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart1>;
-	cts-gpios = <&gpio4 24 GPIO_ACTIVE_LOW>;
-	rts-gpios = <&gpio4 23 GPIO_ACTIVE_LOW>;
+	uart-has-rtscts;
 	status = "okay";
 };
 
@@ -512,6 +510,7 @@
 	cts-gpios = <&gpio4 30 GPIO_ACTIVE_LOW>;
 	rts-gpios = <&gpio4 29 GPIO_ACTIVE_LOW>;
 	fsl,dte-mode;
+	status = "disabled";
 };
 
 &uart4 {
@@ -644,6 +643,7 @@
 		fsl,pins = <
 			MX8MM_IOMUXC_I2C1_SCL_I2C1_SCL		0x40000083
 			MX8MM_IOMUXC_I2C1_SDA_I2C1_SDA		0x40000083
+			MX8MM_IOMUXC_SAI3_TXFS_GPIO4_IO31	0x80 /* GPO-nINT-MCU1 */
 		>;
 	};
 
@@ -676,8 +676,8 @@
 		fsl,pins = <
 			MX8MM_IOMUXC_UART1_RXD_UART1_DCE_RX		0x80
 			MX8MM_IOMUXC_UART1_TXD_UART1_DCE_TX		0x80
-			MX8MM_IOMUXC_SAI2_TXFS_GPIO4_IO24		0x80
-			MX8MM_IOMUXC_SAI2_RXD0_GPIO4_IO23		0x80
+			MX8MM_IOMUXC_SAI2_TXFS_UART1_DCE_CTS_B	0x80
+			MX8MM_IOMUXC_SAI2_RXD0_UART1_DCE_RTS_B	0x80
 		>;
 	};
 
@@ -699,7 +699,7 @@
 
 	pinctrl_pmic: pmicirqgrp {
 		fsl,pins = <
-			MX8MM_IOMUXC_GPIO1_IO03_GPIO1_IO3		0x41
+			MX8MM_IOMUXC_NAND_CE0_B_GPIO3_IO1		0x41
 		>;
 	};
 
