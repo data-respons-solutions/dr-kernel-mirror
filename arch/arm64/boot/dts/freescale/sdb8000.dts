@@ -108,6 +108,19 @@
 		output-ohms = <1>;
 		full-ohms = <2>;
 	};
+
+	system-gpios {
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_system>;
+		compatible = "drs,system-gpios";
+
+		gpios = <&gpio3 19 GPIO_ACTIVE_HIGH>,
+				<&gpio1 15 GPIO_ACTIVE_HIGH>,
+				<&gpio1 8 GPIO_ACTIVE_HIGH>,
+				<&gpio1 7 GPIO_ACTIVE_HIGH>;
+		gpio-line-names =	"sys_power_override", "sys_flash_wp",
+							"vmcu_boot0", "vmcu_reset";
+	};
 };
 
 &ddrc {
@@ -155,7 +168,6 @@
 	status = "okay";
 
 	flash0: mx25l3233fm2i-08g@0 {
-		//FIXME: WP
 		reg = <0>;
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -556,7 +568,6 @@
 			MX8MM_IOMUXC_ECSPI1_MISO_ECSPI1_MISO	0x82
 			MX8MM_IOMUXC_ECSPI1_MOSI_ECSPI1_MOSI	0x82
 			MX8MM_IOMUXC_ECSPI1_SS0_GPIO5_IO9		0x0 /* ECSPI1_SS0 */
-			MX8MM_IOMUXC_GPIO1_IO15_GPIO1_IO15		0x0 /* WP_Flash */
 		>;
 	};
 
@@ -785,6 +796,15 @@
 		fsl,pins = <
 			MX8MM_IOMUXC_GPIO1_IO05_GPIO1_IO5	0x0 /* CLK_32KOUT-CTRL */
 			MX8MM_IOMUXC_GPIO1_IO00_ANAMIX_REF_CLK_32K	0x141 /* REF_CLK_32K */
+		>;
+	};
+
+	pinctrl_system: systemgrp {
+		fsl,pins = <
+			MX8MM_IOMUXC_SAI5_RXFS_GPIO3_IO19	0x0 /* POWER_EN_CPU */
+			MX8MM_IOMUXC_GPIO1_IO15_GPIO1_IO15	0x0 /* WP_Flash */
+			MX8MM_IOMUXC_GPIO1_IO08_GPIO1_IO8	0x0 /* GP-MCU_BOOT0_SEL */
+			MX8MM_IOMUXC_GPIO1_IO07_GPIO1_IO7	0x0 /* GP-NRST--MCU1 */
 		>;
 	};
 };
