@@ -457,6 +457,12 @@
 	status = "disabled";
 };
 
+&uart3 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart3>;
+	status = "okay";
+};
+
 &uart4 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart4>;
@@ -631,6 +637,13 @@
 			MX8MM_IOMUXC_UART2_TXD_UART2_DTE_RX		0x80
 			MX8MM_IOMUXC_SAI3_RXC_GPIO4_IO29		0x80
 			MX8MM_IOMUXC_SAI3_RXD_GPIO4_IO30		0x80
+		>;
+	};
+
+	pinctrl_uart3: uart3grp {
+		fsl,pins = <
+			MX8MM_IOMUXC_UART3_RXD_UART3_DCE_RX		0x80
+			MX8MM_IOMUXC_UART3_TXD_UART3_DCE_TX		0x80
 		>;
 	};
 
