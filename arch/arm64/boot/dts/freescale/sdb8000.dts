@@ -116,9 +116,11 @@
 
 		gpios = <&gpio3 19 GPIO_ACTIVE_HIGH>,
 				<&gpio1 15 GPIO_ACTIVE_HIGH>,
+				<&smc 0 GPIO_ACTIVE_HIGH>,
 				<&gpio1 8 GPIO_ACTIVE_HIGH>,
 				<&gpio1 7 GPIO_ACTIVE_HIGH>;
 		gpio-line-names =	"sys_power_override", "sys_flash_wp",
+							"sys_ignition",
 							"vmcu_boot0", "vmcu_reset";
 	};
 };
@@ -373,7 +375,9 @@
 	smc: vmcu@51 {
 		compatible = "drs,vmcu";
 		reg = <0x51>;
+		#gpio-cells = <2>;
 		#io-channel-cells = <1>;
+		gpio-controller;
 		interrupt-parent = <&gpio4>;
 		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
 	};
