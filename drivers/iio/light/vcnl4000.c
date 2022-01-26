@@ -59,6 +59,7 @@
 
 #define VCNL4200_AL_CONF	0x00 /* Ambient light configuration */
 #define VCNL4200_PS_CONF1	0x03 /* Proximity configuration */
+#define VCNL4200_PS_CONF3	0x04 /* Proximity configuration 3 */
 #define VCNL4200_PS_DATA	0x08 /* Proximity data */
 #define VCNL4200_AL_DATA	0x09 /* Ambient light data */
 #define VCNL4200_DEV_ID		0x0e /* Device ID, slave address and version */
@@ -73,6 +74,24 @@
 #define VCNL4000_ALS_EN		BIT(2) /* start ALS measurement */
 #define VCNL4000_PROX_EN	BIT(1) /* start proximity measurement */
 #define VCNL4000_SELF_TIMED_EN	BIT(0) /* start self-timed measurement */
+
+/* Bit mask for PS_CONF1 -- 0x03 low byte */
+#define VCNL4200_PS_CONF1_SHUTDOWN		BIT(0)
+#define VCNL4200_PS_CONF1_IT_4T			(BIT(1) | BIT(2))
+#define VCNL4200_PS_CONF1_IT_8T			BIT(3)
+#define VCNL4200_PS_CONF1_IT_9T			(BIT(3) | BIT(1))
+#define VCNL4200_PS_CONF1_PS_DUTY_160	0
+#define VCNL4200_PS_CONF1_PS_DUTY_640	BIT(7)
+#define VCNL4200_PS_CONF1_PS_DUTY_1280	(BIT(6) | BIT(7))
+
+/* Bit mask for PS_CONF2 -- 0x03 high byte */
+#define VCNL4200_PS_CONF2_PS_HD			(BIT(3) << 8)
+
+/* Bit mask for PS_CONF3 -- 0x04 low byte */
+#define VCNL4200_PS_CONF3_SC_EN			BIT(0)
+#define VCNL4200_PS_CONF3_ADV			BIT(1)
+#define VCNL4200_PS_CONF3_PS_MPS_4		BIT(6)
+#define VCNL4200_PS_CONF3_PS_MPS_8		(BIT(5) | BIT(6))
 
 /* Bit masks for interrupt registers. */
 #define VCNL4010_INT_THR_SEL	BIT(0) /* Select threshold interrupt source */
@@ -197,6 +216,11 @@ static int vcnl4200_set_power_state(struct vcnl4000_data *data, bool on)
 	if (ret < 0)
 		return ret;
 
+	if (on)
+		val = VCNL4200_PS_CONF1_IT_9T | VCNL4200_PS_CONF1_PS_DUTY_640 | VCNL4200_PS_CONF2_PS_HD;
+	else
+		val = VCNL4200_PS_CONF1_SHUTDOWN;
+
 	ret = i2c_smbus_write_word_data(data->client, VCNL4200_PS_CONF1, val);
 	if (ret < 0)
 		return ret;
@@ -213,6 +237,7 @@ static int vcnl4200_set_power_state(struct vcnl4000_data *data, bool on)
 static int vcnl4200_init(struct vcnl4000_data *data)
 {
 	int ret, id;
+	u16 reg;
 
 	ret = i2c_smbus_read_word_data(data->client, VCNL4200_DEV_ID);
 	if (ret < 0)
@@ -257,6 +282,11 @@ static int vcnl4200_init(struct vcnl4000_data *data)
 	mutex_init(&data->vcnl4200_ps.lock);
 
 	ret = data->chip_spec->set_power_state(data, true);
+	if (ret < 0)
+		return ret;
+
+	reg = VCNL4200_PS_CONF3_SC_EN | VCNL4200_PS_CONF3_PS_MPS_8;
+	ret = i2c_smbus_write_word_data(data->client, VCNL4200_PS_CONF3, reg);
 	if (ret < 0)
 		return ret;
 
