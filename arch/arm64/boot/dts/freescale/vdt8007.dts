@@ -8,7 +8,7 @@
 #include "sdb8000.dts"
 
 / {
-	model = "Data Respons Solutions SDB8000-XT70610A";
+	model = "Data Respons Solutions VDT8007";
 
 	reg_lcd_con: regulator-lcd-con {
 		compatible = "regulator-fixed";
@@ -91,6 +91,10 @@
     	irq-gpios = <&gpio4 26 GPIO_ACTIVE_LOW>;
     	reset-gpios = <&gpio4 25 GPIO_ACTIVE_HIGH>;
 	};
+};
+
+&uart1 {
+	status = "disabled";
 };
 
 &iomuxc {
