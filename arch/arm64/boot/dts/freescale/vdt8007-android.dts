@@ -1,0 +1,13 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2021 Data Respons Solutions AB
+ */
+
+/dts-v1/;
+
+#include "vdt8007.dts"
+#include "sdb8000-android.dtsi"
+
+/ {
+	model = "Data Respons Solutions VDT8007 for Android";
+};

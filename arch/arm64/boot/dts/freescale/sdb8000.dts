@@ -11,62 +11,6 @@
 	model = "Data Respons Solutions SDB8000";
 	compatible = "drs,sdb8000", "fsl,imx8mm";
 
-    firmware {
-		android {
-			compatible = "android,firmware";
-			/* default emmc node used for GSI */
-			boot_devices = "soc@0/30800000.bus/30b60000.mmc";
-			/* sd card node which used if androidboot.boot_device_root=mmcblk1 */
-			boot_devices_mmcblk1 = "soc@0/30800000.bus/30b50000.mmc";
-			/* emmc node which used if androidboot.boot_device_root=mmcblk2 */
-			boot_devices_mmcblk2 = "soc@0/30800000.bus/30b60000.mmc";
-			fstab {
-				compatible = "android,fstab";
-				system {
-					compatible = "android,system";
-					dev = "system";
-					type = "ext4";
-					mnt_flags = "noatime,errors=panic,ro,barrier=1,inode_readahead_blks=8";
-					fsmgr_flags = "wait,slotselect,avb,avb_keys=/avb,logical,first_stage_mount";
-				};
-				system_ext {
-					compatible = "android,system_ext";
-					dev = "system_ext";
-					type = "ext4";
-					mnt_flags = "noatime,ro,errors=panic";
-					fsmgr_flags = "wait,slotselect,avb,logical,first_stage_mount";
-				};
-				vendor {
-					compatible = "android,vendor";
-					dev = "vendor";
-					type = "ext4";
-					mnt_flags = "noatime,errors=panic,ro,barrier=1,inode_readahead_blks=8";
-					fsmgr_flags = "wait,slotselect,avb,logical,first_stage_mount";
-				};
-				product {
-					compatible = "android,product";
-					dev = "product";
-					type = "ext4";
-					mnt_flags = "noatime,errors=panic,ro,barrier=1,inode_readahead_blks=8";
-					fsmgr_flags = "wait,slotselect,avb,logical,first_stage_mount";
-				};
-				metadata {
-					compatible = "android,metadata";
-					dev = "/dev/block/by-name/metadata";
-					type = "ext4";
-					mnt_flags = "noatime,nosuid,nodev,discard,sync";
-					fsmgr_flags = "wait,formattable,first_stage_mount,check";
-				};
-			};
-			vbmeta {
-				/*we need use FirstStageMountVBootV2 if we enable avb*/
-				compatible = "android,vbmeta";
-				/*parts means the partition witch can be mount in first stage*/
-				parts = "vbmeta,dtbo,boot,system,vendor,product";
-			};
-		};
-	};
-
 	chosen {
 		stdout-path = &uart4;
 	};
@@ -164,6 +108,21 @@
 		output-ohms = <1>;
 		full-ohms = <2>;
 	};
+
+	system-gpios {
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_system>;
+		compatible = "drs,system-gpios";
+
+		gpios = <&gpio3 19 GPIO_ACTIVE_HIGH>,
+				<&gpio1 15 GPIO_ACTIVE_HIGH>,
+				<&smc 0 GPIO_ACTIVE_HIGH>,
+				<&gpio1 8 GPIO_ACTIVE_HIGH>,
+				<&gpio1 7 GPIO_ACTIVE_HIGH>;
+		gpio-line-names =	"sys_power_override", "sys_flash_wp",
+							"sys_ignition",
+							"vmcu_boot0", "vmcu_reset";
+	};
 };
 
 &ddrc {
@@ -211,7 +170,6 @@
 	status = "okay";
 
 	flash0: mx25l3233fm2i-08g@0 {
-		//FIXME: WP
 		reg = <0>;
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -417,7 +375,9 @@
 	smc: vmcu@51 {
 		compatible = "drs,vmcu";
 		reg = <0x51>;
+		#gpio-cells = <2>;
 		#io-channel-cells = <1>;
+		gpio-controller;
 		interrupt-parent = <&gpio4>;
 		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
 	};
@@ -513,6 +473,12 @@
 	status = "disabled";
 };
 
+&uart3 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart3>;
+	status = "okay";
+};
+
 &uart4 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart4>;
@@ -606,7 +572,6 @@
 			MX8MM_IOMUXC_ECSPI1_MISO_ECSPI1_MISO	0x82
 			MX8MM_IOMUXC_ECSPI1_MOSI_ECSPI1_MOSI	0x82
 			MX8MM_IOMUXC_ECSPI1_SS0_GPIO5_IO9		0x0 /* ECSPI1_SS0 */
-			MX8MM_IOMUXC_GPIO1_IO15_GPIO1_IO15		0x0 /* WP_Flash */
 		>;
 	};
 
@@ -687,6 +652,13 @@
 			MX8MM_IOMUXC_UART2_TXD_UART2_DTE_RX		0x80
 			MX8MM_IOMUXC_SAI3_RXC_GPIO4_IO29		0x80
 			MX8MM_IOMUXC_SAI3_RXD_GPIO4_IO30		0x80
+		>;
+	};
+
+	pinctrl_uart3: uart3grp {
+		fsl,pins = <
+			MX8MM_IOMUXC_UART3_RXD_UART3_DCE_RX		0x80
+			MX8MM_IOMUXC_UART3_TXD_UART3_DCE_TX		0x80
 		>;
 	};
 
@@ -828,6 +800,15 @@
 		fsl,pins = <
 			MX8MM_IOMUXC_GPIO1_IO05_GPIO1_IO5	0x0 /* CLK_32KOUT-CTRL */
 			MX8MM_IOMUXC_GPIO1_IO00_ANAMIX_REF_CLK_32K	0x141 /* REF_CLK_32K */
+		>;
+	};
+
+	pinctrl_system: systemgrp {
+		fsl,pins = <
+			MX8MM_IOMUXC_SAI5_RXFS_GPIO3_IO19	0x0 /* POWER_EN_CPU */
+			MX8MM_IOMUXC_GPIO1_IO15_GPIO1_IO15	0x0 /* WP_Flash */
+			MX8MM_IOMUXC_GPIO1_IO08_GPIO1_IO8	0x0 /* GP-MCU_BOOT0_SEL */
+			MX8MM_IOMUXC_GPIO1_IO07_GPIO1_IO7	0x0 /* GP-NRST--MCU1 */
 		>;
 	};
 };
