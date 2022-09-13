@@ -303,6 +303,70 @@
 		#gpio-cells = <2>;
 	};
 };
+
+&ecspi1 {
+	cs-gpios = <&gpio5 9 GPIO_ACTIVE_LOW>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_ecspi1>;
+	status = "okay";
+
+	flash0: mx25l3233fm2i-08g@0 {
+		reg = <0>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "jedec,spi-nor";
+		/* Unreliable communication at 50MHz, quite possibly due to soldered in wires, cap at 10MHz */
+		spi-max-frequency = <10000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			spl@0 {
+				label = "spl";
+				reg = <0x000000 0x040000>;
+			};
+
+			platform@40000 {
+				label = "platform";
+				reg = <0x040000 0x010000>;
+				read-only;
+			};
+
+			u-boot@50000 {
+				label = "u-boot";
+				reg = <0x050000 0x1A0000>;
+			};
+
+			u-boot-second@1F0000 {
+				label = "u-boot-second";
+				reg = <0x1F0000 0x1A0000>;
+			};
+
+			system_a@390000 {
+				label = "system_a";
+				reg = <0x390000 0x010000>;
+			};
+
+			system_b@3A0000 {
+				label = "system_b";
+				reg = <0x3A0000 0x010000>;
+			};
+
+			user_a@3B0000 {
+				label = "user_a";
+				reg = <0x3B0000 0x010000>;
+			};
+
+			user_b@3C0000 {
+				label = "user_b";
+				reg = <0x3C0000 0x010000>;
+			};
+		};
+	};
+};
+
 /*
 &sai3 {
 	pinctrl-names = "default";
@@ -330,15 +394,6 @@
 &uart2 { /* console */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart2>;
-	status = "okay";
-};
-
-&uart3 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_uart3>;
-	assigned-clocks = <&clk IMX8MN_CLK_UART3>;
-	assigned-clock-parents = <&clk IMX8MN_SYS_PLL1_80M>;
-	uart-has-rtscts;
 	status = "okay";
 };
 
@@ -470,6 +525,15 @@
 		>;
 	};
 
+	pinctrl_ecspi1: ecspi1grp {
+		fsl,pins = <
+			MX8MN_IOMUXC_ECSPI1_SCLK_ECSPI1_SCLK	0x94
+			MX8MN_IOMUXC_ECSPI1_MISO_ECSPI1_MISO	0x94
+			MX8MN_IOMUXC_ECSPI1_MOSI_ECSPI1_MOSI	0x94
+			MX8MN_IOMUXC_ECSPI1_SS0_GPIO5_IO9		0x41 /* ECSPI1_SS0 */
+		>;
+	};
+
 	pinctrl_reg_usdhc2_vmmc: regusdhc2vmmcgrp {
 		fsl,pins = <
 			MX8MN_IOMUXC_SD2_RESET_B_GPIO2_IO19	0x41
@@ -502,15 +566,6 @@
 		fsl,pins = <
 			MX8MN_IOMUXC_UART2_RXD_UART2_DCE_RX	0x140
 			MX8MN_IOMUXC_UART2_TXD_UART2_DCE_TX	0x140
-		>;
-	};
-
-	pinctrl_uart3: uart3grp {
-		fsl,pins = <
-			MX8MN_IOMUXC_ECSPI1_SCLK_UART3_DCE_RX		0x140
-			MX8MN_IOMUXC_ECSPI1_MOSI_UART3_DCE_TX		0x140
-			MX8MN_IOMUXC_ECSPI1_SS0_UART3_DCE_RTS_B	0x140
-			MX8MN_IOMUXC_ECSPI1_MISO_UART3_DCE_CTS_B	0x140
 		>;
 	};
 
