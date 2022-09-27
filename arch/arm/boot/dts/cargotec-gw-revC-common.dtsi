@@ -17,6 +17,8 @@
     aliases {
 		rtc0 = &smc;
 		rtc1 = &snvs_rtc;
+		mmc0 = &usdhc3;
+		mmc1 = &usdhc4;
 	};
 
 	chosen {
