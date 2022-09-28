@@ -133,7 +133,10 @@
 				<&gpio1 4 GPIO_ACTIVE_HIGH>,
 				<&gpio6 2 GPIO_ACTIVE_HIGH>,
 				<&gpio4 17 GPIO_ACTIVE_HIGH>,
-				<&gpio4 27 GPIO_ACTIVE_LOW>;
+				<&gpio4 27 GPIO_ACTIVE_LOW>,
+				<&smc 0 GPIO_ACTIVE_HIGH>,
+				<&smc 1 GPIO_ACTIVE_HIGH>,
+				<&smc 2 GPIO_ACTIVE_HIGH>;
 		gpio-line-names =	"sys_hw_setting0",
 							"sys_hw_setting1",
 							"sys_hw_setting2",
@@ -148,7 +151,10 @@
 							"sys_mcu_reset",
 							"sys_mcu_pwr_override",
 							"sys_mcu_boot0",
-							"sys_wwan_rst";
+							"sys_wwan_rst",
+							"sys_gpo3",
+							"sys_gpo4",
+							"sys_ignition";
 	};
 
 	ani1-voltage {
@@ -397,12 +403,12 @@
 	status = "okay";
 
 	smc: cargotec_smc@51 {
-		compatible = "datarespons,cargotec-gw-mcu";
+		compatible = "drs,ctgw";
 		reg = <0x51>;
+		#gpio-cells = <2>;
+		gpio-controller;
 		interrupt-parent = <&gpio5>;
 		interrupts = <15 IRQ_TYPE_EDGE_FALLING>;
-		smc-gpio-names = "gpio_dc_on", "gpio_can_on", "gpi_ignition", "gpi_wakeup";
-		smc-gpio-input = <0 0 1 1>;
 		has-rtc;
 	};
 };
