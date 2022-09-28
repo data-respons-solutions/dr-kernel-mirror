@@ -211,7 +211,7 @@
 		gpio-hog;
 		gpios = <13 GPIO_ACTIVE_HIGH>;
 		output-high;
-		line-name = "sys_lc_enable";
+		line-name = "gpio7-hog";
 	};
 };
 
@@ -443,6 +443,18 @@
         clocks = <&clk_32k_wifi>;
         clock-names = "ext_clock";
 	};
+};
+
+&reg_arm {
+	vin-supply = <&sw1a_reg>;
+};
+
+&reg_pu {
+	vin-supply = <&sw1c_reg>;
+};
+
+&reg_soc {
+	vin-supply = <&sw1c_reg>;
 };
 
 &snvs_poweroff {
