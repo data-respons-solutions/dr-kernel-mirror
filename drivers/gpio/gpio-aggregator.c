@@ -504,7 +504,8 @@ static const struct of_device_id gpio_aggregator_dt_ids[] = {
 	 * Add GPIO-operated devices controlled from userspace below,
 	 * or use "driver_override" in sysfs
 	 */
-	{}
+	{.compatible = "drs,system-gpios"},
+	{},
 };
 MODULE_DEVICE_TABLE(of, gpio_aggregator_dt_ids);
 #endif
