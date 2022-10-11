@@ -185,9 +185,10 @@
 };
 
 &gpio1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_gpio1_hog>;
+
 	gpio1-hog {
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_gpio1_hog>;
 		gpio-hog;
 		gpios = <2 GPIO_ACTIVE_HIGH>,
 				<9 GPIO_ACTIVE_HIGH>;
@@ -197,9 +198,10 @@
 };
 
 &gpio4 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_gpio4_hog>;
+
 	gpio4-hog {
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_gpio4_hog>;
 		gpio-hog;
 		gpios = <10 GPIO_ACTIVE_HIGH>,
 				<12 GPIO_ACTIVE_HIGH>,
@@ -211,9 +213,10 @@
 };
 
 &gpio7 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_gpio7_hog>;
+
 	gpio7-hog {
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_gpio7_hog>;
 		gpio-hog;
 		gpios = <13 GPIO_ACTIVE_HIGH>;
 		output-high;
