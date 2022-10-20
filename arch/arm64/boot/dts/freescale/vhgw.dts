@@ -82,6 +82,31 @@
 		spdif-in;
 	};
 */
+	system-gpios {
+		//pinctrl-names = "default";
+		//pinctrl-0 = <&pinctrl_system>;
+		compatible = "drs,system-gpios";
+
+		gpios =
+			<&vmcu 0 GPIO_ACTIVE_HIGH>,
+			<&vmcu 2 GPIO_ACTIVE_HIGH>,
+			<&vmcu 3 GPIO_ACTIVE_HIGH>,
+			<&vmcu 4 GPIO_ACTIVE_HIGH>,
+			<&vmcu 5 GPIO_ACTIVE_HIGH>;
+		gpio-line-names =
+			"sys_ignition",
+			"sys_gpo1",
+			"sys_gpo2",
+			"sys_gpo3",
+			"sys_gpo4,";
+	};
+
+	vin-voltage {
+		compatible = "voltage-divider";
+		io-channels = <&vmcu 0>;
+		output-ohms = <10000>;
+		full-ohms = <112000>;
+	};
 };
 
 &A53_0 {
@@ -301,6 +326,16 @@
 		reg = <0x20>;
 		gpio-controller;
 		#gpio-cells = <2>;
+	};
+
+	vmcu: vmcu@51 {
+		compatible = "drs,vmcu";
+		reg = <0x51>;
+		#io-channel-cells = <1>;
+		#gpio-cells = <2>;
+		gpio-controller;
+		//interrupt-parent = <&gpio5>;
+		//interrupts = <15 IRQ_TYPE_EDGE_FALLING>;
 	};
 };
 
