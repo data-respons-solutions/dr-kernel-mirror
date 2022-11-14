@@ -257,7 +257,7 @@
 	status = "okay";
 
 	pmic@4b {
-		compatible = "rohm,bd71847";
+		compatible = "rohm,bd71850";
 		reg = <0x4b>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_pmic>;
