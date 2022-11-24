@@ -143,6 +143,30 @@
 		full-ohms = <112000>;
 	};
 
+	gpo1-current {
+		compatible = "current-sense-shunt";
+		io-channels = <&vmcu 1>;
+		shunt-resistor-micro-ohms = <5000000>;
+	};
+
+	gpo2-current {
+		compatible = "current-sense-shunt";
+		io-channels = <&vmcu 2>;
+		shunt-resistor-micro-ohms = <5000000>;
+	};
+
+	gpo3-current {
+		compatible = "current-sense-shunt";
+		io-channels = <&vmcu 3>;
+		shunt-resistor-micro-ohms = <5000000>;
+	};
+
+	gpo4-current {
+		compatible = "current-sense-shunt";
+		io-channels = <&vmcu 4>;
+		shunt-resistor-micro-ohms = <5000000>;
+	};
+
 	ani1-voltage {
 		compatible = "voltage-divider";
 		io-channels = <&adc 4>;
