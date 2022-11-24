@@ -157,6 +157,38 @@
 							"sys_ignition";
 	};
 
+
+	vin-voltage {
+		compatible = "voltage-divider";
+		io-channels = <&smc 0>;
+		output-ohms = <1>;
+		full-ohms = <1>;
+	};
+
+	gpo1-current {
+		compatible = "current-sense-shunt";
+		io-channels = <&smc 1>;
+		shunt-resistor-micro-ohms = <1000000>;
+	};
+
+	gpo2-current {
+		compatible = "current-sense-shunt";
+		io-channels = <&smc 2>;
+		shunt-resistor-micro-ohms = <1000000>;
+	};
+
+	gpo3-current {
+		compatible = "current-sense-shunt";
+		io-channels = <&smc 3>;
+		shunt-resistor-micro-ohms = <1000000>;
+	};
+
+	gpo4-current {
+		compatible = "current-sense-shunt";
+		io-channels = <&smc 4>;
+		shunt-resistor-micro-ohms = <1000000>;
+	};
+
 	ani1-voltage {
 		compatible = "voltage-divider";
 		io-channels = <&adc 2>;
@@ -410,6 +442,7 @@
 		reg = <0x51>;
 		#gpio-cells = <2>;
 		gpio-controller;
+		#io-channel-cells = <1>;
 		interrupt-parent = <&gpio5>;
 		interrupts = <15 IRQ_TYPE_EDGE_FALLING>;
 		has-rtc;
