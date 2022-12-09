@@ -59,6 +59,7 @@
 		gpio = <&gpio4 25 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
 		regulator-always-on;
+		regulator-boot-on;
 	};
 
 	reg_gsm: regulator-gsm {
