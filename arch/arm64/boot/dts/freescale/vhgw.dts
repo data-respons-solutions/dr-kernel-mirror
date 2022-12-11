@@ -612,13 +612,6 @@
 	non-removable;
 	mmc-pwrseq = <&usdhc1_pwrseq>;
 	status = "okay";
-
-	#address-cells = <1>;
-	#size-cells = <0>;
-	wifi: wifi@0 {
-		compatible = "marvell,sd8997";
-		reg = <0>;
-	};
 };
 
 &usdhc3 {
