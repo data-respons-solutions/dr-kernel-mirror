@@ -3751,6 +3751,45 @@ out:
 	return ret;
 }
 
+static int fec_enet_init_ref_clk(struct fec_enet_private *fep,
+				   struct device_node *np)
+{
+	struct device_node *gpr_np;
+	struct regmap *gpr_regmap;
+	u32 val[3];
+	int ret = 0;
+
+	/* 0 */
+	gpr_np = of_parse_phandle(np, "fsl,ref-clk", 0);
+	if (!gpr_np)
+		return 0;
+
+	ret = of_property_read_u32_array(np, "fsl,ref-clk", val,
+					 ARRAY_SIZE(val));
+	if (ret) {
+		dev_err(&fep->pdev->dev, "no ref-clk property\n");
+		goto out;
+	}
+
+	gpr_regmap = syscon_node_to_regmap(gpr_np);
+	if (IS_ERR(gpr_regmap)) {
+		dev_err(&fep->pdev->dev, "could not find gpr regmap\n");
+		ret = PTR_ERR(gpr_regmap);
+		goto out;
+	}
+
+	ret = regmap_update_bits(gpr_regmap, val[1], val[2], val[2]);
+	if (ret) {
+		dev_err(&fep->pdev->dev, "failed udpdating gpr bits 0x%x at addr 0x%x with error: %d\n", val[2], val[1], ret);
+		goto out;
+	}
+
+out:
+	of_node_put(gpr_np);
+
+	return ret;
+}
+
 static int
 fec_probe(struct platform_device *pdev)
 {
@@ -3821,6 +3860,9 @@ fec_probe(struct platform_device *pdev)
 		fep->wol_flag |= FEC_WOL_HAS_MAGIC_PACKET;
 
 	ret = fec_enet_init_stop_mode(fep, np);
+	if (ret)
+		goto failed_stop_mode;
+	ret = fec_enet_init_ref_clk(fep, np);
 	if (ret)
 		goto failed_stop_mode;
 
