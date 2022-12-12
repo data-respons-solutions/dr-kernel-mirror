@@ -101,7 +101,7 @@
 #define MX8MN_IOMUXC_ENET_TD3_USDHC3_DATA6                                     0x070 0x2D8 0x584 0x6 0x1
 #define MX8MN_IOMUXC_ENET_TD2_ENET1_RGMII_TD2                                  0x074 0x2DC 0x000 0x0 0x0
 #define MX8MN_IOMUXC_ENET_TD2_ENET1_TX_CLK                                     0x074 0x2DC 0x5A4 0x1 0x0
-#define MX8MN_IOMUXC_ENET_TD2_CCMSRCGPCMIX_ENET_REF_CLK_ROOT                   0x074 0x2DC 0x5A4 0x1 0x0
+#define MX8MN_IOMUXC_ENET_TD2_CCMSRCGPCMIX_ENET_REF_CLK_ROOT                   0x074 0x2DC 0x5A4 0x11 0x0
 #define MX8MN_IOMUXC_ENET_TD2_SAI6_RX_DATA0                                    0x074 0x2DC 0x000 0x2 0x0
 #define MX8MN_IOMUXC_ENET_TD2_PDM_BIT_STREAM3                                  0x074 0x2DC 0x540 0x3 0x2
 #define MX8MN_IOMUXC_ENET_TD2_GPIO1_IO19                                       0x074 0x2DC 0x000 0x5 0x0
