@@ -211,6 +211,14 @@
 	cpu-supply = <&buck1_reg>;
 };
 
+&a53_opp_table {
+	/* iMX8MN UltraLite can't reduce a53 clock
+	 * as it's combined with soc clock */
+	opp-1200000000 {
+		opp-microvolt = <950000>;
+	};
+};
+
 &ddrc {
 	operating-points-v2 = <&ddrc_opp_table>;
 
