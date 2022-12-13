@@ -70,7 +70,7 @@
 		regulator-min-microvolt = <3800000>;
 		regulator-max-microvolt = <3800000>;
 		gpio = <&gpio5 4 GPIO_ACTIVE_HIGH>;
-		startup-delay-us = <100000>;
+		startup-delay-us = <500000>;
 		enable-active-high;
 	};
 
@@ -238,7 +238,7 @@
 	gpio2-hog {
 		gpio-hog;
 		gpios = <14 GPIO_ACTIVE_HIGH>;
-		output-high;
+		output-low;
 		line-name = "gpio2-hog";
 	};
 };
