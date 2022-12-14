@@ -40,6 +40,32 @@
 		reg = <0x0 0x40000000 0 0x80000000>;
 	};
 
+	/*
+	 * The fdt overlay, provided by optee and applied
+	 * by u-boot on this fdt should describe memory regions
+	 * reserved for optee.
+	 * However mainline u-boot does not support this operation
+	 * for our version of optee. We do it here.
+	 */
+	reserved-memory {
+		ranges;
+		#size-cells = <0x00000002>;
+		#address-cells = <0x00000002>;
+		optee_core@56000000 {
+			no-map;
+			reg = <0x00000000 0x56000000 0x00000000 0x01e00000>;
+		};
+	};
+	reserved-memory {
+		ranges;
+		#size-cells = <0x00000002>;
+		#address-cells = <0x00000002>;
+		optee_shm@57e00000 {
+			no-map;
+			reg = <0x00000000 0x57e00000 0x00000000 0x00200000>;
+		};
+	};
+
 	usdhc1_pwrseq: usdhc1_pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		pinctrl-names = "default";
@@ -193,6 +219,19 @@
 		io-channels = <&adc 6>;
 		shunt-resistor-micro-ohms = <91000000>;
 	};
+};
+
+/* Job rings 0 and 2 are reserved by optee.
+ * The fdt overlay, provided by optee and applied
+ * by u-boot on this fdt should set status = disabled.
+ * However mainline u-boot does not support overriding
+ * the job rings. We do it here.
+ */
+&sec_jr0 {
+	status = "disabled";
+};
+&sec_jr2 {
+	status = "disabled";
 };
 
 &A53_0 {
