@@ -251,8 +251,8 @@
 };
 
 &a53_opp_table {
-	/* iMX8MN UltraLite can't reduce a53 clock
-	 * as it's combined with soc clock */
+	/* iMX8MN UltraLite can't reduce a53 core voltage
+	 * as it's combined with VDD_SOC */
 	opp-1200000000 {
 		opp-microvolt = <950000>;
 	};
