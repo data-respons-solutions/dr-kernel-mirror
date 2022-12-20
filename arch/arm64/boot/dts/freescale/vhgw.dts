@@ -278,15 +278,14 @@
 	};
 };
 
-&gpio2 {
+&gpio3 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_gpio2_hog>;
+	pinctrl-0 = <&pinctrl_gpio3_hog>;
 
-	gpio2-hog {
+	gpio3-hog {
 		gpio-hog;
-		gpios = <14 GPIO_ACTIVE_HIGH>;
-		output-low;
-		line-name = "gpio2-hog";
+		gpios = <24 GPIO_ACTIVE_HIGH>;
+		input;
 	};
 };
 
@@ -299,7 +298,6 @@
 		gpios = <26 GPIO_ACTIVE_HIGH>,
 				<27 GPIO_ACTIVE_HIGH>;
 		output-low;
-		line-name = "gpio5-hog";
 	};
 };
 
@@ -692,8 +690,8 @@
 &iomuxc {
 #if 0
    /* UNUSED PINS */
-	MX8MN_IOMUXC_SD2_DATA0_GPIO2_IO15	0x20 /* WnDisable-GSM */
-	MX8MN_IOMUXC_SAI5_RXD3_GPIO3_IO24	0x0 /* STATUS-GSM */
+	MX8MN_IOMUXC_SD2_DATA0_GPIO2_IO15	0x0 /* WnDisable-GSM */
+	MX8MN_IOMUXC_SD2_CMD_GPIO2_IO14		0x0 /* WAKEUP_IN-GSM */
 	MX8MN_IOMUXC_GPIO1_IO04_GPIO1_IO4	0x0 /* GP-Status--CPU */
 	MX8MN_IOMUXC_GPIO1_IO05_GPIO1_IO5	0x0 /* GP-MCU_BOOT0_SEL */
 	MX8MN_IOMUXC_GPIO1_IO07_GPIO1_IO7	0x0 /* GP-EN--BUCK_5V-CPU */
@@ -718,9 +716,9 @@
 		>;
 	};
 
-	pinctrl_gpio2_hog: gpiohog2grp {
+	pinctrl_gpio3_hog: gpiohog3grp {
 		fsl,pins = <
-			MX8MN_IOMUXC_SD2_CMD_GPIO2_IO14	0x20 /* WAKEUP_IN-GSM */
+			MX8MN_IOMUXC_SAI5_RXD3_GPIO3_IO24	0x0 /* STATUS-GSM */
 		>;
 	};
 
