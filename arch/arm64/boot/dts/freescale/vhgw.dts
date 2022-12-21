@@ -483,7 +483,7 @@
 		#gpio-cells = <2>;
 		gpio-controller;
 		interrupt-parent = <&gpio1>;
-		interrupts = <6 IRQ_TYPE_EDGE_FALLING>, <9 IRQ_TYPE_EDGE_FALLING>;
+		interrupts = <6 IRQ_TYPE_EDGE_FALLING>, <9 IRQ_TYPE_LEVEL_LOW>;
 		interrupt-names = "irq", "shutdown";
 	};
 
