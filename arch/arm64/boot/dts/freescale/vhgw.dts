@@ -587,27 +587,6 @@
 	cs-gpios = <&gpio5 13 GPIO_ACTIVE_LOW>;
 	status = "okay";
 
-	can0: can@0 {
-		compatible = "microchip,mcp2518fd";
-		reg = <0>;
-		clocks = <&can0_clk>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_can0>;
-		spi-max-frequency = <17000000>;
-		interrupt-parent = <&gpio5>;
-		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
-		microchip,rx-int-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
-	    termination-gpios = <&gpio3 25 GPIO_ACTIVE_HIGH>;
-		termination-ohms = <120>;
-	};
-};
-
-&ecspi3 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_ecspi3>;
-	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>;
-	status = "okay";
-
 	can1: can@0 {
 		compatible = "microchip,mcp2518fd";
 		reg = <0>;
@@ -619,6 +598,27 @@
 		interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
 		microchip,rx-int-gpios = <&gpio4 29 GPIO_ACTIVE_LOW>;
 	    termination-gpios = <&gpio3 19 GPIO_ACTIVE_HIGH>;
+		termination-ohms = <120>;
+	};
+};
+
+&ecspi3 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_ecspi3>;
+	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>;
+	status = "okay";
+
+	can0: can@0 {
+		compatible = "microchip,mcp2518fd";
+		reg = <0>;
+		clocks = <&can0_clk>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_can0>;
+		spi-max-frequency = <17000000>;
+		interrupt-parent = <&gpio5>;
+		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
+		microchip,rx-int-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
+	    termination-gpios = <&gpio3 25 GPIO_ACTIVE_HIGH>;
 		termination-ohms = <120>;
 	};
 };
