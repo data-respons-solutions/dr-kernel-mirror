@@ -641,7 +641,10 @@
 &uart3 { /* bluetooth */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart3>;
+	assigned-clocks = <&clk IMX8MN_CLK_UART3>;
+	assigned-clock-parents = <&clk IMX8MN_SYS_PLL1_80M>;
 	uart-has-rtscts;
+	status = "okay";
 };
 
 &uart4 { /* vmcu */
@@ -817,10 +820,10 @@
 
 	pinctrl_uart3: uart3grp {
 		fsl,pins = <
-			MX8MN_IOMUXC_SD1_DATA6_UART3_DCE_TX			0x0 /* BT_UART_RXD_I */
-			MX8MN_IOMUXC_SD1_DATA7_UART3_DCE_RX			0x80 /* BT_UART_TXD_O */
-			MX8MN_IOMUXC_SD1_RESET_B_UART3_DCE_RTS_B	0x0 /* BT_UART_nRTS_O */
-			MX8MN_IOMUXC_SD1_STROBE_UART3_DCE_CTS_B		0x80 /* BT_UART_nCTS_I */
+			MX8MN_IOMUXC_SD1_DATA6_UART3_DCE_TX			0x140 /* BT_UART_RXD_I */
+			MX8MN_IOMUXC_SD1_DATA7_UART3_DCE_RX			0x140 /* BT_UART_TXD_O */
+			MX8MN_IOMUXC_SD1_RESET_B_UART3_DCE_RTS_B	0x140 /* BT_UART_nRTS_O */
+			MX8MN_IOMUXC_SD1_STROBE_UART3_DCE_CTS_B		0x140 /* BT_UART_nCTS_I */
 		>;
 	};
 
