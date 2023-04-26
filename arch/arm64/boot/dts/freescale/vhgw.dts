@@ -279,6 +279,17 @@
 	};
 };
 
+&gpio2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_gpio2_hog>;
+
+	gpio2-hog {
+		gpio-hog;
+		gpios = <16 GPIO_ACTIVE_HIGH>;
+		output-low;
+	}
+};
+
 &gpio3 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_gpio3_hog>;
@@ -722,6 +733,12 @@
 	pinctrl_reg_gsm_enable: gsmenablereggrp {
 		fsl,pins = <
 			MX8MN_IOMUXC_SPDIF_EXT_CLK_GPIO5_IO5	0x0 /* GP_PWRKEY-GSM */
+		>;
+	};
+
+	pinctrl_gpio2_hog: gpiohog2grp {
+		fsl,pins = <
+			MX8MN_IOMUXC_SD2_DATA1_GPIO2_IO16	0x20 /* GPO-USB_BOOT-GSM */
 		>;
 	};
 
