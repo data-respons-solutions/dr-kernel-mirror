@@ -289,7 +289,9 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
 	imx6qp-yapp4-crux-plus.dtb \
 	imx6qp-yapp4-pegasus-plus.dtb \
 	imx6qp-zii-rdu2.dtb \
-	imx6s-dhcom-drc02.dtb
+	imx6s-dhcom-drc02.dtb \
+	cargotec-gw-revC-dl.dtb \
+	cargotec-gw-revC-q.dtb
 dtb-$(CONFIG_SOC_IMX6SL) += \
 	imx6sl-evk.dtb \
 	imx6sl-kobo-aura2.dtb \
