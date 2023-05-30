@@ -113,8 +113,6 @@
 			<&vmcu 3 GPIO_ACTIVE_HIGH>,
 			<&vmcu 4 GPIO_ACTIVE_HIGH>,
 			<&vmcu 5 GPIO_ACTIVE_HIGH>,
-			<&gpio3 22 GPIO_ACTIVE_HIGH>,
-			<&gpio3 23 GPIO_ACTIVE_HIGH>,
 			<&gpio4 24 GPIO_ACTIVE_LOW>,
 			<&gpio1 11 GPIO_ACTIVE_HIGH>,
 			<&gpio1 14 GPIO_ACTIVE_HIGH>,
@@ -128,8 +126,6 @@
 			"sys_gpo2",
 			"sys_gpo3",
 			"sys_gpo4",
-			"sys_ani1_current",
-			"sys_ani2_current",
 			"sys_flash_wp",
 			"sys_gpi1",
 			"sys_gpi2",
@@ -169,29 +165,67 @@
 		shunt-resistor-micro-ohms = <5000000>;
 	};
 
+	ani1_mux_ctrl: ani1muxctrl {
+		compatible = "gpio-mux";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ani1_mux>;
+		#mux-control-cells = <0>;
+
+		mux-gpios = <&gpio3 22 GPIO_ACTIVE_HIGH>;
+	};
+
+	ani2_mux_ctrl: ani2muxctrl {
+		compatible = "gpio-mux";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ani2_mux>;
+		#mux-control-cells = <0>;
+
+		mux-gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
+	};
+
+	ani1_mux: ani1mux {
+		compatible = "io-channel-mux";
+		io-channels = <&adc 4>;
+		io-channel-names = "parent";
+		#io-channel-cells = <1>;
+		settle-time-us = <10000>;
+		mux-controls = <&ani1_mux_ctrl>;
+		channels = "voltage", "current";
+	};
+
+	ani2_mux: ani2mux {
+		compatible = "io-channel-mux";
+		io-channels = <&adc 6>;
+		io-channel-names = "parent";
+		#io-channel-cells = <1>;
+		settle-time-us = <10000>;
+		mux-controls = <&ani2_mux_ctrl>;
+		channels = "voltage", "current";
+	};
+
 	ani1-voltage {
 		compatible = "voltage-divider";
-		io-channels = <&adc 4>;
+		io-channels = <&ani1_mux 0>;
 		output-ohms = <390>;
 		full-ohms = <2190>;
 	};
 
 	ani1-current {
 		compatible = "current-sense-shunt";
-		io-channels = <&adc 4>;
+		io-channels = <&ani1_mux 1>;
 		shunt-resistor-micro-ohms = <91000000>;
 	};
 
 	ani2-voltage {
 		compatible = "voltage-divider";
-		io-channels = <&adc 6>;
+		io-channels = <&ani2_mux 0>;
 		output-ohms = <390>;
 		full-ohms = <2190>;
 	};
 
 	ani2-current {
 		compatible = "current-sense-shunt";
-		io-channels = <&adc 6>;
+		io-channels = <&ani2_mux 1>;
 		shunt-resistor-micro-ohms = <91000000>;
 	};
 };
@@ -733,14 +767,24 @@
 
 	pinctrl_system: systemgrp {
 		fsl,pins = <
-			MX8MN_IOMUXC_SAI5_RXD1_GPIO3_IO22	0x0 /* EN--4-20mA_ANI_1 */
-			MX8MN_IOMUXC_SAI5_RXD2_GPIO3_IO23	0x0 /* EN--4-20mA_ANI_2 */
 			MX8MN_IOMUXC_SAI2_TXFS_GPIO4_IO24	0x0 /* WP_Flash */
 			MX8MN_IOMUXC_GPIO1_IO11_GPIO1_IO11	0x80 /* GPI_1--PCA */
 			MX8MN_IOMUXC_GPIO1_IO12_GPIO1_IO12	0x80 /* GPI_3--PCA */
 			MX8MN_IOMUXC_GPIO1_IO14_GPIO1_IO14	0x80 /* GPI_2--PCA */
 			MX8MN_IOMUXC_SAI3_MCLK_GPIO5_IO2	0x20 /* USB_HUB1_nRESET */
 			MX8MN_IOMUXC_GPIO1_IO08_GPIO1_IO8	0x0 /* GP-NRST--MCU1 */
+		>;
+	};
+
+	pinctrl_ani1_mux: ani1muxgrp {
+		fsl,pins = <
+			MX8MN_IOMUXC_SAI5_RXD1_GPIO3_IO22	0x0 /* EN--4-20mA_ANI_1 */
+		>;
+	};
+
+	pinctrl_ani2_mux: ani2muxgrp {
+		fsl,pins = <
+			MX8MN_IOMUXC_SAI5_RXD2_GPIO3_IO23	0x0 /* EN--4-20mA_ANI_2 */
 		>;
 	};
 
