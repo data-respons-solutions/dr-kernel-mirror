@@ -41,13 +41,15 @@
 		reg = <0x0 0x40000000 0 0x80000000>;
 	};
 
-	usdhc1_pwrseq: usdhc1_pwrseq {
-		compatible = "mmc-pwrseq-simple";
+	reg_wifi: regulator-wifi {
+		compatible = "regulator-fixed";
 		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_usdhc1_pwrseq>;
-		reset-gpios = <&gpio2 20 GPIO_ACTIVE_LOW>;
-		clocks = <&osc_32k>;
-		clock-names = "ext_clock";
+		pinctrl-0 = <&pinctrl_reg_wifi>;
+		regulator-name = "wifi-vio";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&gpio2 20 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
 	};
 
 	reg_usb0: regulator-usb0 {
@@ -679,7 +681,7 @@
 	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
 	bus-width = <4>;
 	non-removable;
-	mmc-pwrseq = <&usdhc1_pwrseq>;
+	vmmc-supply = <&reg_wifi>;
 	status = "okay";
 };
 
@@ -910,7 +912,7 @@
 		>;
 	};
 
-	pinctrl_usdhc1_pwrseq: usdhc1pwrseqgrp{
+	pinctrl_reg_wifi: regwifigrp{
 		fsl,pins = <
 			MX8MN_IOMUXC_SD2_WP_GPIO2_IO20	0x0 /* GP-EN_PWR-WL */
 			MX8MN_IOMUXC_GPIO1_IO00_ANAMIX_REF_CLK_32K	0x0 /* REF_CLK_32K */
