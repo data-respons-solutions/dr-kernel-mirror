@@ -249,11 +249,10 @@
 };
 
 &a53_opp_table {
-	/* iMX8MN UltraLite can't reduce a53 core voltage
-	 * as it's combined with VDD_SOC */
-	opp-1200000000 {
-		opp-microvolt = <950000>;
-	};
+	/* Combined VDD_SOC/VDD_ARM set to 0.85V and
+	 * frequencies over 1,2GHz not supported. */
+	/delete-node/ opp-1400000000;
+	/delete-node/ opp-1500000000;
 };
 
 &ddrc {
@@ -270,8 +269,8 @@
 			opp-hz = /bits/ 64 <100000000>;
 		};
 
-		opp-800M {
-			opp-hz = /bits/ 64 <800000000>;
+		opp-600M {
+			opp-hz = /bits/ 64 <600000000>;
 		};
 	};
 };
