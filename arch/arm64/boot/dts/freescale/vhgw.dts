@@ -249,6 +249,14 @@
 };
 
 &a53_opp_table {
+	opp-800000000 {
+		opp-hz = /bits/ 64 <800000000>;
+		opp-microvolt = <850000>;
+		opp-supported-hw = <0xb00>, <0x7>;
+		clock-latency-ns = <150000>;
+		opp-suspend;
+	};
+
 	/* Combined VDD_SOC/VDD_ARM set to 0.85V and
 	 * frequencies over 1,2GHz not supported. */
 	/delete-node/ opp-1400000000;
