@@ -367,7 +367,7 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
 	struct imx8m_ddrc *priv;
-	const char *gov = DEVFREQ_GOV_USERSPACE;
+	const char *gov = DEVFREQ_GOV_PERFORMANCE;
 	int ret;
 
 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
@@ -421,6 +421,7 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
 	priv->profile.exit = imx8m_ddrc_exit;
 	priv->profile.get_cur_freq = imx8m_ddrc_get_cur_freq;
 	priv->profile.initial_freq = clk_get_rate(priv->dram_core);
+	priv->profile.is_cooling_device = true;
 
 	priv->devfreq = devm_devfreq_add_device(dev, &priv->profile,
 						gov, NULL);
