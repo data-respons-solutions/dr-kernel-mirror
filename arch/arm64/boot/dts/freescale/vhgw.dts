@@ -232,6 +232,16 @@
 	};
 };
 
+/* Add dram to list of passive cooling devices */
+&{/thermal-zones/cpu-thermal/cooling-maps/map0} {
+	cooling-device =
+		<&ddrc THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+		<&A53_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+		<&A53_1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+		<&A53_2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+		<&A53_3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+};
+
 &A53_0 {
 	cpu-supply = <&buck1_reg>;
 };
@@ -265,20 +275,24 @@
 
 &ddrc {
 	operating-points-v2 = <&ddrc_opp_table>;
+	#cooling-cells = <2>;
 
 	ddrc_opp_table: opp-table {
 		compatible = "operating-points-v2";
-
+/*
 		opp-25M {
 			opp-hz = /bits/ 64 <25000000>;
+			opp-microvolt = <850000>;
 		};
-
+*/
 		opp-100M {
 			opp-hz = /bits/ 64 <100000000>;
+			opp-microvolt = <850000>;
 		};
 
 		opp-600M {
 			opp-hz = /bits/ 64 <600000000>;
+			opp-microvolt = <850000>;
 		};
 	};
 };
