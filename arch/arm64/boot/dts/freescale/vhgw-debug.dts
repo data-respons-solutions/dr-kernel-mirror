@@ -1,0 +1,39 @@
+/*
+ * Copyright DATA RESPONS AB
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
+/dts-v1/;
+
+#include "vhgw.dts"
+
+/ {
+	model = "Data Respons Solutions VHGW DEBUG";
+
+	reg_gsm_virtual: regulator-gsm-virtual {
+		compatible = "regulator-virtual-consumer";
+		default-supply = <&reg_gsm_enable>;
+	};
+};
+
+&reg_gsm_enable {
+	/* Allow disabling through virtual regulator */
+	/delete-property/ regulator-always-on;
+	/* Set default enabled */
+	regulator-boot-on;
+};
+
+&flash0 {
+	partitions {
+		platform@3E0000 {
+			/* Allow writing platform partition */
+			/delete-property/ read-only;
+		};
+	};
+};
