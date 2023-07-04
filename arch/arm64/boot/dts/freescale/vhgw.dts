@@ -167,42 +167,28 @@
 		shunt-resistor-micro-ohms = <5000000>;
 	};
 
-	ani1_mux_ctrl: ani1muxctrl {
-		compatible = "gpio-mux";
+	ani1_mux: ani1mux {
+		compatible = "drs,ani-mux";
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_ani1_mux>;
-		#mux-control-cells = <0>;
-
-		mux-gpios = <&gpio3 22 GPIO_ACTIVE_HIGH>;
-	};
-
-	ani2_mux_ctrl: ani2muxctrl {
-		compatible = "gpio-mux";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_ani2_mux>;
-		#mux-control-cells = <0>;
-
-		mux-gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
-	};
-
-	ani1_mux: ani1mux {
-		compatible = "io-channel-mux";
 		io-channels = <&adc 4>;
 		io-channel-names = "parent";
 		#io-channel-cells = <1>;
 		settle-time-us = <10000>;
-		mux-controls = <&ani1_mux_ctrl>;
-		channels = "voltage", "current";
+		mux-gpios = <&gpio3 22 GPIO_ACTIVE_HIGH>;
+
 	};
 
 	ani2_mux: ani2mux {
-		compatible = "io-channel-mux";
+		compatible = "drs,ani-mux";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ani2_mux>;
 		io-channels = <&adc 6>;
 		io-channel-names = "parent";
 		#io-channel-cells = <1>;
 		settle-time-us = <10000>;
-		mux-controls = <&ani2_mux_ctrl>;
-		channels = "voltage", "current";
+		mux-gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
+
 	};
 
 	ani1-voltage {
