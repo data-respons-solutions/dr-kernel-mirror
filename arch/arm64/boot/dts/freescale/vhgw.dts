@@ -140,7 +140,7 @@
 		compatible = "voltage-divider";
 		io-channels = <&vmcu 0>;
 		output-ohms = <10000>;
-		full-ohms = <112000>;
+		full-ohms = <149000>;
 	};
 
 	gpo1-current {
