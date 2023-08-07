@@ -680,16 +680,16 @@
 };
 
 &usdhc1 {
-	assigned-clocks = <&clk IMX8MN_CLK_USDHC2>;
-	assigned-clock-rates = <200000000>;
-	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+	assigned-clocks = <&clk IMX8MN_CLK_USDHC1>;
+	assigned-clock-rates = <100000000>;
+	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_usdhc1>;
-	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
-	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
 	bus-width = <4>;
 	non-removable;
 	vmmc-supply = <&reg_wifi>;
 	status = "okay";
+	max-frequency = <50000000>;
+	sd-uhs-ddr50;
 };
 
 &usdhc3 {
@@ -934,28 +934,6 @@
 			MX8MN_IOMUXC_SD1_DATA1_USDHC1_DATA1	0x1d0 /* SD_DAT1-WiFi */
 			MX8MN_IOMUXC_SD1_DATA2_USDHC1_DATA2	0x1d0 /* SD_DAT2-WiFi */
 			MX8MN_IOMUXC_SD1_DATA3_USDHC1_DATA3	0x1d0 /* SD_DAT3-WiFi */
-		>;
-	};
-
-	pinctrl_usdhc1_100mhz: usdhc1-100mhzgrp {
-		fsl,pins = <
-			MX8MN_IOMUXC_SD1_CLK_USDHC1_CLK		0x40000094 /* SD_CLK-WiFi_R */
-			MX8MN_IOMUXC_SD1_CMD_USDHC1_CMD		0x1d4 /* SD_CMD-WiFi */
-			MX8MN_IOMUXC_SD1_DATA0_USDHC1_DATA0	0x1d4 /* SD_DAT0-WiFi */
-			MX8MN_IOMUXC_SD1_DATA1_USDHC1_DATA1	0x1d4 /* SD_DAT1-WiFi */
-			MX8MN_IOMUXC_SD1_DATA2_USDHC1_DATA2	0x1d4 /* SD_DAT2-WiFi */
-			MX8MN_IOMUXC_SD1_DATA3_USDHC1_DATA3	0x1d4 /* SD_DAT3-WiFi */
-		>;
-	};
-
-	pinctrl_usdhc1_200mhz: usdhc1-200mhzgrp {
-		fsl,pins = <
-			MX8MN_IOMUXC_SD1_CLK_USDHC1_CLK		0x40000096 /* SD_CLK-WiFi_R */
-			MX8MN_IOMUXC_SD1_CMD_USDHC1_CMD		0x1d6 /* SD_CMD-WiFi */
-			MX8MN_IOMUXC_SD1_DATA0_USDHC1_DATA0	0x1d6 /* SD_DAT0-WiFi */
-			MX8MN_IOMUXC_SD1_DATA1_USDHC1_DATA1	0x1d6 /* SD_DAT1-WiFi */
-			MX8MN_IOMUXC_SD1_DATA2_USDHC1_DATA2	0x1d6 /* SD_DAT2-WiFi */
-			MX8MN_IOMUXC_SD1_DATA3_USDHC1_DATA3	0x1d6 /* SD_DAT3-WiFi */
 		>;
 	};
 
