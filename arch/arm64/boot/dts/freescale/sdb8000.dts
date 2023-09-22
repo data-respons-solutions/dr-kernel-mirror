@@ -535,17 +535,6 @@
 	bus-width = <8>;
 	non-removable;
 	status = "okay";
-
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		reserved@0 {
-			label = "reserved";
-			reg = <0x0 0x1000000>;
-		};
-	};
 };
 
 &pwm1 {
