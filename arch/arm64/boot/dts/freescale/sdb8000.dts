@@ -429,11 +429,16 @@
 };
 
 &mipi_dsi {
+	samsung,esc-clock-frequency = <10000000>;
 	status = "okay";
-	port@1 {
-		dsim_to_bridge: endpoint {
-			remote-endpoint = <&bridge_from_dsim>;
-			attach-bridge;
+
+	ports {
+		port@1 {
+			reg = <1>;
+			dsim_to_bridge: endpoint {
+				remote-endpoint = <&bridge_from_dsim>;
+				attach-bridge;
+			};
 		};
 	};
 };
@@ -548,26 +553,10 @@
 	status = "okay";
 };
 
-&vpu_g1 {
-	status = "okay";
-};
-
-&vpu_g2 {
-	status = "okay";
-};
-
-&vpu_h1 {
-	status = "okay";
-};
-
 &wdog1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_wdog>;
 	fsl,ext-reset-output;
-	status = "okay";
-};
-
-&gpu {
 	status = "okay";
 };
 
