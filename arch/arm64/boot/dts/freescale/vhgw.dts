@@ -119,7 +119,6 @@
 			<&gpio1 11 GPIO_ACTIVE_HIGH>,
 			<&gpio1 14 GPIO_ACTIVE_HIGH>,
 			<&gpio1 12 GPIO_ACTIVE_HIGH>,
-			<&gpio5 2 GPIO_ACTIVE_LOW>,
 			<&gpio1 8 GPIO_ACTIVE_HIGH>;
 
 		gpio-line-names =
@@ -132,7 +131,6 @@
 			"sys_gpi1",
 			"sys_gpi2",
 			"sys_gpi3",
-			"sys_usb_hub_rst",
 			"sys_vmcu_rst";
 	};
 
@@ -506,7 +504,8 @@
 };
 
 &i2c3 {
-	clock-frequency = <400000>;
+	/* usb2512bi only supports 100KHz */
+	clock-frequency = <100000>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c3>;
 	status = "okay";
@@ -514,6 +513,14 @@
 	onewire_1: ds2482@18 {
 		reg = <0x18>;
 		compatible = "dallas,ds2482";
+	};
+
+	usb_hub: usb2512bi@2c {
+		reg = <0x2c>;
+		compatible = "microchip,usb2512bi";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_hub>;
+		reset-gpios = <&gpio5 2 GPIO_ACTIVE_LOW>;
 	};
 };
 
@@ -780,7 +787,6 @@
 			MX8MN_IOMUXC_GPIO1_IO11_GPIO1_IO11	0x80 /* GPI_1--PCA */
 			MX8MN_IOMUXC_GPIO1_IO12_GPIO1_IO12	0x80 /* GPI_3--PCA */
 			MX8MN_IOMUXC_GPIO1_IO14_GPIO1_IO14	0x80 /* GPI_2--PCA */
-			MX8MN_IOMUXC_SAI3_MCLK_GPIO5_IO2	0x20 /* USB_HUB1_nRESET */
 			MX8MN_IOMUXC_GPIO1_IO08_GPIO1_IO8	0x0 /* GP-NRST--MCU1 */
 		>;
 	};
@@ -828,6 +834,12 @@
 	pinctrl_pmic: pmicirqgrp {
 		fsl,pins = <
 			MX8MN_IOMUXC_GPIO1_IO03_GPIO1_IO3	0x140 /* PMIC_nINT */
+		>;
+	};
+
+	pinctrl_hub: hubgrp {
+		fsl,pins = <
+			MX8MN_IOMUXC_SAI3_MCLK_GPIO5_IO2	0x0 /* USB_HUB1_nRESET */
 		>;
 	};
 
