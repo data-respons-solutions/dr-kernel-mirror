@@ -257,6 +257,11 @@
 	/delete-node/ opp-1500000000;
 };
 
+/* Used by optee */
+&sec_jr2 {
+	status = "disabled";
+};
+
 &ddrc {
 	operating-points-v2 = <&ddrc_opp_table>;
 	#cooling-cells = <2>;
