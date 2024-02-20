@@ -369,6 +369,7 @@ static int usb251xb_connect(struct usb251xb *hub)
 			goto out_err;
 	}
 
+	dev_warn(dev, "BOOST14: reg 0x%x -> 0x%x\n", USB251XB_ADDR_BOOST_14, i2c_wb[USB251XB_ADDR_BOOST_14]);
 	dev_info(dev, "Hub configuration was successful.\n");
 	return 0;
 
@@ -542,6 +543,11 @@ static int usb251xb_get_ofdata(struct usb251xb *hub,
 	if (of_property_read_u8(np, "boost-up", &hub->boost_up))
 		hub->boost_up = USB251XB_DEF_BOOST_UP;
 
+	if (of_property_read_u8(np, "boost-14", &hub->boost_14)) {
+		dev_warn(dev, "boost-14 not set\n");
+		hub->boost_14 = USB251XB_DEF_BOOST_14;
+	}
+
 	cproperty_char = of_get_property(np, "manufacturer", NULL);
 	strscpy(str, cproperty_char ? : USB251XB_DEF_MANUFACTURER_STRING,
 		sizeof(str));
@@ -584,7 +590,7 @@ static int usb251xb_get_ofdata(struct usb251xb *hub,
 	 */
 	hub->bat_charge_en = USB251XB_DEF_BATTERY_CHARGING_ENABLE;
 	hub->boost_57 = USB251XB_DEF_BOOST_57;
-	hub->boost_14 = USB251XB_DEF_BOOST_14;
+	/*hub->boost_14 = USB251XB_DEF_BOOST_14;*/
 	hub->port_map12 = USB251XB_DEF_PORT_MAP_12;
 	hub->port_map34 = USB251XB_DEF_PORT_MAP_34;
 	hub->port_map56 = USB251XB_DEF_PORT_MAP_56;
