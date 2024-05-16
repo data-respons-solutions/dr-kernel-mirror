@@ -227,8 +227,8 @@
 	pinctrl-names = "default", "gpio";
 	pinctrl-0 = <&pinctrl_i2c1>;
 	pinctrl-1 = <&pinctrl_i2c1_gpio>;
-	scl-gpios = <&gpio5 14 GPIO_ACTIVE_HIGH>;
-	sda-gpios = <&gpio5 15 GPIO_ACTIVE_HIGH>;
+	scl-gpios = <&gpio5 14 GPIO_OPEN_DRAIN>;
+	sda-gpios = <&gpio5 15 GPIO_OPEN_DRAIN>;
 	status = "okay";
 
 	pmic@25 {
@@ -325,8 +325,8 @@
 	pinctrl-names = "default", "gpio";
 	pinctrl-0 = <&pinctrl_i2c2>;
 	pinctrl-1 = <&pinctrl_i2c2_gpio>;
-	scl-gpios = <&gpio5 16 GPIO_ACTIVE_HIGH>;
-	sda-gpios = <&gpio5 17 GPIO_ACTIVE_HIGH>;
+	scl-gpios = <&gpio5 16 GPIO_OPEN_DRAIN>;
+	sda-gpios = <&gpio5 17 GPIO_OPEN_DRAIN>;
 	status = "okay";
 
 	touch: ili2131@41 {
@@ -345,8 +345,8 @@
 	pinctrl-names = "default", "gpio";
 	pinctrl-0 = <&pinctrl_i2c3>;
 	pinctrl-1 = <&pinctrl_i2c3_gpio>;
-	scl-gpios = <&gpio5 18 GPIO_ACTIVE_HIGH>;
-	sda-gpios = <&gpio5 19 GPIO_ACTIVE_HIGH>;
+	scl-gpios = <&gpio5 18 GPIO_OPEN_DRAIN>;
+	sda-gpios = <&gpio5 19 GPIO_OPEN_DRAIN>;
 	status = "okay";
 
 	light-sensor@44 {
@@ -763,8 +763,8 @@
 
 	pinctrl_i2c1_gpio: i2c1gpiogrp {
 		fsl,pins = <
-			MX8MP_IOMUXC_I2C1_SCL__GPIO5_IO14		0x1c3 /* I2C1_SCL */
-			MX8MP_IOMUXC_I2C1_SDA__GPIO5_IO15		0x1c3 /* I2C1_SDA */
+			MX8MP_IOMUXC_I2C1_SCL__GPIO5_IO14		0x1e3 /* I2C1_SCL */
+			MX8MP_IOMUXC_I2C1_SDA__GPIO5_IO15		0x1e3 /* I2C1_SDA */
 		>;
 	};
 
@@ -777,8 +777,8 @@
 
 	pinctrl_i2c2_gpio: i2c2gpiogrp {
 		fsl,pins = <
-			MX8MP_IOMUXC_I2C2_SCL__GPIO5_IO16		0x1c3 /* I2C2_SCL */
-			MX8MP_IOMUXC_I2C2_SDA__GPIO5_IO17		0x1c3 /* I2C2_SDA */
+			MX8MP_IOMUXC_I2C2_SCL__GPIO5_IO16		0x1e3 /* I2C2_SCL */
+			MX8MP_IOMUXC_I2C2_SDA__GPIO5_IO17		0x1e3 /* I2C2_SDA */
 		>;
 	};
 
@@ -791,8 +791,8 @@
 
 	pinctrl_i2c3_gpio: i2c3gpiogrp {
 		fsl,pins = <
-			MX8MP_IOMUXC_I2C3_SCL__GPIO5_IO18		0x1c3 /* I2C3_SCL */
-			MX8MP_IOMUXC_I2C3_SDA__GPIO5_IO19		0x1c3 /* I2C3_SDA */
+			MX8MP_IOMUXC_I2C3_SCL__GPIO5_IO18		0x1e3 /* I2C3_SCL */
+			MX8MP_IOMUXC_I2C3_SDA__GPIO5_IO19		0x1e3 /* I2C3_SDA */
 		>;
 	};
 
