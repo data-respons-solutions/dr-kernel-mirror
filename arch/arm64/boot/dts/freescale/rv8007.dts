@@ -643,7 +643,9 @@
 &pgc_vpu_vc8000e {
 	status = "disabled";
 };
-&pgc_ispdwp {
+
+/* Reserved by optee */
+&sec_jr2 {
 	status = "disabled";
 };
 
