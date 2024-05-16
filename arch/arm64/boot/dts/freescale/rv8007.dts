@@ -554,9 +554,11 @@
 	pinctrl-0 = <&pinctrl_eqos>;
 	phy-mode = "rmii";
 	phy-handle = <&ethphy0>;
-	snps,force_thresh_dma_mode;
-	snps,mtl-tx-config = <&mtl_tx_setup>;
-	snps,mtl-rx-config = <&mtl_rx_setup>;
+	/* Ref clk as 50MHz */
+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_266M>,
+				 <&clk IMX8MP_SYS_PLL2_100M>,
+				 <&clk IMX8MP_SYS_PLL2_50M>;
+	assigned-clock-rates = <0>, <100000000>, <50000000>;
 	status = "okay";
 
 	mdio {
@@ -564,80 +566,15 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		ethphy0: ethernet-phy@1 {
+		ethphy0: ethernet-phy@0 {
 			compatible = "ethernet-phy-ieee802.3-c22";
-			reg = <1>;
+			reg = <0>;
             interrupt-parent = <&gpio1>;
             interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
 			reset-names = "phy";
 			reset-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
             reset-assert-us = <500>;
             reset-deassert-us = <100>;
-		};
-	};
-
-	mtl_tx_setup: tx-queues-config {
-		snps,tx-queues-to-use = <5>;
-		snps,tx-sched-sp;
-
-		queue0 {
-			snps,dcb-algorithm;
-			snps,priority = <0x1>;
-		};
-
-		queue1 {
-			snps,dcb-algorithm;
-			snps,priority = <0x2>;
-		};
-
-		queue2 {
-			snps,dcb-algorithm;
-			snps,priority = <0x4>;
-		};
-
-		queue3 {
-			snps,dcb-algorithm;
-			snps,priority = <0x8>;
-		};
-
-		queue4 {
-			snps,dcb-algorithm;
-			snps,priority = <0xf0>;
-		};
-	};
-
-	mtl_rx_setup: rx-queues-config {
-		snps,rx-queues-to-use = <5>;
-		snps,rx-sched-sp;
-
-		queue0 {
-			snps,dcb-algorithm;
-			snps,priority = <0x1>;
-			snps,map-to-dma-channel = <0>;
-		};
-
-		queue1 {
-			snps,dcb-algorithm;
-			snps,priority = <0x2>;
-			snps,map-to-dma-channel = <1>;
-		};
-
-		queue2 {
-			snps,dcb-algorithm;
-			snps,priority = <0x4>;
-			snps,map-to-dma-channel = <2>;
-		};
-
-		queue3 {
-			snps,dcb-algorithm;
-			snps,priority = <0x8>;
-			snps,map-to-dma-channel = <3>;
-		};
-
-		queue4 {
-			snps,dcb-algorithm;
-			snps,priority = <0xf0>;
-			snps,map-to-dma-channel = <4>;
 		};
 	};
 };
@@ -647,7 +584,7 @@
 	pinctrl-0 = <&pinctrl_gpio1_hog>;
 
 	/* Permanently un-mute audio */
-	gpio2-hog-high {
+	gpio1-hog-high {
 		gpio-hog;
 		gpios = <4 GPIO_ACTIVE_HIGH>;
 		output-high;
@@ -682,6 +619,32 @@
 	assigned-clock-rates = <12288000>;
 	fsl,sai-mclk-direction-output;
 	status = "okay";
+};
+
+/* VPU/ISP not available on i.MX 8M Plus QuadLite */
+&vpu_g1 {
+	status = "disabled";
+};
+&vpu_g2 {
+	status = "disabled";
+};
+&vpumix_blk_ctrl {
+	status = "disabled";
+};
+&pgc_vpumix {
+	status = "disabled";
+};
+&pgc_vpu_g1 {
+	status = "disabled";
+};
+&pgc_vpu_g2 {
+	status = "disabled";
+};
+&pgc_vpu_vc8000e {
+	status = "disabled";
+};
+&pgc_ispdwp {
+	status = "disabled";
 };
 
 &iomuxc {
