@@ -38,7 +38,7 @@
 
 	beeper {
 		compatible = "pwm-beeper";
-		pwms = <&pwm2>;
+		pwms = <&pwm2 0 1000000 0>;
 		beeper-hz = <2731>;
 	};
 
@@ -142,12 +142,12 @@
 			max-brightness = <65535>;
 
 			led-red {
-				pwms = <&pwm3 0 1000000>;
+				pwms = <&pwm3 0 1000000 0>;
 				color = <LED_COLOR_ID_RED>;
 			};
 
 			led-blue {
-				pwms = <&pwm1 0 1000000>;
+				pwms = <&pwm1 0 1000000 0>;
 				color = <LED_COLOR_ID_BLUE>;
 			};
 		};
