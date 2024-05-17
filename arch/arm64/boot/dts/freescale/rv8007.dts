@@ -153,43 +153,41 @@
 		};
 	};
 
-	sound {
-		compatible = "simple-audio-card";
-		simple-audio-card,name = "rv8007-audio";
-		#address-cells = <1>;
-		#size-cells = <0>;
-		simple-audio-card,widgets =
-			"Speaker", "External Speaker";
-		simple-audio-card,routing =
-			"External Speaker", "SPK_LP",
-			"External Speaker", "SPK_LN",
-			"External Speaker", "SPK_RP",
-			"External Speaker", "SPK_RN";
+	bt_sco_codec: bt_sco_codec {
+		#sound-dai-cells = <1>;
+		compatible = "linux,bt-sco";
+	};
 
-		simple-audio-card,dai-link@0 {
-			reg = <0>;
-			format = "i2s";
-			frame-master = <&cpusai1>;
-			bitclock-master = <&cpusai1>;
-			cpusai1: cpu {
-				sound-dai = <&sai1>;
-			};
-			codec {
-				sound-dai = <&pcm1681>;
-			};
+	sound-bt {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "rv8007-bt";
+		simple-audio-card,format = "dsp_a";
+		simple-audio-card,bitclock-inversion;
+		simple-audio-card,frame-master = <&soundbtcpu>;
+		simple-audio-card,bitclock-master = <&soundbtcpu>;
+
+		soundbtcpu: simple-audio-card,cpu {
+			sound-dai = <&sai2>;
 		};
 
-		simple-audio-card,dai-link@1 {
-			reg = <1>;
-			format = "i2s";
-			frame-master = <&cpusai3>;
-			bitclock-master = <&cpusai3>;
-			cpusai3: cpu {
-				sound-dai = <&sai3>;
-			};
-			codec {
-				sound-dai = <&bluetooth>;
-			};
+		simple-audio-card,codec {
+			sound-dai = <&bt_sco_codec 1>;
+		};
+	};
+
+	sound-out {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "rv8007-out";
+		simple-audio-card,format = "i2s";
+		simple-audio-card,frame-master = <&soundoutcpu>;
+		simple-audio-card,bitclock-master = <&soundoutcpu>;
+
+		soundoutcpu: simple-audio-card,cpu {
+			sound-dai = <&sai1>;
+		};
+
+		simple-audio-card,codec {
+			sound-dai = <&pcm1681>;
 		};
 	};
 };
@@ -361,6 +359,7 @@
 	pcm1681: pcm1681@4c {
 		compatible = "ti,pcm1681";
 		reg = <0x4c>;
+		#sound-dai-cells = <0>;
 	};
 };
 
@@ -609,6 +608,16 @@
 		gpios = <18 GPIO_ACTIVE_HIGH>;
 		output-high;
 	};
+};
+
+&sai1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_sai1>;
+	assigned-clocks = <&clk IMX8MP_CLK_SAI1>;
+	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
+	assigned-clock-rates = <12288000>;
+	fsl,sai-mclk-direction-output;
+	status = "okay";
 };
 
 &sai2 {
