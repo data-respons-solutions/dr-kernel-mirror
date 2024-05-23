@@ -82,10 +82,10 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_panel>;
 		label = "CH070XLFLWN-CT1";
-		data-mapping = "jeida-24";
+		data-mapping = "vesa-24";
 		width-mm = <154>;
 		height-mm = <86>;
-		reset-gpios = <&gpio1 5 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
 		enable-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
 		power-supply = <&reg_lcd>;
 		backlight = <&backlight>;
@@ -216,6 +216,10 @@
 };
 
 &lvds_bridge {
+	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_LDB>,
+					<&clk IMX8MP_AUDIO_PLL2_OUT>;
+	assigned-clock-rates = <358400000>, <358400000>;
+	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL2_OUT>;
 	status = "okay";
 };
 
