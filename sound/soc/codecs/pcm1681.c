@@ -79,6 +79,7 @@ struct pcm1681_private {
 	/* Current rate for deemphasis control */
 	unsigned int rate;
 	struct clk *mclk;
+	bool tdm_mode;
 };
 
 static const int pcm1681_deemph[] = { 44100, 48000, 32000 };
@@ -163,6 +164,17 @@ static int pcm1681_mute(struct snd_soc_dai *dai, int mute, int direction)
 	return regmap_write(priv->regmap, PCM1681_SOFT_MUTE, val);
 }
 
+static int pcm1681_set_tdm_slot(struct snd_soc_dai *dai, unsigned int tx_mask,
+				unsigned int rx_mask, int slots, int slot_width)
+{
+	struct snd_soc_component *component = dai->component;
+	struct pcm1681_private *priv = snd_soc_component_get_drvdata(component);
+
+	priv->tdm_mode = slots > 0 ? 1 : 0;
+
+	return 0;
+}
+
 static int pcm1681_hw_params(struct snd_pcm_substream *substream,
 			     struct snd_pcm_hw_params *params,
 			     struct snd_soc_dai *dai)
@@ -175,6 +187,8 @@ static int pcm1681_hw_params(struct snd_pcm_substream *substream,
 
 	switch (priv->format & SND_SOC_DAIFMT_FORMAT_MASK) {
 	case SND_SOC_DAIFMT_RIGHT_J:
+		if (priv->tdm_mode)
+			return -EINVAL;
 		switch (params_width(params)) {
 		case 24:
 			val = 0;
@@ -187,10 +201,10 @@ static int pcm1681_hw_params(struct snd_pcm_substream *substream,
 		}
 		break;
 	case SND_SOC_DAIFMT_I2S:
-		val = 0x04;
+		val = priv->tdm_mode ? 0x06 : 0x04;
 		break;
 	case SND_SOC_DAIFMT_LEFT_J:
-		val = 0x05;
+		val = priv->tdm_mode ? 0x07 : 0x05;
 		break;
 	default:
 		dev_err(component->dev, "Invalid DAI format\n");
@@ -207,6 +221,7 @@ static int pcm1681_hw_params(struct snd_pcm_substream *substream,
 static const struct snd_soc_dai_ops pcm1681_dai_ops = {
 	.set_fmt	= pcm1681_set_dai_fmt,
 	.hw_params	= pcm1681_hw_params,
+	.set_tdm_slot	= pcm1681_set_tdm_slot,
 	.mute_stream	= pcm1681_mute,
 	.no_capture_mute = 1,
 };
