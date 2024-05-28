@@ -180,7 +180,8 @@
 	sound-out {
 		compatible = "simple-audio-card";
 		simple-audio-card,name = "rv8007";
-		simple-audio-card,format = "i2s";
+		label = "rv8007";
+		simple-audio-card,format = "left_j";
 		simple-audio-card,widgets =
 			"Line", "OUTFL",
 			"Line", "OUTFR",
@@ -202,10 +203,14 @@
 			bitclock-master;
 			system-clock-direction-out;
 			clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1>;
+			dai-tdm-slot-num = <8>;
+			dai-tdm-slot-width = <32>;
 		};
 
 		simple-audio-card,codec {
 			sound-dai = <&pcm1681>;
+			dai-tdm-slot-num = <8>;
+			dai-tdm-slot-width = <32>;
 		};
 	};
 
@@ -647,7 +652,7 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_sai1>;
 	/* Disable mclk[2,3] to force TX/RX clock from mclk[1]
-	 * due to pcm1681 recommendations */
+	 * due to pcm1681 recommendations of deriving BCLK from SCLK */
 	clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI1_IPG>,
 		<&clk IMX8MP_CLK_DUMMY>,
 		<&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1>,
@@ -702,6 +707,8 @@
 			MX8MP_IOMUXC_GPIO1_IO09__GPIO1_IO09		0x000 /* WP_Flash */
 			MX8MP_IOMUXC_SAI3_TXD__GPIO5_IO01		0x080 /* IRQ_BLE-1V8-BT */
 			MX8MP_IOMUXC_SAI3_RXC__GPIO4_IO29		0x000 /* EN-1v8-BT */
+			MX8MP_IOMUXC_SAI1_TXD2__AUDIOMIX_SAI1_TX_DATA02	0x0d6 /* PCM_DAT2-PCMDAC */
+			MX8MP_IOMUXC_SAI1_TXD1__AUDIOMIX_SAI1_TX_DATA01	0x0d6 /* PCM_DAT1-PCMDAC */
 #endif
 
 	pinctrl_sai1: sai1grp {
@@ -710,8 +717,6 @@
 			MX8MP_IOMUXC_SAI1_TXFS__AUDIOMIX_SAI1_TX_SYNC	0x0d6 /* PCM_LRCK-PCMDAC */
 			MX8MP_IOMUXC_SAI1_TXC__AUDIOMIX_SAI1_TX_BCLK	0x0d6 /* PCM_BCLK-PCMDAC */
 			MX8MP_IOMUXC_SAI1_TXD0__AUDIOMIX_SAI1_TX_DATA00	0x0d6 /* PCM_DAT0-PCMDAC */
-			MX8MP_IOMUXC_SAI1_TXD1__AUDIOMIX_SAI1_TX_DATA01	0x0d6 /* PCM_DAT1-PCMDAC */
-			MX8MP_IOMUXC_SAI1_TXD2__AUDIOMIX_SAI1_TX_DATA02	0x0d6 /* PCM_DAT2-PCMDAC */
 		>;
 	};
 
