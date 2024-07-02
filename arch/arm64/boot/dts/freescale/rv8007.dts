@@ -214,6 +214,15 @@
 		};
 	};
 
+	system-gpios {
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_system>;
+		compatible = "drs,system-gpios";
+		gpios =
+			<&gpio1 4 GPIO_ACTIVE_LOW>;
+		gpio-line-names =
+			"sys_mute";
+	};
 };
 
 &ldb_lvds_ch0 {
@@ -609,18 +618,6 @@
 	};
 };
 
-&gpio1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_gpio1_hog>;
-
-	/* Permanently un-mute audio */
-	gpio1-hog-high {
-		gpio-hog;
-		gpios = <4 GPIO_ACTIVE_HIGH>;
-		output-high;
-	};
-};
-
 &gpio2 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_gpio2_hog>;
@@ -729,7 +726,7 @@
 		>;
 	};
 
-	pinctrl_gpio1_hog: gpio1hoggrp {
+	pinctrl_system: systemgrp {
 		fsl,pins = <
 			MX8MP_IOMUXC_GPIO1_IO04__GPIO1_IO04		0x000 /* LINE_nMUTE-A */
 		>;
