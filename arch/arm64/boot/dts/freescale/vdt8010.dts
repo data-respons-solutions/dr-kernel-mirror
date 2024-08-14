@@ -1,0 +1,110 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2021 Data Respons Solutions AB
+ */
+
+/dts-v1/;
+
+#include "sdb8000.dts"
+
+/ {
+	model = "Data Respons Solutions VDT8010";
+
+	backlight: backlight {
+		compatible = "pwm-backlight";
+		pwms = <&pwm1 0 66666 0>; /* ~15KHz */
+        brightness-levels = <0 26 40 50 60 70 80 90 100 120 150 180 210 255>;
+		default-brightness-level = <14>;
+		power-supply = <&reg_vled_bl>;
+	};
+
+	panel_lvds: m101gwwf {
+		compatible = "panel-lvds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_panel>;
+		label = "m101gwwf";
+		data-mapping = "vesa-24";
+		width-mm = <217>;
+		height-mm = <136>;
+		power-supply = <&reg_lcd_con>;
+		backlight = <&backlight>;
+
+		panel-timing {
+			clock-frequency = <70000000 72400000 76600000>;
+			hactive = <1280>;
+			vactive = <800>;
+			/* Even through panel operates without horizontal and vertical sync pulses
+			 * then the lcdif or dsim controller require sync pulses to output video
+			 * frames. We add 8 {v,h}sync-len bits and subtract same value from {v,h}back-porch. */
+			hfront-porch = <42 72 102>;
+			hback-porch =  <80 80 80>;
+			hsync-len =    <8  8  8>;
+			vfront-porch = <5  15 45>;
+			vback-porch =  <15 15 15>;
+			vsync-len =    <8  8  8>;
+			de-active = <1>;
+		};
+		port {
+			lvds_in: endpoint {
+				remote-endpoint = <&lvds_out>;
+			};
+		};
+	};
+};
+
+&lvds_bridge {
+	ports {
+		port@2 {
+			reg = <2>;
+			lvds_out: endpoint {
+				remote-endpoint = <&lvds_in>;
+			};
+		};
+	};
+};
+
+&mipi_dsi {
+	status = "okay";
+};
+
+&lcdif {
+	status = "okay";
+};
+
+&i2c2 {
+	light-sensor@51 {
+		compatible = "vishay,vcnl4200";
+		reg = <0x51>;
+		proximity-near-level = <25>;
+	};
+};
+
+&i2c3 {
+	status = "okay";
+
+	touch: ili2511@41 {
+    	compatible = "ilitek,ili251x";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_touch>;
+    	reg = <0x41>;
+    	interrupt-parent = <&gpio4>;
+    	interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
+    	reset-gpios = <&gpio4 25 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&usdhc1 {
+	status = "disabled";
+};
+
+&pwm1 {
+	status = "okay";
+};
+
+&uart1 {
+	status = "disabled";
+};
+
+&fec1 {
+	status = "disabled";
+};
