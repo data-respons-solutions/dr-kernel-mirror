@@ -34,6 +34,8 @@
 
 	panel_lvds: xt70610a {
 		compatible = "panel-lvds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_panel>;
 		label = "xt70610a";
 		data-mapping = "jeida-24";
 		width-mm = <154>;
@@ -56,8 +58,8 @@
 		};
 
 		port {
-			xt70618a_from_bridge: endpoint {
-				remote-endpoint = <&bridge_to_xt70618a>;
+			lvds_in: endpoint {
+				remote-endpoint = <&lvds_out>;
 			};
 		};
 	};
@@ -67,11 +69,19 @@
 	ports {
 		port@2 {
 			reg = <2>;
-			bridge_to_xt70618a: endpoint {
-				remote-endpoint = <&xt70618a_from_bridge>;
+			lvds_out: endpoint {
+				remote-endpoint = <&lvds_in>;
 			};
 		};
 	};
+};
+
+&mipi_dsi {
+	status = "okay";
+};
+
+&lcdif {
+	status = "okay";
 };
 
 &i2c2 {
@@ -83,7 +93,11 @@
 };
 
 &i2c3 {
+	status = "okay";
+
 	touch: gt5688@14 {
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_touch>;
     	compatible = "goodix,gt5688";
     	reg = <0x14>;
     	interrupt-parent = <&gpio4>;
@@ -93,19 +107,32 @@
 	};
 };
 
+&usdhc1 {
+	status = "disabled";
+};
+
+&pwm1 {
+	status = "okay";
+};
+
 &uart1 {
 	status = "disabled";
 };
 
-&iomuxc {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_hog_1>;
+&fec1 {
+	status = "disabled";
+};
 
-	pinctrl_hog_1: hog1grp {
+&iomuxc {
+	pinctrl_panel: panelgrp {
 		fsl,pins = <
-			// Used by panel
 			MX8MM_IOMUXC_SAI5_MCLK_GPIO3_IO25	0x0 /* LCD_CON-RESET */
 			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11	0x0 /* LCD_CON-STBY */
+		>;
+	};
+
+	pinctrl_touch: touchgrp {
+		fsl,pins = <
 			MX8MM_IOMUXC_SAI2_TXD0_GPIO4_IO26	0x80 /* INT_TP */
 			MX8MM_IOMUXC_SAI2_TXC_GPIO4_IO25	0x0 /* RST_TP */
 		>;
