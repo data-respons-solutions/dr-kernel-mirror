@@ -46,6 +46,8 @@
 
 	panel_lvds: m101gwwf {
 		compatible = "panel-lvds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_panel>;
 		label = "m101gwwf";
 		data-mapping = "vesa-24";
 		width-mm = <217>;
@@ -66,8 +68,8 @@
 		};
 
 		port {
-			m101gwwf_from_bridge: endpoint {
-				remote-endpoint = <&bridge_to_m101gwwf>;
+			lvds_in: endpoint {
+				remote-endpoint = <&lvds_out>;
 			};
 		};
 	};
@@ -77,11 +79,19 @@
 	ports {
 		port@2 {
 			reg = <2>;
-			bridge_to_m101gwwf: endpoint {
-				remote-endpoint = <&m101gwwf_from_bridge>;
+			lvds_out: endpoint {
+				remote-endpoint = <&lvds_in>;
 			};
 		};
 	};
+};
+
+&mipi_dsi {
+	status = "okay";
+};
+
+&lcdif {
+	status = "okay";
 };
 
 &i2c2 {
@@ -93,8 +103,12 @@
 };
 
 &i2c3 {
+	status = "okay";
+
 	touch: ili2511@41 {
     	compatible = "ilitek,ili251x";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_touch>;
     	reg = <0x41>;
     	interrupt-parent = <&gpio4>;
     	interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
@@ -102,15 +116,32 @@
 	};
 };
 
-&iomuxc {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_hog_1>;
+&usdhc1 {
+	status = "disabled";
+};
 
-	pinctrl_hog_1: hog1grp {
+&pwm1 {
+	status = "okay";
+};
+
+&uart1 {
+	status = "disabled";
+};
+
+&fec1 {
+	status = "disabled";
+};
+
+&iomuxc {
+	pinctrl_panel: panelgrp {
 		fsl,pins = <
-			// Used by panel
 			MX8MM_IOMUXC_SAI5_MCLK_GPIO3_IO25	0x0 /* LCD_CON-RESET */
 			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11	0x0 /* LCD_CON-STBY */
+		>;
+	};
+
+	pinctrl_touch: touchgrp {
+		fsl,pins = <
 			MX8MM_IOMUXC_SAI2_TXD0_GPIO4_IO26	0x80 /* INT_TP */
 			MX8MM_IOMUXC_SAI2_TXC_GPIO4_IO25	0x0 /* RST_TP */
 		>;
