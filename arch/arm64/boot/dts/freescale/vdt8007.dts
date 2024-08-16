@@ -88,7 +88,7 @@
 	light-sensor@51 {
 		compatible = "vishay,vcnl4200";
 		reg = <0x51>;
-		proximity-near-level = <220>;
+		proximity-near-level = <25>;
 	};
 };
 
