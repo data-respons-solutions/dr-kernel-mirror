@@ -134,17 +134,6 @@ static int ilitek_i2c_write_and_read(struct ilitek_ts_data *ts,
 }
 
 /* ILITEK ISR APIs */
-static void ilitek_touch_down(struct ilitek_ts_data *ts, unsigned int id,
-			      unsigned int x, unsigned int y)
-{
-	struct input_dev *input = ts->input_dev;
-
-	input_mt_slot(input, id);
-	input_mt_report_slot_state(input, MT_TOOL_FINGER, true);
-
-	touchscreen_report_pos(input, &ts->prop, x, y, true);
-}
-
 static int ilitek_process_and_report_v6(struct ilitek_ts_data *ts)
 {
 	int error = 0;
@@ -184,11 +173,7 @@ static int ilitek_process_and_report_v6(struct ilitek_ts_data *ts)
 
 	for (i = 0; i < report_max_point; i++) {
 		status = buf[i * packet_len + 1] & 0x40;
-		if (!status)
-			continue;
-
 		id = buf[i * packet_len + 1] & 0x3F;
-
 		x = get_unaligned_le16(buf + i * packet_len + 2);
 		y = get_unaligned_le16(buf + i * packet_len + 4);
 
@@ -200,11 +185,12 @@ static int ilitek_process_and_report_v6(struct ilitek_ts_data *ts)
 			continue;
 		}
 
-		ilitek_touch_down(ts, id, x, y);
+		input_mt_slot(input, id);
+		if (input_mt_report_slot_state(input, MT_TOOL_FINGER, status))
+			touchscreen_report_pos(input, &ts->prop, x, y, true);
 	}
 
 err_sync_frame:
-	input_mt_sync_frame(input);
 	input_sync(input);
 	return error;
 }
