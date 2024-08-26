@@ -91,7 +91,7 @@
 		backlight = <&backlight>;
 
 		panel-timing {
-			clock-frequency = <51200000>;
+			clock-frequency = <49500000>; /* 20~71 MHz */
 			hactive = <1024>;
 			vactive = <600>;
 			hback-porch = <250>;
@@ -103,7 +103,7 @@
 		};
 
 		port {
-			panel_endpoint: endpoint {
+			lvds_in: endpoint {
 				remote-endpoint = <&ldb_lvds_ch0>;
 			};
 		};
@@ -226,14 +226,10 @@
 };
 
 &ldb_lvds_ch0 {
-	remote-endpoint = <&panel_endpoint>;
+	remote-endpoint = <&lvds_in>;
 };
 
 &lvds_bridge {
-	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_LDB>,
-					<&clk IMX8MP_AUDIO_PLL2_OUT>;
-	assigned-clock-rates = <358400000>, <358400000>;
-	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL2_OUT>;
 	status = "okay";
 };
 
