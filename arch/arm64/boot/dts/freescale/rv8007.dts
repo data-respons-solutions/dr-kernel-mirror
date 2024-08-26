@@ -670,7 +670,7 @@
 	status = "okay";
 };
 
-/* VPU/ISP not available on i.MX 8M Plus QuadLite */
+/* VPU/ISP/NPU not available on i.MX 8M Plus QuadLite */
 &vpu_g1 {
 	status = "disabled";
 };
@@ -690,6 +690,9 @@
 	status = "disabled";
 };
 &pgc_vpu_vc8000e {
+	status = "disabled";
+};
+&npu {
 	status = "disabled";
 };
 
