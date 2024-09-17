@@ -24,6 +24,7 @@
 		rtc1 = &snvs_rtc;
 		ethernet0 = &eqos;
 		ethernet1 = &fec;
+		btserial = "ttymxc2";
 	};
 
 	chosen {
@@ -170,24 +171,24 @@
 		#sound-dai-cells = <1>;
 		compatible = "linux,bt-sco";
 	};
-/*
+
 	sound-bt {
 		compatible = "simple-audio-card";
-		simple-audio-card,name = "rv8007-bt";
+		simple-audio-card,name = "bt-audio";
+		label = "bt-audio";
 		simple-audio-card,format = "dsp_a";
 
 		simple-audio-card,cpu {
 			sound-dai = <&sai2>;
-			frame-master;
-			bitclock-master;
-			bitclock-inversion;
 		};
 
 		simple-audio-card,codec {
+			frame-master;
+			bitclock-master;
+			bitclock-inversion;
 			sound-dai = <&bt_sco_codec 1>;
 		};
 	};
-*/
 
 	sound-out {
 		compatible = "simple-audio-card";
@@ -514,14 +515,10 @@
 &uart3 { /* bluetooth */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart3>;
+	assigned-clocks = <&clk IMX8MP_CLK_UART3>;
+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_80M>;
 	uart-has-rtscts;
 	status = "okay";
-
-	bluetooth: bluetooth {
-		compatible = "ti,wl1837-st";
-		clocks = <&clk_32k_wifi_gate>;
-		clock-names = "ext_clock";
-	};
 };
 
 &uart4 { /* LIN */
@@ -530,27 +527,18 @@
 	status = "okay";
 };
 
-&usdhc1 {
+&usdhc1 { /* IW416 */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_usdhc1>;
 	bus-width = <4>;
 	non-removable;
-	cap-power-off-card;
-	keep-power-in-suspend;
-	#address-cells = <1>;
-	#size-cells = <0>;
 	status = "okay";
 	mmc-pwrseq = <&wifi_pwrseq>;
-
-	wifi: wifi@2 {
-		compatible = "ti,wl1837";
-		reg = <2>;
-		interrupt-parent = <&gpio4>;
-		interrupts = <30 IRQ_TYPE_LEVEL_HIGH>;
-	};
+	max-frequency = <50000000>;
+	sd-uhs-ddr50;
 };
 
-&usdhc3 {
+&usdhc3 { /* eMMC */
 	assigned-clocks = <&clk IMX8MP_CLK_USDHC3>;
 	assigned-clock-rates = <400000000>;
 	pinctrl-names = "default", "state_100mhz", "state_200mhz";
@@ -673,8 +661,8 @@
 	pinctrl-0 = <&pinctrl_sai2>;
 	assigned-clocks = <&clk IMX8MP_CLK_SAI2>;
 	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
-	assigned-clock-rates = <12288000>;
-	fsl,sai-mclk-direction-output;
+	assigned-clock-rates = <11289600>;
+	fsl,sai-synchronous-rx;
 	status = "okay";
 };
 
@@ -730,9 +718,10 @@
 
 	pinctrl_sai2: sai2grp {
 		fsl,pins = <
-			MX8MP_IOMUXC_SAI2_TXFS__AUDIOMIX_SAI2_TX_SYNC	0x0d6 /* PCM_FSYNC-1v8-BT */
-			MX8MP_IOMUXC_SAI2_TXC__AUDIOMIX_SAI2_TX_BCLK	0x0d6 /* PCM_SCLK-1v8-BT */
+			MX8MP_IOMUXC_SAI2_MCLK__AUDIOMIX_SAI2_MCLK		0x0d6 /* PCM_MCLKO-1v8-CPU */
 			MX8MP_IOMUXC_SAI2_TXD0__AUDIOMIX_SAI2_TX_DATA00	0x0d6 /* PCM_IN-1v8-BT */
+			MX8MP_IOMUXC_SAI2_RXFS__AUDIOMIX_SAI2_RX_SYNC	0x0d6 /* PCM_FSYNC-1v8-BT */
+			MX8MP_IOMUXC_SAI2_RXC__AUDIOMIX_SAI2_RX_BCLK	0x0d6 /* PCM_SCLK-1v8-CPU */
 			MX8MP_IOMUXC_SAI2_RXD0__AUDIOMIX_SAI2_RX_DATA00	0x0d6 /* PCM_OUT-1v8-BT */
 		>;
 	};
