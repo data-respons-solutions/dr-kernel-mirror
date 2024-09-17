@@ -154,6 +154,18 @@
 		};
 	};
 
+	leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ethernet0_link>;
+
+		ethernet0_link {
+			gpios = <&gpio2 12 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+			linux,default-trigger = "stmmac-0:00:link";
+		};
+	};
+
 	bt_sco_codec: bt_sco_codec {
 		#sound-dai-cells = <1>;
 		compatible = "linux,bt-sco";
@@ -773,6 +785,12 @@
 			MX8MP_IOMUXC_ENET_RD1__ENET_QOS_RGMII_RD1		0x080 /* RMII_RXD1-ETH_A */
 			MX8MP_IOMUXC_GPIO1_IO00__GPIO1_IO00				0x080 /* nINT-ETH_A */
 			MX8MP_IOMUXC_GPIO1_IO01__GPIO1_IO01				0x000 /* nRST-ETH_A */
+		>;
+	};
+
+	pinctrl_ethernet0_link: ethernet0linkgrp {
+		fsl,pins = <
+			MX8MP_IOMUXC_SD2_CD_B__GPIO2_IO12		0x0	/* ETH_LINK_G_CPU */
 		>;
 	};
 
