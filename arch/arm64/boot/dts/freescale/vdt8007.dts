@@ -10,18 +10,6 @@
 / {
 	model = "Data Respons Solutions VDT8007";
 
-	reg_lcd_con: regulator-lcd-con {
-		compatible = "regulator-fixed";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_reg_lcd_con>;
-		regulator-name = "LCD_CON-VDD";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
-		off-on-delay-us = <20000>;
-		enable-active-high;
-	};
-
 	backlight: backlight {
 		compatible = "pwm-backlight";
 		pwms = <&pwm1 0 1000000 0>;
@@ -121,26 +109,4 @@
 
 &fec1 {
 	status = "disabled";
-};
-
-&iomuxc {
-	pinctrl_panel: panelgrp {
-		fsl,pins = <
-			MX8MM_IOMUXC_SAI5_MCLK_GPIO3_IO25	0x0 /* LCD_CON-RESET */
-			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11	0x0 /* LCD_CON-STBY */
-		>;
-	};
-
-	pinctrl_touch: touchgrp {
-		fsl,pins = <
-			MX8MM_IOMUXC_SAI2_TXD0_GPIO4_IO26	0x80 /* INT_TP */
-			MX8MM_IOMUXC_SAI2_TXC_GPIO4_IO25	0x0 /* RST_TP */
-		>;
-	};
-
-	pinctrl_reg_lcd_con: reglcdcongrp {
-		fsl,pins = <
-			MX8MM_IOMUXC_GPIO1_IO14_GPIO1_IO14	0x0 /* LCD_PWR_EN */
-		>;
-	};
 };
