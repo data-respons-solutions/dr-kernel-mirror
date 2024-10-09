@@ -79,6 +79,30 @@
 		enable-active-high;
 	};
 
+	reg_lcd_con: regulator-lcd-con {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_reg_lcd_con>;
+		regulator-name = "LCD_CON-VDD";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+		off-on-delay-us = <20000>;
+		enable-active-high;
+	};
+
+	reg_vled_bl: regulator-vled-bl {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_reg_vled_bl>;
+		regulator-name = "VLED_BL";
+		regulator-min-microvolt = <12210000>;
+		regulator-max-microvolt = <12210000>;
+		gpio = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+		startup-delay-us = <200000>;
+		enable-active-high;
+	};
+
 	usdhc1_pwrseq: usdhc1_pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		pinctrl-names = "default";
@@ -777,6 +801,18 @@
 		>;
 	};
 
+	pinctrl_reg_lcd_con: reglcdcongrp {
+		fsl,pins = <
+			MX8MM_IOMUXC_GPIO1_IO14_GPIO1_IO14	0x0 /* LCD_PWR_EN */
+		>;
+	};
+
+	pinctrl_reg_vled_bl: regvledblgrp {
+		fsl,pins = <
+			MX8MM_IOMUXC_GPIO1_IO06_GPIO1_IO6 0x0 /* LCD_BK_EN-CPU */
+		>;
+	};
+
 	pinctrl_clk_32k_in_m2_con: clk32kinm2congrp {
 		fsl,pins = <
 			MX8MM_IOMUXC_GPIO1_IO05_GPIO1_IO5	0x0 /* CLK_32KOUT-CTRL */
@@ -790,6 +826,20 @@
 			MX8MM_IOMUXC_GPIO1_IO15_GPIO1_IO15	0x0 /* WP_Flash */
 			MX8MM_IOMUXC_GPIO1_IO08_GPIO1_IO8	0x0 /* GP-MCU_BOOT0_SEL */
 			MX8MM_IOMUXC_GPIO1_IO07_GPIO1_IO7	0x0 /* GP-NRST--MCU1 */
+		>;
+	};
+
+	pinctrl_panel: panelgrp {
+		fsl,pins = <
+			MX8MM_IOMUXC_SAI5_MCLK_GPIO3_IO25	0x0 /* LCD_CON-RESET */
+			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11	0x0 /* LCD_CON-STBY */
+		>;
+	};
+
+	pinctrl_touch: touchgrp {
+		fsl,pins = <
+			MX8MM_IOMUXC_SAI2_TXD0_GPIO4_IO26	0x80 /* INT_TP */
+			MX8MM_IOMUXC_SAI2_TXC_GPIO4_IO25	0x0 /* RST_TP */
 		>;
 	};
 };
