@@ -496,9 +496,11 @@ static void sn65dsi83_atomic_enable(struct drm_bridge *bridge,
 	struct sn65dsi83 *ctx = bridge_to_sn65dsi83(bridge);
 	unsigned int pval;
 
+	/* Wait for 5ms after enable video stream */
+	usleep_range(5000, 6000);
+
 	/* Clear all errors that got asserted during initialization. */
-	regmap_read(ctx->regmap, REG_IRQ_STAT, &pval);
-	regmap_write(ctx->regmap, REG_IRQ_STAT, pval);
+	regmap_write(ctx->regmap, REG_IRQ_STAT, 0xff);
 
 	/* Wait for 1ms and check for errors in status register */
 	usleep_range(1000, 1100);
