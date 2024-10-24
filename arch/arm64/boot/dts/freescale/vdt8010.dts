@@ -32,15 +32,16 @@
 		backlight = <&backlight>;
 
 		panel-timing {
-			clock-frequency = <70000000>; // 70,0 ~ 76,6
+			clock-frequency = <71100000>; // 70,0 ~ 76,6
 			hactive = <1280>;
 			vactive = <800>;
-			hback-porch = <70>;
-			hfront-porch = <45>;
-			vback-porch = <13>;
-			vfront-porch = <6>;
-			hsync-len = <15>;
-			vsync-len = <9>;
+			hfront-porch = <100>;
+			hback-porch = <52>;
+			hsync-len = <8>;
+			vfront-porch = <16>;
+			vback-porch = <14>;
+			vsync-len = <8>;
+			de-active = <1>;
 		};
 
 		port {
