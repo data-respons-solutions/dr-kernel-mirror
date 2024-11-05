@@ -32,18 +32,20 @@
 		backlight = <&backlight>;
 
 		panel-timing {
-			clock-frequency = <71100000>; // 70,0 ~ 76,6
+			clock-frequency = <70000000 72400000 76600000>;
 			hactive = <1280>;
 			vactive = <800>;
-			hfront-porch = <100>;
-			hback-porch = <52>;
-			hsync-len = <8>;
-			vfront-porch = <16>;
-			vback-porch = <14>;
-			vsync-len = <8>;
+			/* Even through panel operates without horizontal and vertical sync pulses
+			 * then the lcdif or dsim controller require sync pulses to output video
+			 * frames. We add 4 v/hsync-len bits and subtract same value from v/hback-porch. */
+			hfront-porch = <42 72 102>;
+			hback-porch =  <84 84 84>;
+			hsync-len =    <4  4  4>;
+			vfront-porch = <5  15 45>;
+			vback-porch =  <19 19 19>;
+			vsync-len =    <4  4  4>;
 			de-active = <1>;
 		};
-
 		port {
 			lvds_in: endpoint {
 				remote-endpoint = <&lvds_out>;
