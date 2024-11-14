@@ -37,13 +37,13 @@
 			vactive = <800>;
 			/* Even through panel operates without horizontal and vertical sync pulses
 			 * then the lcdif or dsim controller require sync pulses to output video
-			 * frames. We add 4 v/hsync-len bits and subtract same value from v/hback-porch. */
+			 * frames. We add 8 v/hsync-len bits and subtract same value from v/hback-porch. */
 			hfront-porch = <42 72 102>;
-			hback-porch =  <84 84 84>;
-			hsync-len =    <4  4  4>;
+			hback-porch =  <80 80 80>;
+			hsync-len =    <8  8  8>;
 			vfront-porch = <5  15 45>;
-			vback-porch =  <19 19 19>;
-			vsync-len =    <4  4  4>;
+			vback-porch =  <15 15 15>;
+			vsync-len =    <8  8  8>;
 			de-active = <1>;
 		};
 		port {
