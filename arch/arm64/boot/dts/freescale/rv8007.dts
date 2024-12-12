@@ -172,58 +172,47 @@
 		compatible = "linux,bt-sco";
 	};
 
-	sound-bt {
-		compatible = "simple-audio-card";
-		simple-audio-card,name = "bt-audio";
-		label = "bt-audio";
-		simple-audio-card,format = "dsp_a";
-
-		simple-audio-card,cpu {
-			sound-dai = <&sai2>;
-		};
-
-		simple-audio-card,codec {
-			frame-master;
-			bitclock-master;
-			bitclock-inversion;
-			sound-dai = <&bt_sco_codec 1>;
-		};
-	};
-
-	sound-out {
+	sound-rv8007 {
 		compatible = "simple-audio-card";
 		simple-audio-card,name = "rv8007";
-		label = "rv8007";
-		simple-audio-card,format = "left_j";
-		simple-audio-card,widgets =
-			"Line", "OUTFL",
-			"Line", "OUTFR",
-			"Line", "OUTRL",
-			"Line", "OUTRR",
-			"Line", "OUTSL",
-			"Line", "OUTSR";
-		simple-audio-card,routing =
-			"OUTFL", "VOUT1",
-			"OUTFR", "VOUT2",
-			"OUTRL", "VOUT3",
-			"OUTRR", "VOUT4",
-			"OUTSL", "VOUT5",
-			"OUTSR", "VOUT6";
 
-		soundoutcpu: simple-audio-card,cpu {
-			sound-dai = <&sai1>;
-			frame-master;
-			bitclock-master;
-			system-clock-direction-out;
-			clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1>;
-			dai-tdm-slot-num = <8>;
-			dai-tdm-slot-width = <32>;
+		simple-audio-card,dai-link@0 {
+			reg = <0>;
+			format = "left_j";
+
+			cpu {
+				sound-dai = <&sai1>;
+				frame-master;
+				bitclock-master;
+				system-clock-direction-out;
+				clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1>;
+				dai-tdm-slot-num = <8>;
+				dai-tdm-slot-width = <32>;
+			};
+
+			codec {
+				sound-dai = <&pcm1681>;
+				dai-tdm-slot-num = <8>;
+				dai-tdm-slot-width = <32>;
+			};
 		};
 
-		simple-audio-card,codec {
-			sound-dai = <&pcm1681>;
-			dai-tdm-slot-num = <8>;
-			dai-tdm-slot-width = <32>;
+		simple-audio-card,dai-link@1 {
+			reg = <1>;
+			format = "dsp_a";
+
+			cpu {
+				sound-dai = <&sai2>;
+				frame-master;
+				bitclock-master;
+				bitclock-inversion;
+				system-clock-direction-out;
+			};
+
+			codec {
+				prefix = "btsco";
+				sound-dai = <&bt_sco_codec 1>;
+			};
 		};
 	};
 
