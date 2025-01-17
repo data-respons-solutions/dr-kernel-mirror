@@ -642,6 +642,7 @@
 		<&clk IMX8MP_CLK_DUMMY>;
 	assigned-clocks = <&clk IMX8MP_CLK_SAI1>;
 	fsl,sai-mclk-direction-output;
+	fsl,sai-mclk-always-on;
 	status = "okay";
 };
 
