@@ -734,6 +734,7 @@ static int fsl_sai_hw_free(struct snd_pcm_substream *substream,
 			   FSL_SAI_CR3_TRCE_MASK, 0);
 
 	if (!sai->is_consumer_mode[tx] &&
+		!sai->mclk_always_on &&
 	    sai->mclk_streams & BIT(substream->stream)) {
 		clk_disable_unprepare(sai->mclk_clk[sai->mclk_id[tx]]);
 		sai->mclk_streams &= ~BIT(substream->stream);
@@ -854,11 +855,11 @@ static int fsl_sai_trigger(struct snd_pcm_substream *substream, int cmd,
 		 * Disable current stream if either of:
 		 * 1. current stream doesn't provide clocks for synchronous mode
 		 * 2. current stream provides clocks for synchronous mode but no
-		 *    more stream is active.
+		 *    more stream is active unless mclk should always be active.
 		 */
-		if (!fsl_sai_dir_is_synced(sai, dir) || !(xcsr & FSL_SAI_CSR_FRDE))
+		if ((!fsl_sai_dir_is_synced(sai, dir) || !(xcsr & FSL_SAI_CSR_FRDE))
+				&& !sai->mclk_always_on)
 			fsl_sai_config_disable(sai, dir);
-
 		break;
 	default:
 		return -EINVAL;
@@ -873,6 +874,7 @@ static int fsl_sai_startup(struct snd_pcm_substream *substream,
 	struct fsl_sai *sai = snd_soc_dai_get_drvdata(cpu_dai);
 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
 	int ret;
+
 
 	/*
 	 * EDMA controller needs period size to be a multiple of
@@ -1512,6 +1514,8 @@ static int fsl_sai_probe(struct platform_device *pdev)
 		regmap_update_bits(gpr, IOMUXC_GPR1, MCLK_DIR(index),
 				   MCLK_DIR(index));
 	}
+
+	sai->mclk_always_on = of_property_read_bool(np, "fsl,sai-mclk-always-on");
 
 	sai->dma_params_rx.addr = sai->res->start + FSL_SAI_RDR0;
 	sai->dma_params_tx.addr = sai->res->start + FSL_SAI_TDR0;
