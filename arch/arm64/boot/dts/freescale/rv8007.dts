@@ -368,7 +368,7 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_touch>;
 		interrupt-parent = <&gpio5>;
-		interrupts = <12 IRQ_TYPE_EDGE_FALLING>;
+		interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
 		reset-gpios = <&gpio5 10 GPIO_ACTIVE_LOW>;
 	};
 };
