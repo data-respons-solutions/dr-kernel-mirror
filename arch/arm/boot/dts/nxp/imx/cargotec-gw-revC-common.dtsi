@@ -23,6 +23,14 @@
 
 	chosen {
 		stdout-path = &uart1;
+
+		/* Deployed bootloader has loadaddresses which are not compatible
+		 * with kernel requirements but happened to work with kernel 4.14.
+		 * 0x10000000: start of memory
+		 * 0x11000000: dt loadaddress
+		 * Sacrifice 16MB memory before DT and reserve an additional 2MB.
+		 *  */
+		linux,usable-memory-range = <0x11200000 0x3ee00000>;
 	};
 
 	reg_wifi: wifi_pwr {
