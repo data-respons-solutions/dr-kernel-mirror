@@ -135,7 +135,6 @@
 				<&gpio1 12 GPIO_ACTIVE_HIGH>,
 				<&gpio1 14 GPIO_ACTIVE_HIGH>,
 				<&gpio1 13 GPIO_ACTIVE_HIGH>,
-				<&gpio4 26 GPIO_ACTIVE_HIGH>,
 				<&gpio4 24 GPIO_ACTIVE_HIGH>,
 				<&gpio4 25 GPIO_ACTIVE_HIGH>,
 				<&gpio1 4 GPIO_ACTIVE_HIGH>,
@@ -153,7 +152,6 @@
 							"sys_gpi1",
 							"sys_gpi2",
 							"sys_gpi3",
-							"sys_gps_antenna_power",
 							"sys_gpo1",
 							"sys_gpo2",
 							"sys_mcu_reset",
@@ -246,7 +244,8 @@
 		gpios = <10 GPIO_ACTIVE_HIGH>,
 				<12 GPIO_ACTIVE_HIGH>,
 				<18 GPIO_ACTIVE_HIGH>,
-				<19 GPIO_ACTIVE_HIGH>;
+				<19 GPIO_ACTIVE_HIGH>,
+				<26 GPIO_ACTIVE_HIGH>;
 		output-high;
 		line-name = "gpio4-hog";
 	};
@@ -592,7 +591,6 @@
 			MX6QDL_PAD_SD2_DAT1__GPIO1_IO14     0x12000			/* GPI_2 */
 			MX6QDL_PAD_SD2_DAT2__GPIO1_IO13     0x12000			/* GPI_3 */
 			MX6QDL_PAD_DISP0_DAT6__GPIO4_IO27	0x0000b0b0 		/* GP_nPRST_WWAN */
-			MX6QDL_PAD_DISP0_DAT5__GPIO4_IO26	0x00002060		/* GP_EN_PWR--ANT_GPS */
 			MX6QDL_PAD_GPIO_4__GPIO1_IO04		0x80000000		/* MCU_RESET (active high)*/
 			MX6QDL_PAD_DI0_PIN15__GPIO4_IO17	0x2070			/* MCU Boot select (active high) */
 			MX6QDL_PAD_CSI0_DAT16__GPIO6_IO02	0x2070			/* GP-EN--BUCK_5V--CPU (active high) */
@@ -785,10 +783,11 @@
 
 	pinctrl_gpio4_hog: gpio4hoggrp {
 		fsl,pins = <
-			MX6QDL_PAD_KEY_COL2__GPIO4_IO10	0x80000000			/* CAN1_EN */
-			MX6QDL_PAD_KEY_ROW2__GPIO4_IO11	0x80000000			/* CAN1_STB */
-			MX6QDL_PAD_DI0_PIN2__GPIO4_IO18	0x1b0b1				/* CAN1_WAKE */
-			MX6QDL_PAD_DI0_PIN3__GPIO4_IO19	0x1b0b1				/* CAN2_WAKE */
+			MX6QDL_PAD_KEY_COL2__GPIO4_IO10		0x80000000		/* CAN1_EN */
+			MX6QDL_PAD_KEY_ROW2__GPIO4_IO11		0x80000000		/* CAN1_STB */
+			MX6QDL_PAD_DI0_PIN2__GPIO4_IO18		0x1b0b1			/* CAN1_WAKE */
+			MX6QDL_PAD_DI0_PIN3__GPIO4_IO19		0x1b0b1			/* CAN2_WAKE */
+			MX6QDL_PAD_DISP0_DAT5__GPIO4_IO26	0x00002060		/* GP_EN_PWR--ANT_GPS */
 		>;
 	};
 
