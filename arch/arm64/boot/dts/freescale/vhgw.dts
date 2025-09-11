@@ -723,6 +723,11 @@
 	status = "okay";
 };
 
+/* i.MX8MN UltraLite does not have gpu, avoid crashing if etnaviv driver available */
+&gpu {
+	status = "disabled";
+};
+
 &iomuxc {
 #if 0
    /* UNUSED PINS */
