@@ -1666,8 +1666,8 @@ int __init acpi_boot_init(void)
 	if (!acpi_noirq)
 		x86_init.pci.init = pci_acpi_init;
 
-	/* Do not enable ACPI SPCR console by default */
-	acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
+	/* Enable ACPI SPCR console by default */
+	acpi_parse_spcr(earlycon_acpi_spcr_enable, true);
 	return 0;
 }
 
