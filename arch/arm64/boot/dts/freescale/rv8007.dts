@@ -525,6 +525,14 @@
 	mmc-pwrseq = <&wifi_pwrseq>;
 	max-frequency = <50000000>;
 	sd-uhs-ddr50;
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	iw416@1 {
+		compatible = "nxp,iw416";
+		reg = <1>;
+		ieee80211-freq-limit = <2402000 2482000>;
+	};
 };
 
 &usdhc3 { /* eMMC */
