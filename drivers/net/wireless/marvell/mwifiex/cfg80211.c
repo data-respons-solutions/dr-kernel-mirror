@@ -4869,6 +4869,9 @@ int mwifiex_register_cfg80211(struct mwifiex_adapter *adapter)
 
 	set_wiphy_dev(wiphy, priv->adapter->dev);
 
+	/* Apply frequency limits if provided */
+	wiphy_read_of_freq_limits(wiphy);
+
 	ret = wiphy_register(wiphy);
 	if (ret < 0) {
 		mwifiex_dbg(adapter, ERROR,
