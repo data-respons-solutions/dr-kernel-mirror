@@ -225,6 +225,16 @@
 		};
 	};
 
+	tpm2@2e {
+		compatible = "st,st33ktpm2xi2c", "tcg,tpm-tis-i2c";
+		reg = <0x2e>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_i2c2_tpm>;
+		interrupt-parent = <&gpio2>;
+		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
+		status = "okay";
+	};
+
     eeprom@50 {
         compatible = "atmel,24c128";
         reg = <0x50>;
@@ -550,6 +560,12 @@
 	pinctrl_sx1509q: sx1509qgrp {
 		fsl,pins = <
 			IMX95_PAD_ENET2_MDIO__GPIO4_IO_BIT15			0x1fe	//not pull down,not pull up ,Fast slew rate, drive X6
+		>;
+	};
+
+	pinctrl_i2c2_tpm: i2c2tpmgrp {
+		fsl,pins = <
+			IMX95_PAD_GPIO_IO27__GPIO2_IO_BIT27			0x1fe	//not pull down,not pull up ,Fast slew rate, drive X6
 		>;
 	};
 
