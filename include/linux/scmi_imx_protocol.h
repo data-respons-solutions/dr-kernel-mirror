@@ -30,6 +30,7 @@ struct scmi_imx_bbm_proto_ops {
 	int (*rtc_alarm_set)(const struct scmi_protocol_handle *ph, u32 id,
 			     bool enable, u64 sec);
 	int (*button_get)(const struct scmi_protocol_handle *ph, u32 *state);
+	int (*shutdown_set)(const struct scmi_protocol_handle *ph, u32 *state);
 };
 
 enum scmi_nxp_notification_events {

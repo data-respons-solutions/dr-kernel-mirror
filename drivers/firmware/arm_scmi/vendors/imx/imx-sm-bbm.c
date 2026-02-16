@@ -30,6 +30,7 @@ enum scmi_imx_bbm_protocol_cmd {
 	IMX_BBM_BUTTON_GET = 0x9,
 	IMX_BBM_RTC_NOTIFY = 0xA,
 	IMX_BBM_BUTTON_NOTIFY = 0xB,
+	IMX_BBM_SHUTDOWN_SET = 0x20,
 };
 
 #define GET_RTCS_NR(x)	le32_get_bits((x), GENMASK(23, 16))
@@ -336,11 +337,33 @@ static int scmi_imx_bbm_button_get(const struct scmi_protocol_handle *ph, u32 *s
 	return ret;
 }
 
+static int scmi_imx_bbm_shutdown_set(const struct scmi_protocol_handle *ph, u32 *state)
+{
+	struct scmi_xfer *t;
+	int ret;
+
+	ret = ph->xops->xfer_get_init(ph, IMX_BBM_SHUTDOWN_SET, 0, sizeof(u32), &t);
+	if (ret)
+		return ret;
+
+	/* Polling mode to avoid RCU content switch */
+	t->hdr.poll_completion = true;
+
+	ret = ph->xops->do_xfer(ph, t);
+	if (!ret)
+		*state = get_unaligned_le32(t->rx.buf);
+
+	ph->xops->xfer_put(ph, t);
+
+	return ret;
+}
+
 static const struct scmi_imx_bbm_proto_ops scmi_imx_bbm_proto_ops = {
 	.rtc_time_get = scmi_imx_bbm_rtc_time_get,
 	.rtc_time_set = scmi_imx_bbm_rtc_time_set,
 	.rtc_alarm_set = scmi_imx_bbm_rtc_alarm_set,
 	.button_get = scmi_imx_bbm_button_get,
+	.shutdown_set = scmi_imx_bbm_shutdown_set,
 };
 
 static int scmi_imx_bbm_protocol_init(const struct scmi_protocol_handle *ph)
