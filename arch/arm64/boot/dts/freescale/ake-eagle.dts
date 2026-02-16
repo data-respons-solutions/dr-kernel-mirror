@@ -217,11 +217,16 @@
 		pinctrl-0 = <&pinctrl_sx1509q>;
 		status = "okay";
 
-		sx1509q-hog {
+		sx1509q-hog-low {
 			gpio-hog;
 			gpios = <3 GPIO_ACTIVE_HIGH>, /* RC210_EN_3V */
-					<4 GPIO_ACTIVE_HIGH>; /* LT9611_RSTN_3V */
+					<7 GPIO_ACTIVE_LOW>;  /* PCIEB_RST#_3V */
 			output-low;
+		};
+		sx1509q-hog-high {
+			gpio-hog;
+			gpios = <4 GPIO_ACTIVE_LOW>; /* LT9611_RSTN_3V */
+			output-high;
 		};
 	};
 
