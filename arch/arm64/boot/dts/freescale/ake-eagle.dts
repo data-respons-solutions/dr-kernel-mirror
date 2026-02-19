@@ -383,6 +383,8 @@
 		interrupt-parent = <&gpio5>;
 		interrupts = <16 IRQ_TYPE_EDGE_FALLING>; */
 		realtek,clkout-disable;
+		realtek,aldps-enable;
+		max-speed = <100>;
 		compatible = "ethernet-phy-id001c.c916";
 	};
 
@@ -397,6 +399,8 @@
 		interrupt-parent = <&gpio5>;
 		interrupts = <17 IRQ_TYPE_EDGE_FALLING>; */
 		realtek,clkout-disable;
+		realtek,aldps-enable;
+		max-speed = <100>;
 		compatible = "ethernet-phy-id001c.c916";
 	};
 };
