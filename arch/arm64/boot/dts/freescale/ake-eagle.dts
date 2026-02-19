@@ -409,7 +409,7 @@
 	dr_mode = "host";
 	disable-over-current;
 	vbus-supply = <&reg_usb_vbus>;
-	status = "disabled";
+	status = "okay";
 };
 
 &usb3 {
