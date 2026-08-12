@@ -350,6 +350,14 @@
 		interrupt-parent = <&gpio2>;
 		interrupts = <22 IRQ_TYPE_EDGE_FALLING>;
 	};
+
+	vmcu: vmcu@51 {
+		compatible = "drs,vmcu";
+		reg = <0x51>;
+		#io-channel-cells = <1>;
+		#gpio-cells = <2>;
+		gpio-controller;
+	};
 };
 
 &lpuart1 {
