@@ -504,6 +504,14 @@
 		interrupt-parent = <&gpio1>;
 		interrupts = <6 IRQ_TYPE_EDGE_FALLING>, <9 IRQ_TYPE_LEVEL_LOW>;
 		interrupt-names = "irq", "shutdown";
+
+		leds {
+			SYS@0 {
+				reg = <0x0>;
+				function = LED_FUNCTION_STATUS;
+			};
+		};
+
 	};
 
 };

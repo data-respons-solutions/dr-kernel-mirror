@@ -7,6 +7,7 @@
 
 #include <dt-bindings/pwm/pwm.h>
 #include <dt-bindings/usb/pd.h>
+#include <dt-bindings/leds/common.h>
 #include "imx95.dtsi"
 
 #define FALLING_EDGE			1
@@ -100,6 +101,13 @@
 		regulator-name = "USB_VBUS";
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
+	};
+
+	vbat-voltage {
+		compatible = "voltage-divider";
+		io-channels = <&vmcu 9>;
+		output-ohms = <1>;
+		full-ohms = <3>;
 	};
 };
 
@@ -357,6 +365,98 @@
 		#io-channel-cells = <1>;
 		#gpio-cells = <2>;
 		gpio-controller;
+
+		leds {
+			SYS@0 {
+				reg = <0x0>;
+				function = LED_FUNCTION_STATUS;
+			};
+			KEY@03 {
+				reg = <0x03>;
+				function = "key";
+				ake,default-intensity = <LED_COLOR_ID_RED>;
+			};
+			MGT@04 {
+				reg = <0x04>;
+				function = "mgt";
+				ake,default-intensity = <LED_COLOR_ID_YELLOW>;
+			};
+			WL1@05 {
+				reg = <0x05>;
+				function = LED_FUNCTION_WAN;
+				function-enumerator = <0>;
+			};
+			WL2@06 {
+				reg = <0x06>;
+				function = LED_FUNCTION_WAN;
+				function-enumerator = <1>;
+			};
+			WL3@07 {
+				reg = <0x07>;
+				function = LED_FUNCTION_WAN;
+				function-enumerator = <2>;
+			};
+			NBR@08 {
+				reg = <0x08>;
+				function = "nbr";
+				ake,default-intensity = <LED_COLOR_ID_GREEN>;
+			};
+			USER1@09 {
+				reg = <0x09>;
+				function = "user";
+				function-enumerator = <0>;
+				ake,default-intensity = <LED_COLOR_ID_YELLOW>;
+			};
+			4G5G1@0a {
+				reg = <0x0a>;
+				function = "wan-signal";
+				function-enumerator = <0>;
+				ake,default-intensity = <LED_COLOR_ID_GREEN>;
+			};
+			4G5G2@0b {
+				reg = <0x0b>;
+				function = "wan-signal";
+				function-enumerator = <1>;
+				ake,default-intensity = <LED_COLOR_ID_GREEN>;
+			};
+			4G5G3@0c {
+				reg = <0x0c>;
+				function = "wan-signal";
+				function-enumerator = <2>;
+				ake,default-intensity = <LED_COLOR_ID_GREEN>;
+			};
+			4G5G4@0d {
+				reg = <0x0d>;
+				function = "wan-signal";
+				function-enumerator = <3>;
+				ake,default-intensity = <LED_COLOR_ID_GREEN>;
+			};
+			LNK1@0e {
+				reg = <0x0e>;
+				function = LED_FUNCTION_LAN;
+				function-enumerator = <0>;
+				linux,default-trigger = "0003:01:00.0:01:link";
+				ake,default-intensity = <LED_COLOR_ID_GREEN>;
+			};
+			LNK2@0f {
+				reg = <0x0f>;
+				function = LED_FUNCTION_LAN;
+				function-enumerator = <1>;
+				linux,default-trigger = "0003:01:00.0:04:link";
+				ake,default-intensity = <LED_COLOR_ID_GREEN>;
+			};
+			LNK3@10 {
+				reg = <0x10>;
+				function-enumerator = <2>;
+				function = LED_FUNCTION_LAN;
+				ake,default-intensity = <LED_COLOR_ID_GREEN>;
+			};
+			NU_P17_2@11 {
+				reg = <0x11>;
+				function = "nu_p17_2";
+				ake,default-intensity = <LED_COLOR_ID_GREEN>;
+			};
+		};
 	};
 };
 

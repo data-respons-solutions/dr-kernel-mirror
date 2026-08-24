@@ -409,6 +409,13 @@
 		gpio-controller;
 		interrupt-parent = <&gpio4>;
 		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
+
+		leds {
+			SYS@0 {
+				reg = <0x0>;
+				function = LED_FUNCTION_STATUS;
+			};
+		};
 	};
 };
 
