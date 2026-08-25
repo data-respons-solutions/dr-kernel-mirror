@@ -109,6 +109,42 @@
 		output-ohms = <1>;
 		full-ohms = <3>;
 	};
+
+	system-gpios {
+		compatible = "drs,system-gpios";
+
+		gpios =
+			<&vmcu 2 GPIO_ACTIVE_HIGH>,
+			<&vmcu 3 GPIO_ACTIVE_HIGH>,
+			<&vmcu 4 GPIO_ACTIVE_HIGH>,
+			<&vmcu 5 GPIO_ACTIVE_HIGH>,
+			<&vmcu 6 GPIO_ACTIVE_HIGH>,
+			<&vmcu 7 GPIO_ACTIVE_HIGH>,
+			<&vmcu 8 GPIO_ACTIVE_HIGH>,
+			<&vmcu 9 GPIO_ACTIVE_HIGH>,
+			<&vmcu 10 GPIO_ACTIVE_HIGH>,
+			<&vmcu 11 GPIO_ACTIVE_HIGH>,
+			<&vmcu 12 GPIO_ACTIVE_HIGH>,
+			<&vmcu 13 GPIO_ACTIVE_HIGH>,
+			<&vmcu 14 GPIO_ACTIVE_HIGH>,
+			<&vmcu 15 GPIO_ACTIVE_HIGH>;
+
+		gpio-line-names =
+			"P_5V_OUT_EN",
+			"OC_P_5V_OUT_N",
+			"P_12V_OUT_EN",
+			"OC_P_12V_OUT_N",
+			"MODEM_PWR",
+			"MODEM_PWR_EN",
+			"ROTARY_PWR_OFF",
+			"ROTARY_PWR_ON",
+			"ROTARY_RF_OFF",
+			"ROTARY_F1",
+			"ROTARY_F2",
+			"ROTARY_ERASE",
+			"ROTARY_ERASE_CLR",
+			"ROTARY_DAY_MODE";
+	};
 };
 
 &enetc_port0 {
